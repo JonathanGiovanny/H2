@@ -12,6 +12,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.springframework.data.annotation.CreatedDate;
+
 import com.googlecode.jmapper.annotations.JMap;
 
 import lombok.Data;
@@ -36,6 +38,7 @@ public class HHistory implements Serializable {
 	private H h;
 
 	@JMap
+	@CreatedDate
 	@Column(name = "HH_DATE", nullable = false, updatable = false)
 	private LocalDateTime date;
 }

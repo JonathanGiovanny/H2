@@ -64,6 +64,7 @@ public class H extends Auditable implements Serializable {
 
 	@JMap
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="H_TYPE__HT_ID")
 	private HType type;
 
 	@JMap
