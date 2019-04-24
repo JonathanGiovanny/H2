@@ -4,13 +4,13 @@ spring:
             enabled: true
     datasource:
 #        url: jdbc:h2:tcp://localhost/~/Seviper
-        jdbc-url: jdbc:h2:mem:testSeviper
+        jdbc-url: jdbc:h2:file:E:/var/seviper
         username: admin
         password: Asdf963.
         driver-class-name: org.h2.Driver
     data:
         neo4j:
-            uri: file:///var/tmp/neo4j.db
+            uri: file:///E:/var/sec/neo4j.db
             username: admin
             password: Asdf963.
 

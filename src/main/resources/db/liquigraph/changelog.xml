@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<changelog
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://www.liquigraph.org/schema/1.0/liquigraph.xsd">
+
+	<changeset id="create-sec-privs" author="jjo">
+		<query>CREATE (p:Privilege {name:'READ_H_PRIVILEGE', icon:'fas fa-th-large'})</query>
+		<query>CREATE (p:Privilege {name:'WRITE_H_PRIVILEGE'})</query>
+		<query>CREATE (p:Privilege {name:'DELETE_H_PRIVILEGE'})</query>
+		<query>CREATE (p:Privilege {name:'READ_TAGS_PRIVILEGE', icon:'fas fa-hashtag'})</query>
+		<query>CREATE (p:Privilege {name:'WRITE_TAGS_PRIVILEGE'})</query>
+		<query>CREATE (p:Privilege {name:'DELETE_TAGS_PRIVILEGE'})</query>
+		<query>CREATE (p:Privilege {name:'READ_TYPES_PRIVILEGE', icon:'fas fa-folder-open'})</query>
+		<query>CREATE (p:Privilege {name:'WRITE_TYPES_PRIVILEGE'})</query>
+		<query>CREATE (p:Privilege {name:'DELETE_TYPES_PRIVILEGE'})</query>
+		<query>CREATE (p:Privilege {name:'READ_USERS_PRIVILEGE', icon:'fas fa-user-friends})</query>
+		<query>CREATE (p:Privilege {name:'WRITE_USERS_PRIVILEGE'})</query>
+		<query>CREATE (p:Privilege {name:'DELETE_USERS_PRIVILEGE'})</query>
+	</changeset>
+	<changeset id="create-sec-roles" author="jjo">
+		<!-- ROLE ADMIN -->
+		<query>CREATE (r:Role {name:'ROLE_ADMIN'})</query>
+		<query>MATCH (r:Role), (p:Privilege)
+				WHERE r.name = 'ROLE_ADMIN'
+				CREATE (r)-[:HAS_ACCESS_TO]->(p)</query>
+		<query>MATCH (r:Role), (p:Privilege)
+				WHERE r.name='ROLE_ADMIN' AND p.name='READ_H_PRIVILEGE'
+				MERGE (r)-[hat:HAS_ACCESS_TO]->(p)
+				SET hat.order=1</query>
+		<query>MATCH (r:Role), (p:Privilege)
+				WHERE r.name='ROLE_ADMIN' AND p.name='READ_TAGS_PRIVILEGE'
+				MERGE (r)-[hat:HAS_ACCESS_TO]->(p)
+				SET hat.order=2</query>
+		<query>MATCH (r:Role), (p:Privilege)
+				WHERE r.name='ROLE_ADMIN' AND p.name='READ_TYPES_PRIVILEGE'
+				MERGE (r)-[hat:HAS_ACCESS_TO]->(p)
+				SET hat.order=3</query>
+		<query>MATCH (r:Role), (p:Privilege)
+				WHERE r.name='ROLE_ADMIN' AND p.name='READ_USERS_PRIVILEGE'
+				MERGE (r)-[hat:HAS_ACCESS_TO]->(p)
+				SET hat.order=4</query>
+
+		<!-- ROLE USER -->
+		<query>CREATE (r:Role{name:'ROLE_USER'})</query>
+	</changeset>
+	<changeset id="create-sec-admin" author="jjo">
+		<query>MATCH (r:Role)
+			WHERE r.name = 'ROLE_ADMIN'
+			CREATE (u:User {
+			username:'admin',
+			password:'$2a$10$tSBsxG6pqdokBJHy6IA5Muc7Dc0CHGSEIMcrj1qieEnIVmhEFK3aa',
+			email:'jongiocam@gmail.com',
+			createdDate:datetime(),
+			passwordDate:datetime()
+		})-[:HAS]->(r)</query>
+	</changeset>
+</changelog>

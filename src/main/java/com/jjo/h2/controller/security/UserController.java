@@ -23,11 +23,22 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
-	@GetMapping("/user/{id}")
+	@GetMapping("/users/{id}")
 	public ResponseEntity<?> getUser(@PathVariable Long id) {
 		ResponseEntity<?> response = null;
 		try {
 			response = new ResponseEntity<>(userService.getUser(id), HttpStatus.OK);
+		} catch (HException e) {
+			response = new ResponseEntity<>(ExceptionUtils.getErrorDTO(e), e.getStatusCode());
+		}
+		return response;
+	}
+
+	@GetMapping("/users/{username}")
+	public ResponseEntity<?> getUserByUsername(@PathVariable String username) {
+		ResponseEntity<?> response = null;
+		try {
+			response = new ResponseEntity<>(userService.getUserByUsername(username), HttpStatus.OK);
 		} catch (HException e) {
 			response = new ResponseEntity<>(ExceptionUtils.getErrorDTO(e), e.getStatusCode());
 		}

@@ -1,5 +1,8 @@
 package com.jjo.h2.services.security;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -9,6 +12,7 @@ import com.jjo.h2.config.DatasourceNeo4j;
 import com.jjo.h2.dto.security.UserDTO;
 import com.jjo.h2.model.security.User;
 import com.jjo.h2.repositories.security.UserRepository;
+import com.jjo.h2.utils.ErrorConstants;
 import com.jjo.h2.utils.HException;
 import com.jjo.h2.utils.MapperUtil;
 
@@ -31,7 +35,15 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public List<UserDTO> getUserByUsername(String username) throws HException {
+		return userRepo.findByUsername(username).stream().map(u -> toDTO(u)).collect(Collectors.toList());
+	}
+
+	@Override
 	public void registerUser(UserDTO user) throws HException {
+		if (!getUserByUsername(user.getUsername()).isEmpty()) {
+			throw new RuntimeException(ErrorConstants.EXISTING_USER_MSG);
+		}
 		user.setPassword(passEncoder.encode(user.getPassword()));
 		userRepo.save(toEntity(user));
 	}
