@@ -7,9 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jjo.h2.config.DatasourceNeo4j;
 import com.jjo.h2.dto.security.UserDTO;
+import com.jjo.h2.exception.HException;
 import com.jjo.h2.model.security.User;
 import com.jjo.h2.repositories.security.UserRepository;
-import com.jjo.h2.utils.HException;
 import com.jjo.h2.utils.MapperUtil;
 
 @Service

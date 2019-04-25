@@ -8,9 +8,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.jjo.h2.dto.TagsDTO;
+import com.jjo.h2.exception.HException;
 import com.jjo.h2.model.Tags;
 import com.jjo.h2.repositories.TagsRepository;
-import com.jjo.h2.utils.HException;
 import com.jjo.h2.utils.MapperUtil;
 
 @Service

@@ -10,11 +10,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.jjo.h2.dto.HDTO;
+import com.jjo.h2.exception.HException;
 import com.jjo.h2.model.H;
 import com.jjo.h2.model.HHistory;
 import com.jjo.h2.repositories.HHistoryRepository;
 import com.jjo.h2.repositories.HRepository;
-import com.jjo.h2.utils.HException;
 import com.jjo.h2.utils.MapperUtil;
 
 @Service

@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jjo.h2.dto.TagsDTO;
 import com.jjo.h2.dto.util.BaseDTO;
+import com.jjo.h2.exception.ExceptionUtils;
+import com.jjo.h2.exception.HException;
 import com.jjo.h2.services.TagsService;
 import com.jjo.h2.utils.Constants;
-import com.jjo.h2.utils.ExceptionUtils;
-import com.jjo.h2.utils.HException;
 
 @RestController
 @RequestMapping(Constants.APP_NAME)

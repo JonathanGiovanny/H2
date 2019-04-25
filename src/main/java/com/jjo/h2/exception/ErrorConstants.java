@@ -1,4 +1,4 @@
-package com.jjo.h2.utils;
+package com.jjo.h2.exception;
 
 public class ErrorConstants {
 
