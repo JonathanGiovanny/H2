@@ -1,11 +1,16 @@
 package com.jjo.h2.services.security;
 
+import java.util.List;
+import org.springframework.data.domain.Pageable;
 import com.jjo.h2.dto.security.UserDTO;
-import com.jjo.h2.exception.HException;
 
 public interface UserService {
-	
-	public UserDTO getUser(Long id) throws HException;
+  
+  public List<UserDTO> getUsers(Pageable pageable);
 
-	public void registerUser(UserDTO user) throws HException;
+  public UserDTO getUser(Long id);
+
+  public UserDTO getUserByUsername(String username);
+
+  public Long registerUser(UserDTO user);
 }

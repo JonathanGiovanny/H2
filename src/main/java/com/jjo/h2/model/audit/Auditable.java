@@ -37,7 +37,7 @@ public class Auditable implements Serializable {
 	@JMap
 	@CreatedBy
 	@Column(name = "CREATED_BY")
-	private String creationBy;
+	private String createdBy;
 
 	@JMap
 	@LastModifiedDate
