@@ -3,19 +3,11 @@ package com.jjo.h2.dto;
 import java.time.LocalDateTime;
 import java.util.Set;
 import com.googlecode.jmapper.annotations.JMap;
-import com.jjo.h2.dto.util.BaseDTO;
 import com.jjo.h2.model.Tags;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode(callSuper = false)
-public class HDTO extends BaseDTO {
-
-  /**
-   * 
-   */
-  private static final long serialVersionUID = 1031572710019580245L;
+public class HDTO {
 
   @JMap
   private Long id;

@@ -9,6 +9,8 @@ import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.AuditorAware;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
+@EnableJpaAuditing(auditorAwareRef = "auditorAware")
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackages = DatasourceH2.BASE_PACKAGES, //
     entityManagerFactoryRef = DatasourceH2.ENTITY_MANAGER, //
@@ -28,6 +31,11 @@ public class DatasourceH2 {
 
   static final String BASE_PACKAGES = "com.jjo.h2.repositories";
 
+  @Bean
+  public AuditorAware<String> auditorAware() {
+    return new AuditorAwareImpl();
+  }
+
   @Primary
   @Bean(name = "dataSource")
   @ConfigurationProperties("spring.datasource")
@@ -38,10 +46,8 @@ public class DatasourceH2 {
   @PersistenceContext(unitName = "h2")
   @Primary
   @Bean(name = ENTITY_MANAGER)
-  public LocalContainerEntityManagerFactoryBean entityManagerFactory(
-      EntityManagerFactoryBuilder builder) {
-    return builder.dataSource(dataSource()).packages("com.jjo.h2.model").persistenceUnit("h2")
-        .build();
+  public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder) {
+    return builder.dataSource(dataSource()).packages("com.jjo.h2.model").persistenceUnit("h2").build();
   }
 
   @Primary

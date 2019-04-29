@@ -6,17 +6,20 @@ import org.springframework.boot.autoconfigure.data.neo4j.Neo4jProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.neo4j.annotation.EnableNeo4jAuditing;
 import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
 import org.springframework.data.neo4j.transaction.Neo4jTransactionManager;
 
 @Configuration
+@EnableNeo4jAuditing(auditorAwareRef = "auditorAware")
 @EnableNeo4jRepositories( //
     sessionFactoryRef = DatasourceNeo4j.SESSION_FACTORY, //
     basePackages = DatasourceNeo4j.BASE_PACKAGES, //
     transactionManagerRef = DatasourceNeo4j.TRANSACTION_MANAGER)
 public class DatasourceNeo4j {
 
-  static final String SESSION_FACTORY = "sessionFactoryDataNeo4j";
+  // Renamed from DataNeo4j session factory for Neo4j since it is waiting for the session Factory default name
+  static final String SESSION_FACTORY = "sessionFactory";
   public static final String TRANSACTION_MANAGER = "transactionManagerDataNeo4j";
 
   static final String BASE_PACKAGES = "com.jjo.h2.repositories.security";
@@ -39,8 +42,7 @@ public class DatasourceNeo4j {
   }
 
   @Bean(name = TRANSACTION_MANAGER)
-  public Neo4jTransactionManager graphTransactionManager(
-      @Qualifier(SESSION_FACTORY) SessionFactory sessionFactory) {
+  public Neo4jTransactionManager graphTransactionManager(@Qualifier(SESSION_FACTORY) SessionFactory sessionFactory) {
     return new Neo4jTransactionManager(sessionFactory);
   }
 }

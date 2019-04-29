@@ -1,8 +1,9 @@
 package com.jjo.h2.controller;
 
+import java.net.URI;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.jjo.h2.dto.HDTO;
-import com.jjo.h2.dto.util.BaseDTO;
 import com.jjo.h2.services.HService;
 import com.jjo.h2.utils.Constants;
 
@@ -25,48 +25,34 @@ public class HController {
   private HService hService;
 
   @GetMapping("/h/{id}")
-  public ResponseEntity<? extends BaseDTO> getH(@PathVariable Long id) {
-    ResponseEntity<? extends BaseDTO> response = null;
-    response = new ResponseEntity<>(hService.getH(id), HttpStatus.OK);
-    return response;
+  public ResponseEntity<HDTO> getH(@PathVariable Long id) {
+    return ResponseEntity.ok(hService.getH(id));
   }
 
   @GetMapping("/h")
-  public ResponseEntity<?> findAll(Pageable pageable) {
-    ResponseEntity<?> response = null;
-    response = new ResponseEntity<>(hService.findAll(pageable), HttpStatus.OK);
-    return response;
+  public ResponseEntity<List<HDTO>> findAll(Pageable pageable) {
+    return ResponseEntity.ok(hService.findAll(pageable));
   }
 
   @PostMapping("/h")
-  public ResponseEntity<?> saveH(@RequestBody HDTO h) {
-    ResponseEntity<?> response = null;
+  public ResponseEntity<String> saveH(@RequestBody HDTO h) {
     hService.saveH(h);
-    response = new ResponseEntity<>(HttpStatus.CREATED);
-    return response;
+    return ResponseEntity.created(URI.create("")).build();
   }
 
   @PutMapping("/h/{id}")
-  public ResponseEntity<?> saveH(@RequestBody Integer id, HDTO h) {
-    ResponseEntity<?> response = null;
-    hService.saveH(h);
-    response = new ResponseEntity<>(HttpStatus.CREATED);
-    return response;
+  public ResponseEntity<HDTO> saveH(@RequestBody Integer id, HDTO h) {
+    return ResponseEntity.ok(hService.saveH(h));
   }
 
   @DeleteMapping("/h/{id}")
-  public ResponseEntity<?> deleteH(@PathVariable Long id) {
-    ResponseEntity<?> response = null;
+  public ResponseEntity<Void> deleteH(@PathVariable Long id) {
     hService.deleteH(id);
-    response = new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    return response;
+    return ResponseEntity.noContent().build();
   }
 
-  @PutMapping("/h/{id}/click")
-  public ResponseEntity<?> increaseClick(@PathVariable Long id) {
-    ResponseEntity<?> response = null;
-    hService.increaseClick(id);
-    response = new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    return response;
+  @PutMapping("/h/{id}/clicks")
+  public ResponseEntity<HDTO> increaseClick(@PathVariable Long id) {
+    return ResponseEntity.ok(hService.increaseClick(id));
   }
 }

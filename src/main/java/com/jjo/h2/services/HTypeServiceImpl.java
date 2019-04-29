@@ -53,7 +53,7 @@ public class HTypeServiceImpl implements HTypeService {
    * @param dto
    * @return
    */
-  private HType toEntity(HTypeDTO dto) {
+  public HType toEntity(HTypeDTO dto) {
     return mapperUtil.getMapper(HType.class, HTypeDTO.class).getDestination(dto);
   }
 

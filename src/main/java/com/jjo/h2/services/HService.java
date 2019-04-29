@@ -20,7 +20,7 @@ public interface HService {
    * @param h
    * @return
    */
-  public boolean saveH(HDTO h);
+  public HDTO saveH(HDTO h);
 
   /**
    * Get all the H records based on the filter
@@ -53,5 +53,5 @@ public interface HService {
    * @param id
    * @return
    */
-  public boolean increaseClick(Long id);
+  public HDTO increaseClick(Long id);
 }

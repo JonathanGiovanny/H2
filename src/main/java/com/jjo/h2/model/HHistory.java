@@ -18,9 +18,14 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.googlecode.jmapper.annotations.JMap;
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 @Entity
 @Table(name = "H_HISTORY")
