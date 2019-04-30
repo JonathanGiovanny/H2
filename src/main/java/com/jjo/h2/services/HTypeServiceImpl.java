@@ -26,20 +26,19 @@ public class HTypeServiceImpl implements HTypeService {
 
   @Override
   public List<HTypeDTO> findAll(Pageable pageable) {
-    return hTypeRepo.findAll(pageable).getContent().stream().map(ht -> toDTO(ht))
-        .collect(Collectors.toList());
+    return hTypeRepo.findAll(pageable).getContent().stream().map(ht -> toDTO(ht)).collect(Collectors.toList());
   }
 
   @Override
-  public boolean saveHType(HTypeDTO hType) {
-    return hTypeRepo.save(toEntity(hType)) != null;
+  public Integer saveHType(HTypeDTO hType) {
+    return hTypeRepo.save(toEntity(hType)).getId();
   }
 
   @Override
-  public boolean updateHType(Integer id, HTypeDTO hType) {
-    HType hTypeEntity = hTypeRepo.getOne(id);
+  public HTypeDTO updateHType(HTypeDTO hType) {
+    HType hTypeEntity = hTypeRepo.getOne(hType.getId());
     hTypeEntity.setName(hType.getName());
-    return hTypeRepo.save(hTypeEntity) != null;
+    return toDTO(hTypeRepo.save(hTypeEntity));
   }
 
   @Override

@@ -1,6 +1,8 @@
 package com.jjo.h2.services.security;
 
 import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.jjo.h2.config.DatasourceNeo4j;
 import com.jjo.h2.dto.security.RoleDTO;
+import com.jjo.h2.model.security.AccessData;
 import com.jjo.h2.model.security.Role;
 import com.jjo.h2.repositories.security.RoleRepository;
 import com.jjo.h2.utils.MapperUtil;
@@ -24,12 +27,33 @@ public class RolesServiceImpl implements RolesService {
 
   @Override
   public List<RoleDTO> getRoles() {
-    return StreamSupport.stream(roleRepo.findAll().spliterator(), true).map(this::toDTO).collect(Collectors.toList());
+    return StreamSupport.stream(roleRepo.findAll().spliterator(), false).map(this::toDTO).collect(Collectors.toList());
   }
 
   @Override
   public Long createRole(RoleDTO role) {
     return roleRepo.save(toEntity(role)).getId();
+  }
+
+  @Override
+  public RoleDTO updateRole(RoleDTO role) {
+    Role entity = roleRepo.findById(role.getId()).get();
+    entity.setName(role.getName());
+    if (entity.getPrivileges() == null) {
+      entity.setPrivileges(Set.of());
+    }
+    Predicate<AccessData> oneToAllCompare = p -> role.getPrivileges().stream().map(priv -> priv.getId())
+        .collect(Collectors.toList()).contains(p.getPrivilege().getId());
+    if (role.getPrivileges() != null && entity.getPrivileges().size() == role.getPrivileges().size()
+        && entity.getPrivileges().stream().anyMatch(oneToAllCompare)) {
+      entity.setPrivileges(toEntity(role).getPrivileges());
+    }
+    return toDTO(roleRepo.save(entity));
+  }
+
+  @Override
+  public void deleteRole(Long id) {
+    roleRepo.deleteById(id);
   }
 
   /**

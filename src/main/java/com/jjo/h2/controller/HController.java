@@ -36,8 +36,7 @@ public class HController {
 
   @PostMapping("/h")
   public ResponseEntity<String> saveH(@RequestBody HDTO h) {
-    hService.saveH(h);
-    return ResponseEntity.created(URI.create("")).build();
+    return ResponseEntity.created(URI.create(hService.saveH(h).getId().toString())).build();
   }
 
   @PutMapping("/h/{id}")

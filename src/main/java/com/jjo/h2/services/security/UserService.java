@@ -13,4 +13,6 @@ public interface UserService {
   public UserDTO getUserByUsername(String username);
 
   public Long registerUser(UserDTO user);
+
+  public UserDTO updateUser(UserDTO user);
 }

@@ -3,7 +3,6 @@ package com.jjo.h2.services;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import com.jjo.h2.dto.TagsDTO;
-import com.jjo.h2.exception.HException;
 
 public interface TagsService {
 
@@ -29,17 +28,15 @@ public interface TagsService {
    * @param tag
    * @return
    */
-  public boolean saveTag(TagsDTO tag);
+  public TagsDTO saveTag(TagsDTO tag);
 
   /**
    * Update the Tag
    * 
-   * @param id
    * @param tagDto
    * @return
-   * @throws HException
    */
-  public boolean updateTag(Integer id, TagsDTO tagDto);
+  public TagsDTO updateTag(TagsDTO tagDto);
 
   /**
    * Delete one tag

@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import com.googlecode.jmapper.annotations.JMap;
 import com.jjo.h2.model.security.Role;
+import com.jjo.h2.model.security.StatusEnum;
 import lombok.Data;
 
 @Data
@@ -23,6 +24,9 @@ public class UserDTO {
   @JMap
   private String email;
 
+  @JMap
+  private StatusEnum status;
+  
   @JMap
   private LocalDateTime createdDate;
 

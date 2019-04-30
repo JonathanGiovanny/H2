@@ -42,6 +42,9 @@ public class User implements Serializable {
   private String email;
 
   @JMap
+  private StatusEnum status;
+  
+  @JMap
   @CreatedDate
   private LocalDateTime createdDate;
 

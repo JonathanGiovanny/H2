@@ -1,5 +1,6 @@
 package com.jjo.h2.dto.security;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.googlecode.jmapper.annotations.JMap;
 import lombok.Data;
 
@@ -18,5 +19,6 @@ public class PrivilegeDTO {
   @JMap
   private String privilegeId;
 
-  private String order;
+  @JsonIgnore
+  private Double order;
 }

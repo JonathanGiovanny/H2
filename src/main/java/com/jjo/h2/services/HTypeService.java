@@ -29,16 +29,15 @@ public interface HTypeService {
    * @param hType
    * @return
    */
-  public boolean saveHType(HTypeDTO hType);
+  public Integer saveHType(HTypeDTO hType);
 
   /**
    * Update HType
    * 
-   * @param id
    * @param hType
    * @return
    */
-  public boolean updateHType(Integer id, HTypeDTO hType);
+  public HTypeDTO updateHType(HTypeDTO hType);
 
   /**
    * Delete the record

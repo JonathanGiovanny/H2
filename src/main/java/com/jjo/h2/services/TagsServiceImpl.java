@@ -31,15 +31,15 @@ public class TagsServiceImpl implements TagsService {
   }
 
   @Override
-  public boolean saveTag(TagsDTO tag) {
-    return tagsRepo.save(toEntity(tag)) != null;
+  public TagsDTO saveTag(TagsDTO tag) {
+    return toDTO(tagsRepo.save(toEntity(tag)));
   }
 
   @Override
-  public boolean updateTag(Integer id, TagsDTO tagDto) {
-    Tags tag = tagsRepo.getOne(id);
+  public TagsDTO updateTag(TagsDTO tagDto) {
+    Tags tag = tagsRepo.getOne(tagDto.getId());
     tag.setName(tagDto.getName());
-    return tagsRepo.save(tag) != null;
+    return toDTO(tagsRepo.save(tag));
   }
 
   @Override
