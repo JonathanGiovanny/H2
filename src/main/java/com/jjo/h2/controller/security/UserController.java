@@ -17,30 +17,29 @@ import com.jjo.h2.services.security.UserService;
 import com.jjo.h2.utils.Constants;
 
 @RestController
-@RequestMapping(Constants.APP_NAME + "/security")
+@RequestMapping(Constants.APP_NAME + "/security/users")
 public class UserController {
 
   @Autowired
   private UserService userService;
   
-  @GetMapping("/users")
+  @GetMapping
   public ResponseEntity<List<UserDTO>> getUsers(Pageable pageable) {
     return ResponseEntity.ok(userService.getUsers(pageable));
   }
 
-  @GetMapping("/users/{username}")
+  @GetMapping("/{username}")
   public ResponseEntity<UserDTO> getUser(@PathVariable String username) {
     return ResponseEntity.ok(userService.getUserByUsername(username));
   }
 
-  @PostMapping("/users")
-  public ResponseEntity<?> registerUser(@RequestBody UserDTO user) {
+  @PostMapping
+  public ResponseEntity<Void> registerUser(@RequestBody UserDTO user) {
     return ResponseEntity.created(URI.create(userService.registerUser(user).toString())).build();
   }
 
-  @PutMapping("/users/{id}")
-  public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UserDTO user) {
-    user.setId(id);
-    return ResponseEntity.ok(userService.updateUser(user));
+  @PutMapping("/{id}")
+  public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @RequestBody UserDTO user) {
+    return ResponseEntity.ok(userService.updateUser(id, user));
   }
 }

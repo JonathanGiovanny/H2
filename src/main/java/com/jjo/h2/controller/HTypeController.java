@@ -18,37 +18,35 @@ import com.jjo.h2.services.HTypeService;
 import com.jjo.h2.utils.Constants;
 
 @RestController
-@RequestMapping(Constants.APP_NAME)
+@RequestMapping(Constants.APP_NAME + "/h/types")
 public class HTypeController {
 
-  private static final String PATH = "/htypes";
-  
   @Autowired
   private HTypeService hTypeService;
 
-  @GetMapping(PATH + "/{id}")
+  @GetMapping("/{id}")
   public ResponseEntity<HTypeDTO> getHType(@PathVariable Integer id) {
     return ResponseEntity.ok(hTypeService.getHType(id));
   }
 
-  @GetMapping(PATH)
+  @GetMapping
   public ResponseEntity<List<HTypeDTO>> findAll(Pageable pageable) {
     return ResponseEntity.ok(hTypeService.findAll(pageable));
   }
 
-  @PostMapping(PATH)
-  public ResponseEntity<?> saveHType(@RequestBody HTypeDTO hType) {
+  @PostMapping
+  public ResponseEntity<Void> saveHType(@RequestBody HTypeDTO hType) {
     return ResponseEntity.created(URI.create(hTypeService.saveHType(hType).toString())).build();
   }
 
-  @PutMapping(PATH + "/{id}")
-  public ResponseEntity<?> updateHType(@PathVariable Integer id, @RequestBody HTypeDTO hType) {
+  @PutMapping("/{id}")
+  public ResponseEntity<HTypeDTO> updateHType(@PathVariable Integer id, @RequestBody HTypeDTO hType) {
     hType.setId(id);
     return ResponseEntity.ok(hTypeService.updateHType(hType));
   }
 
-  @DeleteMapping(PATH + "/{id}")
-  public ResponseEntity<?> saveHType(@PathVariable Integer id) {
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> saveHType(@PathVariable Integer id) {
     hTypeService.deleteHType(id);
     return ResponseEntity.noContent().build();
   }

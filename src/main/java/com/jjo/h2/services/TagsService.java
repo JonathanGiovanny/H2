@@ -12,7 +12,7 @@ public interface TagsService {
    * @param id
    * @return
    */
-  TagsDTO getTag(Integer id);
+  TagsDTO getTag(Long id);
 
   /**
    * Get all the tags
@@ -33,15 +33,16 @@ public interface TagsService {
   /**
    * Update the Tag
    * 
+   * @param id
    * @param tagDto
    * @return
    */
-  TagsDTO updateTag(TagsDTO tagDto);
+  TagsDTO updateTag(Long id, TagsDTO tagDto);
 
   /**
    * Delete one tag
    * 
    * @param id
    */
-  void deleteTag(Integer id);
+  void deleteTag(Long id);
 }

@@ -18,35 +18,38 @@ import com.jjo.h2.services.security.RolesService;
 import com.jjo.h2.utils.Constants;
 
 @RestController
-@RequestMapping(Constants.APP_NAME + "/security")
+@RequestMapping(Constants.APP_NAME + "/security/roles")
 public class RolesController {
 
   @Autowired
   private RolesService rolesService;
 
-  @GetMapping("/roles")
+  @GetMapping
   public ResponseEntity<List<RoleDTO>> getRoles() {
     return ResponseEntity.ok(rolesService.getRoles());
   }
 
-  @PostMapping("/roles")
-  public ResponseEntity<String> saveRole(@RequestBody RoleDTO role) {
+  @GetMapping("/{id}")
+  public ResponseEntity<RoleDTO> getRoles(@PathVariable Long id) {
+    return ResponseEntity.ok(rolesService.getRoleById(id));
+  }
+
+  @PostMapping
+  public ResponseEntity<Void> saveRole(@RequestBody RoleDTO role) {
     return ResponseEntity.created(URI.create(rolesService.createRole(role).toString())).build();
   }
 
-  @PutMapping("/roles/{id}")
+  @PutMapping("/{id}")
   public ResponseEntity<RoleDTO> updateRole(@PathVariable Long id, @RequestBody RoleDTO role) {
-    role.setId(id);
-    return ResponseEntity.ok(rolesService.updateRole(role));
-  }
-  
-  @PatchMapping("/roles/{id}/privileges")
-  public ResponseEntity<RoleDTO> updateRolePriv(@PathVariable Long id, @RequestBody RoleDTO role) {
-    role.setId(id);
-    return ResponseEntity.ok(rolesService.updateRolePrivileges(role));
+    return ResponseEntity.ok(rolesService.updateRole(id, role));
   }
 
-  @DeleteMapping("/roles/{id}")
+  @PatchMapping("/{id}/privileges")
+  public ResponseEntity<RoleDTO> updateRolePriv(@PathVariable Long id, @RequestBody RoleDTO role) {
+    return ResponseEntity.ok(rolesService.updateRolePrivileges(id, role));
+  }
+
+  @DeleteMapping("/{id}")
   public ResponseEntity<Void> updateRole(@PathVariable Long id) {
     rolesService.deleteRole(id);
     return ResponseEntity.noContent().build();

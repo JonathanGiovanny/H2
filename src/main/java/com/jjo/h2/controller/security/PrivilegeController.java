@@ -18,29 +18,28 @@ import com.jjo.h2.services.security.PrivilegeService;
 import com.jjo.h2.utils.Constants;
 
 @RestController
-@RequestMapping(Constants.APP_NAME + "/security")
+@RequestMapping(Constants.APP_NAME + "/security/privileges")
 public class PrivilegeController {
 
   @Autowired
   private PrivilegeService privilegeService;
 
-  @GetMapping("/privileges")
+  @GetMapping
   public ResponseEntity<List<PrivilegeDTO>> getRoles(Pageable pageable) {
     return ResponseEntity.ok(privilegeService.findAll(pageable));
   }
 
-  @PostMapping("/privileges")
-  public ResponseEntity<String> saveRole(@RequestBody PrivilegeDTO privilege) {
+  @PostMapping
+  public ResponseEntity<Void> saveRole(@RequestBody PrivilegeDTO privilege) {
     return ResponseEntity.created(URI.create(privilegeService.savePrivilege(privilege).getId().toString())).build();
   }
 
-  @PutMapping("/privileges/{id}")
+  @PutMapping("/{id}")
   public ResponseEntity<PrivilegeDTO> updateRole(@PathVariable Long id, @RequestBody PrivilegeDTO privilege) {
-    privilege.setId(id);
-    return ResponseEntity.ok(privilegeService.updatePrivilege(privilege));
+    return ResponseEntity.ok(privilegeService.updatePrivilege(id, privilege));
   }
 
-  @DeleteMapping("/privileges/{id}")
+  @DeleteMapping("/{id}")
   public ResponseEntity<Void> updateRole(@PathVariable Long id) {
     privilegeService.deletePrivilege(id);
     return ResponseEntity.noContent().build();

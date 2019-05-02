@@ -33,10 +33,11 @@ public interface PrivilegeService {
   /**
    * Update the privilege
    * 
+   * @param id
    * @param privilegeDto
    * @return
    */
-  PrivilegeDTO updatePrivilege(PrivilegeDTO privilegeDto);
+  PrivilegeDTO updatePrivilege(Long id, PrivilegeDTO privilegeDto);
 
   /**
    * Delete one privilege

@@ -32,6 +32,6 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
    * @return
    */
   private boolean hasPrivilege(Authentication authentication, String permission) {
-    return authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(permission));
+    return authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equalsIgnoreCase(permission));
   }
 }

@@ -42,8 +42,8 @@ public class HServiceImpl implements HService {
   }
 
   @Override
-  public HDTO updateH(HDTO h) {
-    H entity = hRepo.getOne(h.getId());
+  public HDTO updateH(Long id, HDTO h) {
+    H entity = hRepo.getOne(id);
     copyData(h, entity);
     return Optional.ofNullable(hRepo.save(toEntity(h))).map(this::toDTO).orElse(null);
   }
@@ -55,7 +55,7 @@ public class HServiceImpl implements HService {
 
   @Override
   public List<HDTO> findAll(HDTO filter, Pageable pageable) {
-    return hRepo.findAll(Example.of(toEntity(filter)), pageable).getContent().stream().map(h -> toDTO(h))
+    return hRepo.findAll(Example.of(toEntity(filter)), pageable).getContent().stream().map(this::toDTO)
         .collect(Collectors.toList());
   }
 

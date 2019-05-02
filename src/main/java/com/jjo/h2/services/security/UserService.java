@@ -36,8 +36,9 @@ public interface UserService {
 
   /**
    * Update user info
+   * @param id
    * @param user
    * @return
    */
-  UserDTO updateUser(UserDTO user);
+  UserDTO updateUser(Long id, UserDTO user);
 }

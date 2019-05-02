@@ -3,9 +3,12 @@ package com.jjo.h2.utils;
 import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class Utils {
 
+  public static final Predicate<Object> IS_NUMBER = n -> n instanceof Long || n instanceof Integer;
+  
   /**
    * Private constructor for static only methods
    */

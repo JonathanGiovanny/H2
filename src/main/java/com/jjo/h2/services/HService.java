@@ -24,10 +24,11 @@ public interface HService {
 
   /**
    * Modify an entity with out changing the tags or clicks
+   * @param id
    * @param h
    * @return
    */
-  HDTO updateH(HDTO h);
+  HDTO updateH(Long id, HDTO h);
 
   /**
    * Get all the H records based on the filter

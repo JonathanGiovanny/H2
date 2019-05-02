@@ -3,6 +3,8 @@ package com.jjo.h2.dto;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import com.googlecode.jmapper.annotations.JMap;
 import com.googlecode.jmapper.annotations.JMapConversion;
 import com.jjo.h2.model.Tags;
@@ -18,18 +20,21 @@ public class HDTO {
   private String name;
 
   @JMap
+  @NotNull
   private String url;
 
   @JMap
   private String cover;
 
   @JMap
+  @Null
   private Long clicks;
 
   @JMap
   private Double score;
 
   @JMap
+  @NotNull
   private HTypeDTO type;
 
   @JMap

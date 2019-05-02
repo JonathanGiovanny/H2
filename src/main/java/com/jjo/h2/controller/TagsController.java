@@ -1,6 +1,7 @@
 package com.jjo.h2.controller;
 
 import java.net.URI;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -17,35 +18,34 @@ import com.jjo.h2.services.TagsService;
 import com.jjo.h2.utils.Constants;
 
 @RestController
-@RequestMapping(Constants.APP_NAME)
+@RequestMapping(Constants.APP_NAME + "/tags")
 public class TagsController {
 
   @Autowired
   private TagsService tagsService;
 
-  @GetMapping("/tags/{id}")
-  public ResponseEntity<TagsDTO> getTag(@PathVariable Integer id) {
+  @GetMapping("/{id}")
+  public ResponseEntity<TagsDTO> getTag(@PathVariable Long id) {
     return ResponseEntity.ok(tagsService.getTag(id));
   }
 
-  @GetMapping("/tags")
-  public ResponseEntity<?> findAll(Pageable pageable) {
+  @GetMapping
+  public ResponseEntity<List<TagsDTO>> findAll(Pageable pageable) {
     return ResponseEntity.ok(tagsService.findAll(pageable));
   }
 
-  @PostMapping("/tags")
-  public ResponseEntity<?> saveTag(@RequestBody TagsDTO tag) {
+  @PostMapping
+  public ResponseEntity<Void> saveTag(@RequestBody TagsDTO tag) {
     return ResponseEntity.created(URI.create(tagsService.saveTag(tag).getId().toString())).build();
   }
 
-  @PutMapping("/tags/{id}")
-  public ResponseEntity<?> updateTag(@PathVariable Integer id, @RequestBody TagsDTO tag) {
-    tag.setId(id);
-    return ResponseEntity.ok(tagsService.updateTag(tag));
+  @PutMapping("/{id}")
+  public ResponseEntity<TagsDTO> updateTag(@PathVariable Long id, @RequestBody TagsDTO tag) {
+    return ResponseEntity.ok(tagsService.updateTag(id, tag));
   }
 
-  @DeleteMapping("/tags/{id}")
-  public ResponseEntity<?> deleteTag(@PathVariable Integer id) {
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> deleteTag(@PathVariable Long id) {
     tagsService.deleteTag(id);
     return ResponseEntity.noContent().build();
   }

@@ -55,8 +55,8 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public UserDTO updateUser(UserDTO user) {
-    User entity = userRepo.findById(user.getId()).get();
+  public UserDTO updateUser(Long id, UserDTO user) {
+    User entity = userRepo.findById(id).get();
     copyDTO(user, entity);
     return toDTO(userRepo.save(entity));
   }

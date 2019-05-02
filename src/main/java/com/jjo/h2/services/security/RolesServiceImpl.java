@@ -1,8 +1,6 @@
 package com.jjo.h2.services.security;
 
 import java.util.List;
-import java.util.Set;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.jjo.h2.config.DatasourceNeo4j;
 import com.jjo.h2.dto.security.RoleDTO;
-import com.jjo.h2.model.security.AccessData;
 import com.jjo.h2.model.security.Role;
 import com.jjo.h2.repositories.security.RoleRepository;
 import com.jjo.h2.utils.MapperUtil;
@@ -26,6 +23,11 @@ public class RolesServiceImpl implements RolesService {
   private MapperUtil mapperUtil;
 
   @Override
+  public RoleDTO getRoleById(Long id) {
+    return toDTO(roleRepo.findById(id).get());
+  }
+
+  @Override
   public List<RoleDTO> getRoles() {
     return StreamSupport.stream(roleRepo.findAll().spliterator(), false).map(this::toDTO).collect(Collectors.toList());
   }
@@ -36,15 +38,15 @@ public class RolesServiceImpl implements RolesService {
   }
 
   @Override
-  public RoleDTO updateRole(RoleDTO role) {
-    Role entity = roleRepo.findById(role.getId()).get();
+  public RoleDTO updateRole(Long id, RoleDTO role) {
+    Role entity = roleRepo.findById(id).get();
     entity.setName(role.getName());
     return toDTO(roleRepo.save(entity));
   }
-  
+
   @Override
-  public RoleDTO updateRolePrivileges(RoleDTO role) {
-    Role entity = roleRepo.findById(role.getId()).get();
+  public RoleDTO updateRolePrivileges(Long id, RoleDTO role) {
+    Role entity = roleRepo.findById(id).get();
     Role incomingData = toEntity(role);
     entity.setPrivileges(incomingData.getPrivileges());
     return toDTO(roleRepo.save(entity));

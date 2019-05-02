@@ -7,7 +7,7 @@ import lombok.Data;
 public class TagsDTO {
 
   @JMap
-  private Integer id;
+  private Long id;
 
   @JMap
   private String name;

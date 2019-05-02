@@ -36,8 +36,8 @@ public class PrivilegeServiceImpl implements PrivilegeService {
   }
 
   @Override
-  public PrivilegeDTO updatePrivilege(PrivilegeDTO privilegeDto) {
-    Privilege privilege = privilegeRepo.findById(privilegeDto.getId()).get();
+  public PrivilegeDTO updatePrivilege(Long id, PrivilegeDTO privilegeDto) {
+    Privilege privilege = privilegeRepo.findById(id).get();
     privilege.setName(Utils.isNotNullOr(privilegeDto.getName(), privilege.getName()));
     privilege.setIcon(Utils.isNotNullOr(privilegeDto.getIcon(), privilege.getIcon()));
     return toDTO(privilegeRepo.save(privilege));

@@ -20,7 +20,7 @@ public class TagsServiceImpl implements TagsService {
   private MapperUtil mapperUtil;
 
   @Override
-  public TagsDTO getTag(Integer id) {
+  public TagsDTO getTag(Long id) {
     return toDTO(tagsRepo.getOne(id));
   }
 
@@ -36,14 +36,14 @@ public class TagsServiceImpl implements TagsService {
   }
 
   @Override
-  public TagsDTO updateTag(TagsDTO tagDto) {
-    Tags tag = tagsRepo.getOne(tagDto.getId());
+  public TagsDTO updateTag(Long id, TagsDTO tagDto) {
+    Tags tag = tagsRepo.getOne(id);
     tag.setName(tagDto.getName());
     return toDTO(tagsRepo.save(tag));
   }
 
   @Override
-  public void deleteTag(Integer id) {
+  public void deleteTag(Long id) {
     tagsRepo.deleteById(id);
   }
 
