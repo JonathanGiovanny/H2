@@ -16,6 +16,7 @@ public class PrivilegeDTO {
   @JMap
   private String icon;
 
+  // Represents the value that will be used for the preauthorize validation
   @JMap
   private String privilegeId;
 

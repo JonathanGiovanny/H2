@@ -39,15 +39,14 @@ public class RolesServiceImpl implements RolesService {
   public RoleDTO updateRole(RoleDTO role) {
     Role entity = roleRepo.findById(role.getId()).get();
     entity.setName(role.getName());
-    if (entity.getPrivileges() == null) {
-      entity.setPrivileges(Set.of());
-    }
-    Predicate<AccessData> oneToAllCompare = p -> role.getPrivileges().stream().map(priv -> priv.getId())
-        .collect(Collectors.toList()).contains(p.getPrivilege().getId());
-    if (role.getPrivileges() != null && entity.getPrivileges().size() == role.getPrivileges().size()
-        && entity.getPrivileges().stream().anyMatch(oneToAllCompare)) {
-      entity.setPrivileges(toEntity(role).getPrivileges());
-    }
+    return toDTO(roleRepo.save(entity));
+  }
+  
+  @Override
+  public RoleDTO updateRolePrivileges(RoleDTO role) {
+    Role entity = roleRepo.findById(role.getId()).get();
+    Role incomingData = toEntity(role);
+    entity.setPrivileges(incomingData.getPrivileges());
     return toDTO(roleRepo.save(entity));
   }
 

@@ -31,7 +31,7 @@ public class PrivilegeController {
 
   @PostMapping("/privileges")
   public ResponseEntity<String> saveRole(@RequestBody PrivilegeDTO privilege) {
-    return ResponseEntity.created(URI.create(privilegeService.savePrivilege(privilege).toString())).build();
+    return ResponseEntity.created(URI.create(privilegeService.savePrivilege(privilege).getId().toString())).build();
   }
 
   @PutMapping("/privileges/{id}")

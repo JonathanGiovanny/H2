@@ -21,31 +21,33 @@ import com.jjo.h2.utils.Constants;
 @RequestMapping(Constants.APP_NAME)
 public class HTypeController {
 
+  private static final String PATH = "/htypes";
+  
   @Autowired
   private HTypeService hTypeService;
 
-  @GetMapping("/htypes/{id}")
+  @GetMapping(PATH + "/{id}")
   public ResponseEntity<HTypeDTO> getHType(@PathVariable Integer id) {
     return ResponseEntity.ok(hTypeService.getHType(id));
   }
 
-  @GetMapping("/htypes")
+  @GetMapping(PATH)
   public ResponseEntity<List<HTypeDTO>> findAll(Pageable pageable) {
     return ResponseEntity.ok(hTypeService.findAll(pageable));
   }
 
-  @PostMapping("/htypes")
+  @PostMapping(PATH)
   public ResponseEntity<?> saveHType(@RequestBody HTypeDTO hType) {
     return ResponseEntity.created(URI.create(hTypeService.saveHType(hType).toString())).build();
   }
 
-  @PutMapping("/htypes/{id}")
+  @PutMapping(PATH + "/{id}")
   public ResponseEntity<?> updateHType(@PathVariable Integer id, @RequestBody HTypeDTO hType) {
     hType.setId(id);
     return ResponseEntity.ok(hTypeService.updateHType(hType));
   }
 
-  @DeleteMapping("/htypes/{id}")
+  @DeleteMapping(PATH + "/{id}")
   public ResponseEntity<?> saveHType(@PathVariable Integer id) {
     hTypeService.deleteHType(id);
     return ResponseEntity.noContent().build();

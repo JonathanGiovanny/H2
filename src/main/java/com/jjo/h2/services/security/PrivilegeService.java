@@ -12,7 +12,7 @@ public interface PrivilegeService {
    * @param id
    * @return
    */
-  public PrivilegeDTO getPrivilege(Long id);
+  PrivilegeDTO getPrivilege(Long id);
 
   /**
    * Get all the privileges
@@ -20,7 +20,7 @@ public interface PrivilegeService {
    * @param pageable
    * @return
    */
-  public List<PrivilegeDTO> findAll(Pageable pageable);
+  List<PrivilegeDTO> findAll(Pageable pageable);
 
   /**
    * Save the privilege
@@ -28,7 +28,7 @@ public interface PrivilegeService {
    * @param privilege
    * @return
    */
-  public PrivilegeDTO savePrivilege(PrivilegeDTO privilege);
+  PrivilegeDTO savePrivilege(PrivilegeDTO privilege);
 
   /**
    * Update the privilege
@@ -36,12 +36,12 @@ public interface PrivilegeService {
    * @param privilegeDto
    * @return
    */
-  public PrivilegeDTO updatePrivilege(PrivilegeDTO privilegeDto);
+  PrivilegeDTO updatePrivilege(PrivilegeDTO privilegeDto);
 
   /**
    * Delete one privilege
    * 
    * @param id
    */
-  public void deletePrivilege(Long id);
+  void deletePrivilege(Long id);
 }

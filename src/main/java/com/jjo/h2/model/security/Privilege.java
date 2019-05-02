@@ -30,6 +30,7 @@ public class Privilege implements Serializable {
   @JMap
   private String icon;
 
+  @JMap
   @Property(name = "PRIVILEGE_ID")
   private String privilegeId;
 }

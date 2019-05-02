@@ -10,7 +10,7 @@ public interface RolesService {
    * 
    * @return
    */
-  public List<RoleDTO> getRoles();
+  List<RoleDTO> getRoles();
 
   /**
    * Create a role
@@ -18,7 +18,7 @@ public interface RolesService {
    * @param role
    * @return
    */
-  public Long createRole(RoleDTO role);
+  Long createRole(RoleDTO role);
 
   /**
    * Update the role with the id
@@ -26,12 +26,19 @@ public interface RolesService {
    * @param role
    * @return
    */
-  public RoleDTO updateRole(RoleDTO role);
+  RoleDTO updateRole(RoleDTO role);
+  
+  /**
+   * Update the list of privileges for a Role
+   * @param role
+   * @return
+   */
+  RoleDTO updateRolePrivileges(RoleDTO role);
 
   /**
    * Delete the role with the id
    * 
    * @param id
    */
-  public void deleteRole(Long id);
+  void deleteRole(Long id);
 }

@@ -11,6 +11,7 @@ public class ExceptionHandlerController {
 
   @ExceptionHandler(Exception.class)
   protected ResponseEntity<HExceptionDTO> handleOtherException(Exception e) {
+    e.printStackTrace();
     HExceptionDTO hDTO = HExceptionDTO.builder().userMessage(GENERIC_ERROR_MSG).techMessage(e.getMessage())
         .eventTime(LocalDateTime.now()).build();
     return ResponseEntity.badRequest().body(hDTO);

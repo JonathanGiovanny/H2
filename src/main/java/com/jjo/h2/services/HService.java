@@ -12,7 +12,7 @@ public interface HService {
    * @param id
    * @return
    */
-  public HDTO getH(Long id);
+  HDTO getH(Long id);
 
   /**
    * Save / Update the record
@@ -20,7 +20,14 @@ public interface HService {
    * @param h
    * @return
    */
-  public HDTO saveH(HDTO h);
+  HDTO saveH(HDTO h);
+
+  /**
+   * Modify an entity with out changing the tags or clicks
+   * @param h
+   * @return
+   */
+  HDTO updateH(HDTO h);
 
   /**
    * Get all the H records based on the filter
@@ -29,7 +36,7 @@ public interface HService {
    * @param pageable
    * @return
    */
-  public List<HDTO> findAll(HDTO filter, Pageable pageable);
+  List<HDTO> findAll(HDTO filter, Pageable pageable);
 
   /**
    * Get all the H records
@@ -37,7 +44,7 @@ public interface HService {
    * @param pageable
    * @return
    */
-  public List<HDTO> findAll(Pageable pageable);
+  List<HDTO> findAll(Pageable pageable);
 
   /**
    * Delete a record based on the id
@@ -45,7 +52,7 @@ public interface HService {
    * @param id
    * @throws HException
    */
-  public void deleteH(Long id);
+  void deleteH(Long id);
 
   /**
    * Increase number of Clicks on a record
@@ -53,5 +60,5 @@ public interface HService {
    * @param id
    * @return
    */
-  public HDTO increaseClick(Long id);
+  HDTO increaseClick(Long id);
 }

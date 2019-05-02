@@ -22,7 +22,7 @@ public class RoleDTO {
 
   @JMapConversion(from = {"privileges"}, to = {"privileges"})
   public Set<AccessData> privDTOToEntity(Set<PrivilegeDTO> privilegeDTOs) {
-    return privilegeDTOs == null ? Set.of() : privilegeDTOs.stream().map(p -> {
+    return privilegeDTOs.stream().map(p -> {
       Privilege priv = new Privilege();
       priv.setId(p.getId());
       priv.setName(p.getName());

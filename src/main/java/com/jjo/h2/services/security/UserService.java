@@ -5,14 +5,39 @@ import org.springframework.data.domain.Pageable;
 import com.jjo.h2.dto.security.UserDTO;
 
 public interface UserService {
-  
-  public List<UserDTO> getUsers(Pageable pageable);
 
-  public UserDTO getUser(Long id);
+  /**
+   * Get all users
+   * @param pageable
+   * @return
+   */
+  List<UserDTO> getUsers(Pageable pageable);
 
-  public UserDTO getUserByUsername(String username);
+  /**
+   * Get user by id
+   * @param id
+   * @return
+   */
+  UserDTO getUser(Long id);
 
-  public Long registerUser(UserDTO user);
+  /**
+   * Get user by its username (should be unique)
+   * @param username
+   * @return
+   */
+  UserDTO getUserByUsername(String username);
 
-  public UserDTO updateUser(UserDTO user);
+  /**
+   * Register a user
+   * @param user
+   * @return
+   */
+  Long registerUser(UserDTO user);
+
+  /**
+   * Update user info
+   * @param user
+   * @return
+   */
+  UserDTO updateUser(UserDTO user);
 }

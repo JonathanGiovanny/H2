@@ -14,5 +14,5 @@ public interface HHistoryService {
 	 * @param pageable
 	 * @return
 	 */
-	public List<HHistory> getAll(Pageable pageable);
+	List<HHistory> getAll(Pageable pageable);
 }

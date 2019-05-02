@@ -13,7 +13,7 @@ public interface HTypeService {
    * @param id
    * @return
    */
-  public HTypeDTO getHType(Integer id);
+  HTypeDTO getHType(Integer id);
 
   /**
    * Get all the records determined by the pagination
@@ -21,7 +21,7 @@ public interface HTypeService {
    * @param pageable
    * @return
    */
-  public List<HTypeDTO> findAll(Pageable pageable);
+  List<HTypeDTO> findAll(Pageable pageable);
 
   /**
    * Save HType
@@ -29,7 +29,7 @@ public interface HTypeService {
    * @param hType
    * @return
    */
-  public Integer saveHType(HTypeDTO hType);
+  Integer saveHType(HTypeDTO hType);
 
   /**
    * Update HType
@@ -37,14 +37,14 @@ public interface HTypeService {
    * @param hType
    * @return
    */
-  public HTypeDTO updateHType(HTypeDTO hType);
+  HTypeDTO updateHType(HTypeDTO hType);
 
   /**
    * Delete the record
    * 
    * @param id
    */
-  public void deleteHType(Integer id);
+  void deleteHType(Integer id);
 
   /**
    * Public access from DTO to Entity
@@ -52,5 +52,5 @@ public interface HTypeService {
    * @param dto
    * @return
    */
-  public HType toEntity(HTypeDTO dto);
+  HType toEntity(HTypeDTO dto);
 }

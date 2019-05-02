@@ -12,7 +12,7 @@ public interface TagsService {
    * @param id
    * @return
    */
-  public TagsDTO getTag(Integer id);
+  TagsDTO getTag(Integer id);
 
   /**
    * Get all the tags
@@ -20,7 +20,7 @@ public interface TagsService {
    * @param pageable
    * @return
    */
-  public List<TagsDTO> findAll(Pageable pageable);
+  List<TagsDTO> findAll(Pageable pageable);
 
   /**
    * Save the Tag
@@ -28,7 +28,7 @@ public interface TagsService {
    * @param tag
    * @return
    */
-  public TagsDTO saveTag(TagsDTO tag);
+  TagsDTO saveTag(TagsDTO tag);
 
   /**
    * Update the Tag
@@ -36,12 +36,12 @@ public interface TagsService {
    * @param tagDto
    * @return
    */
-  public TagsDTO updateTag(TagsDTO tagDto);
+  TagsDTO updateTag(TagsDTO tagDto);
 
   /**
    * Delete one tag
    * 
    * @param id
    */
-  public void deleteTag(Integer id);
+  void deleteTag(Integer id);
 }

@@ -40,8 +40,9 @@ public class HController {
   }
 
   @PutMapping("/h/{id}")
-  public ResponseEntity<HDTO> saveH(@RequestBody Integer id, HDTO h) {
-    return ResponseEntity.ok(hService.saveH(h));
+  public ResponseEntity<HDTO> saveH(@RequestBody Long id, HDTO h) {
+    h.setId(id);
+    return ResponseEntity.ok(hService.updateH(h));
   }
 
   @DeleteMapping("/h/{id}")

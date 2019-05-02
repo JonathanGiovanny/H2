@@ -31,8 +31,8 @@ public class PrivilegeServiceImpl implements PrivilegeService {
   }
 
   @Override
-  public PrivilegeDTO savePrivilege(PrivilegeDTO Privilege) {
-    return toDTO(privilegeRepo.save(toEntity(Privilege)));
+  public PrivilegeDTO savePrivilege(PrivilegeDTO privilege) {
+    return toDTO(privilegeRepo.save(toEntity(privilege)));
   }
 
   @Override
