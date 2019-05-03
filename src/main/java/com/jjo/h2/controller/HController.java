@@ -6,14 +6,17 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.jjo.h2.controller.validator.HDTOValidator;
 import com.jjo.h2.dto.HDTO;
 import com.jjo.h2.services.HService;
 import com.jjo.h2.utils.Constants;
@@ -24,6 +27,14 @@ public class HController {
 
   @Autowired
   private HService hService;
+
+  @Autowired
+  private HDTOValidator hValid;
+
+  @InitBinder
+  protected void initBinder(WebDataBinder binder) {
+    binder.setValidator(hValid);
+  }
 
   @GetMapping("/{id}")
   public ResponseEntity<HDTO> getH(@PathVariable Long id) {
@@ -36,7 +47,7 @@ public class HController {
   }
 
   @PostMapping("/search")
-  public ResponseEntity<List<HDTO>> searchH(@RequestBody HDTO h, Pageable pageable) {
+  public ResponseEntity<List<HDTO>> searchH(@Valid @RequestBody HDTO h, Pageable pageable) {
     return ResponseEntity.ok(hService.findAll(h, pageable));
   }
 
@@ -46,7 +57,7 @@ public class HController {
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<HDTO> saveH(@Valid @RequestBody Long id, HDTO h) {
+  public ResponseEntity<HDTO> saveH(@PathVariable Long id, @Valid HDTO h) {
     return ResponseEntity.ok(hService.updateH(id, h));
   }
 

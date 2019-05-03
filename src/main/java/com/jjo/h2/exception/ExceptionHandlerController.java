@@ -18,29 +18,26 @@ import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 public class ExceptionHandlerController {
 
   @ExceptionHandler(Exception.class)
-  protected ResponseEntity<HExceptionDTO> handleOtherException(Exception e) {
-    e.printStackTrace();
+  protected ResponseEntity<HErrorDTO> handleOtherException(Exception e) {
     return ResponseEntity.badRequest().body(exBuilder(GENERIC_ERROR_MSG, e));
   }
 
   @ExceptionHandler(NoSuchElementException.class)
-  protected ResponseEntity<HExceptionDTO> handleNoElementException(Exception e) {
-    e.printStackTrace();
+  protected ResponseEntity<HErrorDTO> handleNoElementException(Exception e) {
     return ResponseEntity.badRequest().body(exBuilder(NO_DATA_MSG, e));
   }
 
   @ExceptionHandler({MismatchedInputException.class, HttpMessageNotReadableException.class})
-  protected ResponseEntity<HExceptionDTO> handleJSONException(Exception e) {
+  protected ResponseEntity<HErrorDTO> handleJSONException(Exception e) {
     String exMessage = e.getMessage();
     Pattern p = Pattern.compile("\\[\\\"\\w*\\\"\\]");
     Matcher m = p.matcher(exMessage);
     String userErrorMessage;
     if (m.find()) {
-      userErrorMessage = m.group(m.groupCount()).replace("\"", "'") + MISMATCH_FIELD;
+      userErrorMessage = String.format(MISMATCH_FIELD, m.group(m.groupCount()).replace("\"", "'"));
     } else {
       userErrorMessage = MISMATCH_INPUT;
     }
-    e.printStackTrace();
     return ResponseEntity.badRequest().body(exBuilder(userErrorMessage, e));
   }
 
@@ -51,8 +48,9 @@ public class ExceptionHandlerController {
    * @param e
    * @return
    */
-  private HExceptionDTO exBuilder(String userMessage, Exception e) {
-    return HExceptionDTO.builder() //
+  private HErrorDTO exBuilder(String userMessage, Exception e) {
+    e.printStackTrace();
+    return HErrorDTO.builder() //
         .userMessage(userMessage) //
         .techMessage(e.getMessage()) //
         .eventTime(LocalDateTime.now()) //

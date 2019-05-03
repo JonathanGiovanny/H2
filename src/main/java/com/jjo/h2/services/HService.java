@@ -51,7 +51,7 @@ public interface HService {
    * Delete a record based on the id
    * 
    * @param id
-   * @throws HException
+   * @throws HError
    */
   void deleteH(Long id);
 

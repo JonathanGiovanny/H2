@@ -18,7 +18,7 @@ import lombok.Data;
 @Entity
 @Table(name = "Errors")
 @EnableJpaAuditing
-public class HException {
+public class HError {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

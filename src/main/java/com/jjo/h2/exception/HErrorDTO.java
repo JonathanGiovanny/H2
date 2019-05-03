@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Builder
 @Data
-public class HExceptionDTO {
+public class HErrorDTO {
 
   @JMap
   private Long id;

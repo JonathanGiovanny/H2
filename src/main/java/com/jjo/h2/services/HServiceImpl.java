@@ -3,15 +3,21 @@ package com.jjo.h2.services;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.BiPredicate;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.jjo.h2.dto.HDTO;
+import com.jjo.h2.dto.HTypeDTO;
+import com.jjo.h2.dto.TagsDTO;
 import com.jjo.h2.model.H;
 import com.jjo.h2.model.HHistory;
 import com.jjo.h2.model.HType;
+import com.jjo.h2.model.Tags;
 import com.jjo.h2.repositories.HHistoryRepository;
 import com.jjo.h2.repositories.HRepository;
 import com.jjo.h2.utils.MapperUtil;
@@ -30,10 +36,13 @@ public class HServiceImpl implements HService {
   private HTypeService htService;
 
   @Autowired
+  private TagsService tagsService;
+
+  @Autowired
   private MapperUtil mapperUtil;
 
   public HDTO getH(Long id) {
-    return hRepo.findById(id).map(h -> toDTO(h)).orElse(null);
+    return hRepo.findById(id).map(this::toDTO).orElse(null);
   }
 
   @Override
@@ -89,13 +98,19 @@ public class HServiceImpl implements HService {
     entity.setCover(Utils.isNotNullOr(dto.getCover(), entity.getCover()));
     entity.setScore(Utils.isNotNullOr(dto.getScore(), entity.getScore()));
 
-    HType ht = Optional.ofNullable(dto.getType()).filter(h -> h.getId().equals(entity.getType().getId())).map(htService::toEntity)
-        .orElse(entity.getType());
+    BiPredicate<HTypeDTO, HType> filterType = (d, e) -> d.getId().equals(e.getId());
+    Function<HTypeDTO, HType> processType = htService::toEntity;
+
+    HType ht = Utils.isNotNullROr(dto.getType(), entity.getType(), filterType, processType);
     entity.setType(ht);
 
-    if (entity.getTags().size() == dto.getTags().size() && entity.getTags().containsAll(dto.getTags())) {
-      entity.setTags(dto.getTags());
-    }
+    BiPredicate<Set<TagsDTO>, Set<Tags>> filterTags =
+        (d, e) -> Utils.isNotNull(d) && Utils.isNotNull(e);
+
+    // Set<Tags> t = Utils
+    // if (entity.getTags().size() == dto.getTags().size() && entity.getTags().containsAll(dto.getTags())) {
+    // entity.setTags(dto.getTags());
+    // }
 
     return entity;
   }

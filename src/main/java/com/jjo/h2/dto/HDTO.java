@@ -2,12 +2,9 @@ package com.jjo.h2.dto;
 
 import java.time.LocalDateTime;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import com.googlecode.jmapper.annotations.JMap;
-import com.googlecode.jmapper.annotations.JMapConversion;
-import com.jjo.h2.model.Tags;
 import lombok.Data;
 
 @Data
@@ -38,24 +35,9 @@ public class HDTO {
   private HTypeDTO type;
 
   @JMap
-  private Set<Tags> tags;
+  private Set<TagsDTO> tags;
 
   @JMap
-  private LocalDateTime creationDate;
-
-  @JMap
-  private String createdBy;
-
-  @JMap
+  @Null
   private LocalDateTime modifiedDate;
-
-//  @JMapConversion(from = {"tags"}, to = {"tags"})
-//  public Set<Tags> hDTOToEntity(Set<TagsDTO> tagsEntity) {
-//    return tagsEntity.stream().map(t -> {
-//      Tags tags = new Tags();
-//      tags.setId(t.getId());
-//      tags.setName(t.getName());
-//      return tags;
-//    }).collect(Collectors.toSet());
-//  }
 }

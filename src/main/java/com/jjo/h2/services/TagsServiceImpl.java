@@ -26,8 +26,7 @@ public class TagsServiceImpl implements TagsService {
 
   @Override
   public List<TagsDTO> findAll(Pageable pageable) {
-    return tagsRepo.findAll(pageable).getContent().stream().map(t -> toDTO(t))
-        .collect(Collectors.toList());
+    return tagsRepo.findAll(pageable).getContent().stream().map(this::toDTO).collect(Collectors.toList());
   }
 
   @Override
@@ -53,7 +52,7 @@ public class TagsServiceImpl implements TagsService {
    * @param dto
    * @return
    */
-  private Tags toEntity(TagsDTO dto) {
+  public Tags toEntity(TagsDTO dto) {
     return mapperUtil.getMapper(Tags.class, TagsDTO.class).getDestination(dto);
   }
 

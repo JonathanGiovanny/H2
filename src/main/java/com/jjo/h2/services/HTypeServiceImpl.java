@@ -26,7 +26,7 @@ public class HTypeServiceImpl implements HTypeService {
 
   @Override
   public List<HTypeDTO> findAll(Pageable pageable) {
-    return hTypeRepo.findAll(pageable).getContent().stream().map(ht -> toDTO(ht)).collect(Collectors.toList());
+    return hTypeRepo.findAll(pageable).getContent().stream().map(this::toDTO).collect(Collectors.toList());
   }
 
   @Override

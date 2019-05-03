@@ -24,7 +24,7 @@ public class RolesServiceImpl implements RolesService {
 
   @Override
   public RoleDTO getRoleById(Long id) {
-    return toDTO(roleRepo.findById(id).get());
+    return toDTO(roleRepo.findById(id).orElseThrow());
   }
 
   @Override
@@ -39,14 +39,14 @@ public class RolesServiceImpl implements RolesService {
 
   @Override
   public RoleDTO updateRole(Long id, RoleDTO role) {
-    Role entity = roleRepo.findById(id).get();
+    Role entity = roleRepo.findById(id).orElseThrow();
     entity.setName(role.getName());
     return toDTO(roleRepo.save(entity));
   }
 
   @Override
   public RoleDTO updateRolePrivileges(Long id, RoleDTO role) {
-    Role entity = roleRepo.findById(id).get();
+    Role entity = roleRepo.findById(id).orElseThrow();
     Role incomingData = toEntity(role);
     entity.setPrivileges(incomingData.getPrivileges());
     return toDTO(roleRepo.save(entity));

@@ -3,7 +3,7 @@ package com.jjo.h2.services.security;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.function.BiPredicate;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -56,17 +56,17 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public UserDTO updateUser(Long id, UserDTO user) {
-    User entity = userRepo.findById(id).get();
+    User entity = userRepo.findById(id).orElseThrow();
     copyDTO(user, entity);
     return toDTO(userRepo.save(entity));
   }
 
   public boolean updatePassword(UserDTO user) {
-    User entity = userRepo.findById(user.getId()).get();
+    User entity = userRepo.findById(user.getId()).orElseThrow();
     BiPredicate<String, String> passwordsNotMatch =
         (String dtoP, String eP) -> !passEncoder.matches(user.getPassword(), entity.getPassword());
 
-    Function<String, String> f = str -> {
+    UnaryOperator<String> f = str -> {
       entity.setPasswordDate(LocalDate.now());
       return str;
     };
@@ -86,7 +86,8 @@ public class UserServiceImpl implements UserService {
     entity.setEmail(Utils.isNotNullOr(dto.getEmail(), entity.getEmail()));
     entity.setStatus(Utils.isNotNullOr(dto.getStatus(), entity.getStatus()));
     entity.setProfilePic(Utils.isNotNullOr(dto.getProfilePic(), entity.getProfilePic()));
-    if (dto.getRoles() != null && entity.getRoles().size() == dto.getRoles().size() && entity.getRoles().containsAll(dto.getRoles())) {
+    if (dto.getRoles() != null && entity.getRoles().size() == dto.getRoles().size()
+        && entity.getRoles().containsAll(dto.getRoles())) {
       entity.setRoles(dto.getRoles());
     }
     return entity;

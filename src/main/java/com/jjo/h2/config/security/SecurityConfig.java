@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.jjo.h2.utils.Constants;
@@ -17,9 +18,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Autowired
   private UserDetailsService userDetailsService;
 
-  // @Autowired
-  // private BasicAuthenticationEntryPointImpl authEntryPoint;
-
   @Autowired
   public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
     auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
@@ -27,12 +25,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-    http.csrf().disable();
+    http.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER).and().httpBasic()
+        .disable();
 
     http.cors().and().authorizeRequests().antMatchers(HttpMethod.POST, Constants.APP_NAME + "/security/users")
         .permitAll().anyRequest().permitAll();
-    // .anyRequest().authenticated().and().httpBasic()
-    // .authenticationEntryPoint(authEntryPoint);
 
     // To modify the value of X-FRAME-OPTIONS to allow frames from SameOrigin for h2 DB Console
     http.headers().frameOptions().sameOrigin();

@@ -25,12 +25,10 @@ public class Auditable implements Serializable {
    */
   private static final long serialVersionUID = 74601469141015187L;
 
-  @JMap
   @CreatedDate
   @Column(name = "CREATION_DATE", updatable = false)
   private LocalDateTime creationDate;
 
-  @JMap
   @CreatedBy
   @Column(name = "CREATED_BY")
   private String createdBy;

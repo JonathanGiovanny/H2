@@ -52,7 +52,7 @@ public class User implements Serializable {
   private LocalDate passwordDate;
 
   @JMap
-  private Blob profilePic;
+  private transient Blob profilePic;
 
   @JMap
   @Relationship(type = "HAS")
