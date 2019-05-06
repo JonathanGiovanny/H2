@@ -33,7 +33,7 @@ public class HController {
 
   @InitBinder
   protected void initBinder(WebDataBinder binder) {
-    binder.setValidator(hValid);
+    binder.addValidators(hValid);
   }
 
   @GetMapping("/{id}")
@@ -57,7 +57,7 @@ public class HController {
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<HDTO> saveH(@PathVariable Long id, @Valid HDTO h) {
+  public ResponseEntity<HDTO> saveH(@PathVariable Long id, @Valid @RequestBody HDTO h) {
     return ResponseEntity.ok(hService.updateH(id, h));
   }
 

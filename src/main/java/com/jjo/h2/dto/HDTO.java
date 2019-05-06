@@ -13,7 +13,7 @@ public class HDTO {
   @JMap
   private Long id;
 
-  @JMap
+  @JMap 
   private String name;
 
   @JMap

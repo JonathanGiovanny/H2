@@ -64,8 +64,7 @@ public class HServiceImpl implements HService {
 
   @Override
   public List<HDTO> findAll(HDTO filter, Pageable pageable) {
-    return hRepo.findAll(Example.of(toEntity(filter)), pageable).getContent().stream().map(this::toDTO)
-        .collect(Collectors.toList());
+    return hRepo.findAll(Example.of(toEntity(filter)), pageable).getContent().stream().map(this::toDTO).collect(Collectors.toList());
   }
 
   @Override
@@ -104,13 +103,13 @@ public class HServiceImpl implements HService {
     HType ht = Utils.isNotNullROr(dto.getType(), entity.getType(), filterType, processType);
     entity.setType(ht);
 
-    BiPredicate<Set<TagsDTO>, Set<Tags>> filterTags =
-        (d, e) -> Utils.isNotNull(d) && Utils.isNotNull(e);
+    BiPredicate<Set<TagsDTO>, Set<Tags>> filterTags = (d, e) -> {
+      return true;
+    };
+    Function<Set<TagsDTO>, Set<Tags>> processTags = t -> t.stream().map(tagsService::toEntity).collect(Collectors.toSet());
 
-    // Set<Tags> t = Utils
-    // if (entity.getTags().size() == dto.getTags().size() && entity.getTags().containsAll(dto.getTags())) {
-    // entity.setTags(dto.getTags());
-    // }
+    Set<Tags> tags = Utils.isNotNullROr(dto.getTags(), entity.getTags(), filterTags, processTags);
+    entity.setTags(tags);
 
     return entity;
   }

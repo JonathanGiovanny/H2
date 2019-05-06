@@ -51,7 +51,7 @@ public class Utils {
   public static <T extends Object> T isNotNullOr(T dto, T entity, BiPredicate<T, T> condition, Function<T, T> process) {
     return Optional.ofNullable(dto).filter(f -> condition.test(dto, entity)).map(process).orElse(entity);
   }
-  
+
   /**
    * Validates whenever a value is null, only if the condition is met, and run a process if that condition is met
    */
