@@ -1,12 +1,25 @@
 package com.jjo.h2.controller.validator;
 
+import java.util.Optional;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import com.jjo.h2.dto.HDTO;
+import com.jjo.h2.services.HService;
+import com.jjo.h2.services.HTypeService;
+import com.jjo.h2.services.TagsService;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 @Component
+@RequiredArgsConstructor
 public class HDTOValidator implements Validator {
+
+  private final @NonNull HService hService;
+
+  private final @NonNull TagsService tagsService;
+
+  private final @NonNull HTypeService typeService;
 
   @Override
   public boolean supports(Class<?> clazz) {
@@ -17,7 +30,7 @@ public class HDTOValidator implements Validator {
   public void validate(Object target, Errors errors) {
     HDTO dto = (HDTO) target;
 
-    // ValidationUtils.rejectIfEmptyOrWhitespace(errors, "url", "", "URL is a required field");
-    // ValidationUtils.rejectIfEmptyOrWhitespace(errors, "url", "url.required");
+    Optional.ofNullable(dto).map(HDTO::getTags).ifPresent(t -> t.forEach(tag -> tagsService.getTag(tag.getId())));
+    Optional.ofNullable(dto).map(HDTO::getType).ifPresent(t -> typeService.getHType(t.getId()));
   }
 }

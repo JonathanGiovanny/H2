@@ -1,23 +1,26 @@
 package com.jjo.h2.services;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.jjo.h2.dto.HTypeDTO;
+import com.jjo.h2.exception.ErrorConstants;
+import com.jjo.h2.exception.HException;
 import com.jjo.h2.model.HType;
 import com.jjo.h2.repositories.HTypeRepository;
 import com.jjo.h2.utils.MapperUtil;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class HTypeServiceImpl implements HTypeService {
 
-  @Autowired
-  private HTypeRepository hTypeRepo;
+  private final @NonNull HTypeRepository hTypeRepo;
 
-  @Autowired
-  private MapperUtil mapperUtil;
+  private final @NonNull MapperUtil mapperUtil;
 
   @Override
   public HTypeDTO getHType(Integer id) {
@@ -30,15 +33,39 @@ public class HTypeServiceImpl implements HTypeService {
   }
 
   @Override
+  public HTypeDTO findByName(String name) {
+    return toDTO(hTypeRepo.findByName(name));
+  }
+
+  @Override
+  public List<HTypeDTO> findByNameLike(String name, Pageable pageable) {
+    return hTypeRepo.findByNameLike(name, pageable).stream().map(this::toDTO).collect(Collectors.toList());
+  }
+
+  @Override
   public Integer saveHType(HTypeDTO hType) {
+    if (findByName(hType.getName()) != null) {
+      throw new HException(String.format(ErrorConstants.FIELD_SHOULD_UNIQUE, "name"));
+    }
+
     return hTypeRepo.save(toEntity(hType)).getId();
   }
 
   @Override
-  public HTypeDTO updateHType(HTypeDTO hType) {
-    HType hTypeEntity = hTypeRepo.getOne(hType.getId());
-    hTypeEntity.setName(hType.getName());
-    return toDTO(hTypeRepo.save(hTypeEntity));
+  public HTypeDTO updateHType(Integer id, HTypeDTO hType) {
+    Optional<HType> hTypeEntity = hTypeRepo.findById(hType.getId());
+
+    HTypeDTO existingType = findByName(hType.getName());
+    if (existingType != null && !id.equals(existingType.getId())) {
+      throw new HException(String.format(ErrorConstants.FIELD_SHOULD_UNIQUE, "name"));
+    }
+
+    HType entity = hTypeEntity.map(ht -> {
+      ht.setName(hType.getName());
+      return ht;
+    }).orElse(toEntity(hType));
+
+    return toDTO(hTypeRepo.save(entity));
   }
 
   @Override

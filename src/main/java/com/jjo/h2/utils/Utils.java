@@ -20,7 +20,7 @@ public class Utils {
   /**
    * Validates whenever a value is null or empty for a String
    */
-  public static <T extends Collection<?>> boolean isNotNull(Collection<?> coll) {
+  public static <T extends Collection<?>> boolean isNullOrEmpty(Collection<?> coll) {
     return Optional.ofNullable(coll).filter(c -> !c.isEmpty()).isEmpty();
   }
 

@@ -7,13 +7,14 @@ import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.jjo.h2.dto.HDTO;
 import com.jjo.h2.dto.HTypeDTO;
 import com.jjo.h2.dto.TagsDTO;
+import com.jjo.h2.exception.ErrorConstants;
+import com.jjo.h2.exception.HException;
 import com.jjo.h2.model.H;
 import com.jjo.h2.model.HHistory;
 import com.jjo.h2.model.HType;
@@ -22,39 +23,55 @@ import com.jjo.h2.repositories.HHistoryRepository;
 import com.jjo.h2.repositories.HRepository;
 import com.jjo.h2.utils.MapperUtil;
 import com.jjo.h2.utils.Utils;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 @Service
 public class HServiceImpl implements HService {
 
-  @Autowired
-  private HRepository hRepo;
+  private final @NonNull HRepository hRepo;
 
-  @Autowired
-  private HHistoryRepository hHisRepo;
+  private final @NonNull HHistoryRepository hHisRepo;
 
-  @Autowired
-  private HTypeService htService;
+  private final @NonNull HTypeService htService;
 
-  @Autowired
-  private TagsService tagsService;
+  private final @NonNull TagsService tagsService;
 
-  @Autowired
-  private MapperUtil mapperUtil;
+  private final @NonNull MapperUtil mapperUtil;
 
+  @Override
   public HDTO getH(Long id) {
     return hRepo.findById(id).map(this::toDTO).orElse(null);
   }
 
   @Override
   public HDTO saveH(HDTO h) {
+    HDTO filter = new HDTO();
+    filter.setUrl(h.getUrl());
+    List<HDTO> existingH = findAll(filter, Pageable.unpaged());
+
+    if (!Utils.isNullOrEmpty(existingH)) {
+      throw new HException(String.format(ErrorConstants.FIELD_SHOULD_UNIQUE, "url"));
+    }
+
     return toDTO(hRepo.save(toEntity(h)));
   }
 
   @Override
   public HDTO updateH(Long id, HDTO h) {
-    H entity = hRepo.getOne(id);
-    copyData(h, entity);
-    return Optional.ofNullable(hRepo.save(toEntity(h))).map(this::toDTO).orElse(null);
+    HDTO filter = new HDTO();
+    filter.setUrl(h.getUrl());
+    List<HDTO> existingH = findAll(filter, Pageable.unpaged());
+
+    if (!Utils.isNullOrEmpty(existingH) && existingH.stream().filter(exh -> !id.equals(exh.getId())).count() != 0) {
+      throw new HException(String.format(ErrorConstants.FIELD_SHOULD_UNIQUE, "url"));
+    }
+
+    Optional<H> optEntity = hRepo.findById(id);
+
+    H entity = optEntity.map(hEntity -> copyData(h, hEntity)).orElse(toEntity(h));
+    return toDTO(hRepo.save(entity));
   }
 
   @Override
@@ -64,7 +81,8 @@ public class HServiceImpl implements HService {
 
   @Override
   public List<HDTO> findAll(HDTO filter, Pageable pageable) {
-    return hRepo.findAll(Example.of(toEntity(filter)), pageable).getContent().stream().map(this::toDTO).collect(Collectors.toList());
+    return hRepo.findAll(Example.of(toEntity(filter)), pageable).getContent().stream().map(this::toDTO)
+        .collect(Collectors.toList());
   }
 
   @Override
@@ -106,7 +124,8 @@ public class HServiceImpl implements HService {
     BiPredicate<Set<TagsDTO>, Set<Tags>> filterTags = (d, e) -> {
       return true;
     };
-    Function<Set<TagsDTO>, Set<Tags>> processTags = t -> t.stream().map(tagsService::toEntity).collect(Collectors.toSet());
+    Function<Set<TagsDTO>, Set<Tags>> processTags =
+        t -> t.stream().map(tagsService::toEntity).collect(Collectors.toSet());
 
     Set<Tags> tags = Utils.isNotNullROr(dto.getTags(), entity.getTags(), filterTags, processTags);
     entity.setTags(tags);

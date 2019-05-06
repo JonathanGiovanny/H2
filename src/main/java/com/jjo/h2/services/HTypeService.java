@@ -24,6 +24,23 @@ public interface HTypeService {
   List<HTypeDTO> findAll(Pageable pageable);
 
   /**
+   * Get the records with an exact name
+   * 
+   * @param name
+   * @return
+   */
+  HTypeDTO findByName(String name);
+
+  /**
+   * Get the records with a like name determined by the pagination
+   * 
+   * @param name
+   * @param pageable
+   * @return
+   */
+  List<HTypeDTO> findByNameLike(String name, Pageable pageable);
+
+  /**
    * Save HType
    * 
    * @param hType
@@ -32,12 +49,13 @@ public interface HTypeService {
   Integer saveHType(HTypeDTO hType);
 
   /**
-   * Update HType
+   * Update HType by the id
    * 
+   * @param id
    * @param hType
    * @return
    */
-  HTypeDTO updateHType(HTypeDTO hType);
+  HTypeDTO updateHType(Integer id, HTypeDTO hType);
 
   /**
    * Delete the record

@@ -1,23 +1,26 @@
 package com.jjo.h2.services;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.jjo.h2.dto.TagsDTO;
+import com.jjo.h2.exception.ErrorConstants;
+import com.jjo.h2.exception.HException;
 import com.jjo.h2.model.Tags;
 import com.jjo.h2.repositories.TagsRepository;
 import com.jjo.h2.utils.MapperUtil;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class TagsServiceImpl implements TagsService {
 
-  @Autowired
-  private TagsRepository tagsRepo;
+  private final @NonNull TagsRepository tagsRepo;
 
-  @Autowired
-  private MapperUtil mapperUtil;
+  private final @NonNull MapperUtil mapperUtil;
 
   @Override
   public TagsDTO getTag(Long id) {
@@ -30,15 +33,39 @@ public class TagsServiceImpl implements TagsService {
   }
 
   @Override
+  public TagsDTO findByName(String name) {
+    return toDTO(tagsRepo.findByName(name));
+  }
+
+  @Override
+  public List<TagsDTO> findByNameLike(String name, Pageable pageable) {
+    return tagsRepo.findByNameLike(name, pageable).stream().map(this::toDTO).collect(Collectors.toList());
+  }
+
+  @Override
   public TagsDTO saveTag(TagsDTO tag) {
+    if (findByName(tag.getName()) != null) {
+      throw new HException(String.format(ErrorConstants.FIELD_SHOULD_UNIQUE, "name"));
+    }
+
     return toDTO(tagsRepo.save(toEntity(tag)));
   }
 
   @Override
   public TagsDTO updateTag(Long id, TagsDTO tagDto) {
-    Tags tag = tagsRepo.getOne(id);
-    tag.setName(tagDto.getName());
-    return toDTO(tagsRepo.save(tag));
+    Optional<Tags> optTag = tagsRepo.findById(id);
+
+    TagsDTO existingTag = findByName(tagDto.getName());
+    if (existingTag != null && !id.equals(existingTag.getId())) {
+      throw new HException(String.format(ErrorConstants.FIELD_SHOULD_UNIQUE, "name"));
+    }
+
+    Tags entity = optTag.map(t -> {
+      t.setName(tagDto.getName());
+      return t;
+    }).orElse(toEntity(tagDto));
+
+    return toDTO(tagsRepo.save(entity));
   }
 
   @Override

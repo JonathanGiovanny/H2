@@ -3,7 +3,6 @@ package com.jjo.h2.controller;
 import java.net.URI;
 import java.util.List;
 import javax.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.WebDataBinder;
@@ -20,16 +19,17 @@ import com.jjo.h2.controller.validator.HDTOValidator;
 import com.jjo.h2.dto.HDTO;
 import com.jjo.h2.services.HService;
 import com.jjo.h2.utils.Constants;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping(Constants.APP_NAME + "/h")
 public class HController {
 
-  @Autowired
-  private HService hService;
+  private final @NonNull HService hService;
 
-  @Autowired
-  private HDTOValidator hValid;
+  private final HDTOValidator hValid;
 
   @InitBinder
   protected void initBinder(WebDataBinder binder) {

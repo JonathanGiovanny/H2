@@ -24,6 +24,23 @@ public interface TagsService {
   List<TagsDTO> findAll(Pageable pageable);
 
   /**
+   * Get the tags with exact name
+   * 
+   * @param name
+   * @return
+   */
+  TagsDTO findByName(String name);
+
+  /**
+   * Get the tags with like name
+   * 
+   * @param name
+   * @param pageable
+   * @return
+   */
+  List<TagsDTO> findByNameLike(String name, Pageable pageable);
+
+  /**
    * Save the Tag
    * 
    * @param tag
