@@ -10,6 +10,7 @@ public class ErrorConstants {
   public static final String MISMATCH_INPUT = "El Request contiene errores, por favor verifica";
   public static final String INVALID_DATE_FORMAT = "El formato de la fecha no es válido";
   public static final String FIELD_SHOULD_UNIQUE = "El campo '%s' debe ser único, ya existe un registro con este valor";
+  public static final String BAD_QUERY = "Se presento un error en la transacción de los datos";
 
   /**
    * Private constructor for constants class

@@ -69,14 +69,4 @@ public class H extends Auditable implements Serializable {
       joinColumns = @JoinColumn(name = "H_ID", referencedColumnName = "H_ID"),
       inverseJoinColumns = @JoinColumn(name = "TAG_ID", referencedColumnName = "TAG_ID"))
   private Set<Tags> tags;
-
-//  @JMapConversion(from = {"tags"}, to = {"tags"})
-//  public Set<TagsDTO> hEntityToDTO(Set<Tags> hEntity) {
-//    return hEntity.stream().map(t -> {
-//      TagsDTO tags = new TagsDTO();
-//      tags.setId(t.getId());
-//      tags.setName(t.getName());
-//      return tags;
-//    }).collect(Collectors.toSet());
-//  }
 }

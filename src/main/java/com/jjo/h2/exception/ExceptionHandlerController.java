@@ -1,11 +1,13 @@
 package com.jjo.h2.exception;
 
+import static com.jjo.h2.exception.ErrorConstants.BAD_QUERY;
 import static com.jjo.h2.exception.ErrorConstants.GENERIC_ERROR_MSG;
 import static com.jjo.h2.exception.ErrorConstants.INVALID_DATE_FORMAT;
 import static com.jjo.h2.exception.ErrorConstants.MISMATCH_FIELD;
 import static com.jjo.h2.exception.ErrorConstants.MISMATCH_INPUT;
 import static com.jjo.h2.exception.ErrorConstants.MISSING_FIELD;
 import static com.jjo.h2.exception.ErrorConstants.NO_DATA_MSG;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
@@ -16,6 +18,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
+import org.hibernate.exception.SQLGrammarException;
+import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -123,7 +127,7 @@ public class ExceptionHandlerController {
    * @return
    */
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<Set<HErrorDTO>> handleMethodArgumentNotValidException(final Exception exception) {
+  protected ResponseEntity<Set<HErrorDTO>> handleMethodArgumentNotValidException(final Exception exception) {
     MethodArgumentNotValidException methodArgumentNotValidException = (MethodArgumentNotValidException) exception;
 
     List<ObjectError> l = methodArgumentNotValidException.getBindingResult().getAllErrors();
@@ -147,27 +151,41 @@ public class ExceptionHandlerController {
    * @return
    */
   @ExceptionHandler(DateTimeParseException.class)
-  public ResponseEntity<Set<HErrorDTO>> handleDateTimeParseException(final DateTimeParseException exception) {
+  protected ResponseEntity<Set<HErrorDTO>> handleDateTimeParseException(final DateTimeParseException exception) {
     return ResponseEntity.badRequest().body(Set.of(exBuilder(INVALID_DATE_FORMAT, exception)));
+  }
+
+  @ExceptionHandler({SQLException.class, SQLGrammarException.class, InvalidDataAccessResourceUsageException.class})
+  protected ResponseEntity<Set<HErrorDTO>> handleSQLException(final Exception exception) {
+    Exception e;
+
+    if (exception instanceof SQLGrammarException) {
+      e = (Exception) exception.getCause();
+    } else {
+      e = exception;
+    }
+
+    return ResponseEntity.badRequest().body(Set.of(exBuilder(BAD_QUERY, e)));
   }
 
   /**
    * Get the user message for the custom validations on the requests
+   * 
    * @param fieldError
    * @return
    */
   private String getUserMessage(FieldError fieldError) {
     String msg;
-    
+
     if (fieldError.getCode().toLowerCase().contains("null")) {
       msg = String.format(MISSING_FIELD, fieldError.getField());
     } else {
       msg = fieldError.getDefaultMessage();
     }
-    
+
     return msg;
   }
-  
+
   /**
    * Build the DTO to be send as response
    * 

@@ -32,5 +32,8 @@ public class HDTOValidator implements Validator {
 
     Optional.ofNullable(dto).map(HDTO::getTags).ifPresent(t -> t.forEach(tag -> tagsService.getTag(tag.getId())));
     Optional.ofNullable(dto).map(HDTO::getType).ifPresent(t -> typeService.getHType(t.getId()));
+
+    dto.setClicks(Optional.ofNullable(dto).map(HDTO::getClicks).orElse(0L));
+    dto.setScore(Optional.ofNullable(dto).map(HDTO::getScore).orElse(0.0));
   }
 }
