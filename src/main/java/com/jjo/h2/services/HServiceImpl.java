@@ -2,13 +2,13 @@ package com.jjo.h2.services;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import com.jjo.h2.dto.HDTO;
 import com.jjo.h2.dto.HTypeDTO;
@@ -22,6 +22,7 @@ import com.jjo.h2.model.Tags;
 import com.jjo.h2.repositories.HHistoryRepository;
 import com.jjo.h2.repositories.HRepository;
 import com.jjo.h2.utils.MapperUtil;
+import com.jjo.h2.utils.SQLUtils;
 import com.jjo.h2.utils.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -62,15 +63,13 @@ public class HServiceImpl implements HService {
   public HDTO updateH(Long id, HDTO h) {
     HDTO filter = new HDTO();
     filter.setUrl(h.getUrl());
-    List<HDTO> existingH = findAll(filter, Pageable.unpaged());
+    List<H> existingH = hRepo.findAll(Example.of(toEntity(filter)), Pageable.unpaged()).getContent();
 
-    if (!Utils.isNullOrEmpty(existingH) && existingH.stream().filter(exh -> !id.equals(exh.getId())).count() != 0) {
+    if (!Utils.isNullOrEmpty(existingH) && existingH.stream().anyMatch(exh -> !id.equals(exh.getId()))) {
       throw new HException(String.format(ErrorConstants.FIELD_SHOULD_UNIQUE, "url"));
     }
 
-    Optional<H> optEntity = hRepo.findById(id);
-
-    H entity = optEntity.map(hEntity -> copyData(h, hEntity)).orElse(toEntity(h));
+    H entity = hRepo.findById(id).map(hEntity -> copyData(h, hEntity)).orElse(toEntity(h));
     return toDTO(hRepo.save(entity));
   }
 
@@ -81,7 +80,7 @@ public class HServiceImpl implements HService {
 
   @Override
   public List<HDTO> findAll(HDTO filter, Pageable pageable) {
-    return hRepo.findAll(Example.of(toEntity(filter)), pageable).getContent().stream().map(this::toDTO)
+    return hRepo.findAll(buildFilter(filter), pageable).getContent().stream().map(this::toDTO)
         .collect(Collectors.toList());
   }
 
@@ -115,7 +114,7 @@ public class HServiceImpl implements HService {
     entity.setCover(Utils.isNotNullOr(dto.getCover(), entity.getCover()));
     entity.setScore(Utils.isNotNullOr(dto.getScore(), entity.getScore()));
 
-    BiPredicate<HTypeDTO, HType> filterType = (d, e) -> d.getId().equals(e.getId());
+    BiPredicate<HTypeDTO, HType> filterType = (d, e) -> !d.getId().equals(e.getId());
     Function<HTypeDTO, HType> processType = htService::toEntity;
 
     HType ht = Utils.isNotNullROr(dto.getType(), entity.getType(), filterType, processType);
@@ -131,6 +130,20 @@ public class HServiceImpl implements HService {
     entity.setTags(tags);
 
     return entity;
+  }
+
+  /**
+   * Build the custom filter that will be applied to the query, this filter can or cannot get all the values
+   * 
+   * @param filter
+   * @return
+   */
+  private Specification<H> buildFilter(HDTO filter) {
+    return (root, query,
+        builder) -> builder.and(SQLUtils.unifyPredicate(SQLUtils.sqlLike(builder, root, "name", filter.getName()),
+            SQLUtils.sqlLike(builder, root, "url", filter.getUrl()),
+            SQLUtils.sqlLike(builder, root, "cover", filter.getCover()),
+            SQLUtils.sql(filter.getType(), v -> builder.equal(root.get("type"), v), HTypeDTO::getId)));
   }
 
   /**

@@ -48,7 +48,7 @@ public class HController {
   }
 
   @PostMapping("/search")
-  public ResponseEntity<List<HDTO>> searchH(@Valid @RequestBody HDTO h, Pageable pageable) {
+  public ResponseEntity<List<HDTO>> searchH(@RequestBody HDTO h, Pageable pageable) {
     return ResponseEntity.ok(hService.findAll(h, pageable));
   }
 

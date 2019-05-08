@@ -5,17 +5,13 @@ import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Utils {
 
   public static final Predicate<Object> IS_NUMBER = n -> n instanceof Long || n instanceof Integer;
-
-  /**
-   * Private constructor for static only methods
-   */
-  private Utils() {
-    super();
-  }
 
   /**
    * Validates whenever a value is null or empty for a String
@@ -55,7 +51,8 @@ public class Utils {
   /**
    * Validates whenever a value is null, only if the condition is met, and run a process if that condition is met
    */
-  public static <T extends Object, R extends Object> R isNotNullROr(T dto, R entity, BiPredicate<T, R> condition, Function<T, R> process) {
+  public static <T extends Object, R extends Object> R isNotNullROr(T dto, R entity, BiPredicate<T, R> condition,
+      Function<T, R> process) {
     return Optional.ofNullable(dto).filter(f -> condition.test(dto, entity)).map(process).orElse(entity);
   }
 }
