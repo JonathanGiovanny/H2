@@ -46,6 +46,11 @@ public class HTypeController {
     return ResponseEntity.ok(hTypeService.findAll(pageable));
   }
 
+  @PostMapping("/search")
+  public ResponseEntity<List<HTypeDTO>> findByFilter(@Valid @RequestBody HTypeDTO filter, Pageable pageable) {
+    return ResponseEntity.ok(hTypeService.findByNameLike(filter.getName(), pageable));
+  }
+
   @PostMapping
   public ResponseEntity<Void> saveHType(@Valid @RequestBody HTypeDTO hType) {
     return ResponseEntity.created(URI.create(hTypeService.saveHType(hType).toString())).build();

@@ -41,6 +41,11 @@ public class TagsController {
     return ResponseEntity.ok(tagsService.getTag(id));
   }
 
+  @PostMapping("/search")
+  public ResponseEntity<List<TagsDTO>> findByFilter(@Valid @RequestBody TagsDTO tags, Pageable pageable) {
+    return ResponseEntity.ok(tagsService.findByNameLike(tags.getName(), pageable));
+  }
+
   @GetMapping
   public ResponseEntity<List<TagsDTO>> findAll(Pageable pageable) {
     return ResponseEntity.ok(tagsService.findAll(pageable));
