@@ -26,7 +26,7 @@ import com.zaxxer.hikari.HikariDataSource;
     transactionManagerRef = DatasourceH2.TRANSACTION_MANAGER)
 public class DatasourceH2 {
 
-  static final String ENTITY_MANAGER = "entityManager";
+  public static final String ENTITY_MANAGER = "entityManager";
   static final String TRANSACTION_MANAGER = "transactionManagerDataH2";
 
   static final String BASE_PACKAGES = "com.jjo.h2.repositories";

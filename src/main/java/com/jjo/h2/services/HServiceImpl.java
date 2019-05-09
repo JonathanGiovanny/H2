@@ -8,7 +8,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import com.jjo.h2.dto.HDTO;
 import com.jjo.h2.dto.HTypeDTO;
@@ -22,7 +21,6 @@ import com.jjo.h2.model.Tags;
 import com.jjo.h2.repositories.HHistoryRepository;
 import com.jjo.h2.repositories.HRepository;
 import com.jjo.h2.utils.MapperUtil;
-import com.jjo.h2.utils.SQLUtils;
 import com.jjo.h2.utils.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -80,8 +78,7 @@ public class HServiceImpl implements HService {
 
   @Override
   public List<HDTO> findAll(HDTO filter, Pageable pageable) {
-    return hRepo.findAll(buildFilter(filter), pageable).getContent().stream().map(this::toDTO)
-        .collect(Collectors.toList());
+    return hRepo.filter(toEntity(filter), pageable).stream().map(this::toDTO).collect(Collectors.toList());
   }
 
   @Override
@@ -120,9 +117,7 @@ public class HServiceImpl implements HService {
     HType ht = Utils.isNotNullROr(dto.getType(), entity.getType(), filterType, processType);
     entity.setType(ht);
 
-    BiPredicate<Set<TagsDTO>, Set<Tags>> filterTags = (d, e) -> {
-      return true;
-    };
+    BiPredicate<Set<TagsDTO>, Set<Tags>> filterTags = (d, e) -> true;
     Function<Set<TagsDTO>, Set<Tags>> processTags =
         t -> t.stream().map(tagsService::toEntity).collect(Collectors.toSet());
 
@@ -130,20 +125,6 @@ public class HServiceImpl implements HService {
     entity.setTags(tags);
 
     return entity;
-  }
-
-  /**
-   * Build the custom filter that will be applied to the query, this filter can or cannot get all the values
-   * 
-   * @param filter
-   * @return
-   */
-  private Specification<H> buildFilter(HDTO filter) {
-    return (root, query,
-        builder) -> builder.and(SQLUtils.unifyPredicate(SQLUtils.sqlLike(builder, root, "name", filter.getName()),
-            SQLUtils.sqlLike(builder, root, "url", filter.getUrl()),
-            SQLUtils.sqlLike(builder, root, "cover", filter.getCover()),
-            SQLUtils.sql(filter.getType(), v -> builder.equal(root.get("type"), v), HTypeDTO::getId)));
   }
 
   /**

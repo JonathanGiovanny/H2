@@ -1,10 +1,12 @@
 package com.jjo.h2.utils;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +14,13 @@ import lombok.NoArgsConstructor;
 public class Utils {
 
   public static final Predicate<Object> IS_NUMBER = n -> n instanceof Long || n instanceof Integer;
+
+  /**
+   * Validates whenever a value is null or empty for a String
+   */
+  public static <T> Stream<T> isNotNullOrEmpty(Collection<T> coll) {
+    return Optional.ofNullable(coll).map(c -> c.stream()).orElse(Stream.empty()).filter(Objects::nonNull);
+  }
 
   /**
    * Validates whenever a value is null or empty for a String
