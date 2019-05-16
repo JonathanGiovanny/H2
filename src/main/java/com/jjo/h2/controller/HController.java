@@ -23,8 +23,8 @@ import com.jjo.h2.utils.Constants;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(Constants.APP_NAME + "/h")
 public class HController {
 
