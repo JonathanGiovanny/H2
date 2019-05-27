@@ -26,7 +26,6 @@ public class RoleDTO {
       Privilege priv = new Privilege();
       priv.setId(p.getId());
       priv.setName(p.getName());
-      priv.setIcon(p.getIcon());
 
       AccessData ac = new AccessData();
       ac.setPrivilege(priv);

@@ -1,7 +1,8 @@
 package com.jjo.h2.services;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -43,29 +44,17 @@ public class HTypeServiceImpl implements HTypeService {
   }
 
   @Override
-  public Integer saveHType(HTypeDTO hType) {
-    if (findByName(hType.getName()) != null) {
+  public HTypeDTO saveHType(HTypeDTO hType) {
+    HTypeDTO existingName = findByName(hType.getName());
+    Predicate<HTypeDTO> hasExistingValue = ht -> Objects.nonNull(existingName) && Objects.isNull(ht.getId());
+    Predicate<HTypeDTO> hasExistingValueAndOtherId =
+        ht -> Objects.nonNull(existingName) && Objects.nonNull(ht.getId()) && !existingName.getId().equals(ht.getId());
+
+    if (hasExistingValue.or(hasExistingValueAndOtherId).test(hType)) {
       throw new HException(String.format(ErrorConstants.FIELD_SHOULD_UNIQUE, "name"));
     }
 
-    return hTypeRepo.save(toEntity(hType)).getId();
-  }
-
-  @Override
-  public HTypeDTO updateHType(Integer id, HTypeDTO hType) {
-    Optional<HType> hTypeEntity = hTypeRepo.findById(hType.getId());
-
-    HTypeDTO existingType = findByName(hType.getName());
-    if (existingType != null && !id.equals(existingType.getId())) {
-      throw new HException(String.format(ErrorConstants.FIELD_SHOULD_UNIQUE, "name"));
-    }
-
-    HType entity = hTypeEntity.map(ht -> {
-      ht.setName(hType.getName());
-      return ht;
-    }).orElse(toEntity(hType));
-
-    return toDTO(hTypeRepo.save(entity));
+    return toDTO(hTypeRepo.save(toEntity(hType)));
   }
 
   @Override
@@ -79,6 +68,7 @@ public class HTypeServiceImpl implements HTypeService {
    * @param dto
    * @return
    */
+  @Override
   public HType toEntity(HTypeDTO dto) {
     return mapperUtil.getMapper(HType.class, HTypeDTO.class).getDestination(dto);
   }

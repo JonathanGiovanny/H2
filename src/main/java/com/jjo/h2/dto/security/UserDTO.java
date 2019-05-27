@@ -4,6 +4,8 @@ import java.sql.Blob;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import com.googlecode.jmapper.annotations.JMap;
 import com.jjo.h2.model.security.Role;
 import com.jjo.h2.model.security.StatusEnum;
@@ -19,14 +21,16 @@ public class UserDTO {
   private String username;
 
   @JMap
+  @NotNull
   private String password;
 
   @JMap
+  @Email
   private String email;
 
   @JMap
   private StatusEnum status;
-  
+
   @JMap
   private LocalDateTime createdDate;
 

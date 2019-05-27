@@ -46,16 +46,7 @@ public interface HTypeService {
    * @param hType
    * @return
    */
-  Integer saveHType(HTypeDTO hType);
-
-  /**
-   * Update HType by the id
-   * 
-   * @param id
-   * @param hType
-   * @return
-   */
-  HTypeDTO updateHType(Integer id, HTypeDTO hType);
+  HTypeDTO saveHType(HTypeDTO hType);
 
   /**
    * Delete the record

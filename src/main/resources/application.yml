@@ -19,3 +19,8 @@ server:
 
 hibernate:
     dialect: default
+
+h:
+   config:
+      jwtSecret: UmFuZG9tIGNoYXJhY3RlciBjb3VudCB0b29sIHNvIHRoZSBzZWNyZXQga2V5IGl0cyBhdCBsZWFzdCAyNTYgY2hhcmFjdGVycyB0byBlbnN1cmUgbWF4aW11bSBzZWN1cml0eQ==
+      jwtExpiration: 1

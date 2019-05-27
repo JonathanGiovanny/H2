@@ -52,14 +52,15 @@ public class HTypeController {
   }
 
   @PostMapping
-  public ResponseEntity<Void> saveHType(@Valid @RequestBody HTypeDTO hType) {
-    return ResponseEntity.created(URI.create(hTypeService.saveHType(hType).toString())).build();
+  public ResponseEntity<HTypeDTO> saveHType(@Valid @RequestBody HTypeDTO hType) {
+    HTypeDTO savedHt = hTypeService.saveHType(hType);
+    return ResponseEntity.created(URI.create(savedHt.getId().toString())).build();
   }
 
   @PutMapping("/{id}")
   public ResponseEntity<HTypeDTO> updateHType(@PathVariable Integer id, @Valid @RequestBody HTypeDTO hType) {
     hType.setId(id);
-    return ResponseEntity.ok(hTypeService.updateHType(id, hType));
+    return ResponseEntity.ok(hTypeService.saveHType(hType));
   }
 
   @DeleteMapping("/{id}")
