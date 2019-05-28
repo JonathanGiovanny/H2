@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,12 +18,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.jjo.h2.controller.validator.HDTOValidator;
+import com.jjo.h2.controller.validator.ValidList;
 import com.jjo.h2.dto.HDTO;
 import com.jjo.h2.services.HService;
 import com.jjo.h2.utils.Constants;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(Constants.APP_NAME + "/h")
@@ -53,8 +56,8 @@ public class HController {
   }
 
   @PostMapping
-  public ResponseEntity<Void> saveH(@Valid @RequestBody HDTO h) {
-    return ResponseEntity.created(URI.create(hService.saveH(h).getId().toString())).build();
+  public ResponseEntity<Void> saveH(@Valid @ValidList @RequestBody List<HDTO> h) {
+    return ResponseEntity.created(URI.create(hService.saveH(h.get(0)).getId().toString())).build();
   }
 
   @PutMapping("/{id}")

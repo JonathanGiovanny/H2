@@ -28,11 +28,6 @@ public class UserController {
     return ResponseEntity.ok(userService.getUsers(pageable));
   }
 
-  @GetMapping("/{username}")
-  public ResponseEntity<UserDTO> getUser(@PathVariable String username) {
-    return ResponseEntity.ok(userService.getUserByUsername(username));
-  }
-
   @PostMapping
   public ResponseEntity<Void> registerUser(@RequestBody UserDTO user) {
     return ResponseEntity.created(URI.create(userService.registerUser(user).toString())).build();

@@ -2,54 +2,31 @@ package com.jjo.h2.services.security;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User.UserBuilder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.jjo.h2.config.DatasourceNeo4j;
 import com.jjo.h2.dto.security.UserDTO;
-import com.jjo.h2.exception.ErrorConstants;
-import com.jjo.h2.model.security.Role;
 import com.jjo.h2.model.security.User;
 import com.jjo.h2.repositories.security.UserRepository;
 import com.jjo.h2.utils.MapperUtil;
 import com.jjo.h2.utils.Utils;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 @Transactional(value = DatasourceNeo4j.TRANSACTION_MANAGER)
-public class UserServiceImpl implements UserService, UserDetailsService {
+public class UserServiceImpl implements UserService {
 
-  @Autowired
   private UserRepository userRepo;
 
-  @Autowired
   private PasswordEncoder passEncoder;
 
-  @Autowired
   private MapperUtil mapperUtil;
-
-  @Override
-  public UserDetails loadUserById(Long id) {
-    return userRepo.findById(id).map(this::buildUserDetails)
-        .orElseThrow(() -> new UsernameNotFoundException(ErrorConstants.MISSING_USER + " with id: " + id));
-  }
-
-  @Override
-  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    return userRepo.findByUsername(username).or(() -> userRepo.findByEmail(username)).map(this::buildUserDetails)
-        .orElseThrow(() -> new UsernameNotFoundException(ErrorConstants.MISSING_USER));
-  }
 
   @Override
   public Long registerUser(UserDTO user) {
@@ -83,25 +60,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     entity.setPassword(Utils.isNotNullOr(user.getPassword(), entity.getPassword(), passwordsNotMatch, f));
     return true;
-  }
-
-  private UserDetails buildUserDetails(User user) {
-    UserBuilder builder = org.springframework.security.core.userdetails.User.withUsername(user.getUsername());
-    builder.password(user.getPassword());
-    builder.authorities(getGrantedAuthorities(user.getRoles()));
-
-    return builder.build();
-  }
-
-  /**
-   * Create the authorities for the privileges list
-   * 
-   * @param roles
-   * @return
-   */
-  private Set<GrantedAuthority> getGrantedAuthorities(Set<Role> roles) {
-    return roles.stream().flatMap(r -> r.getPrivileges().stream()).map(p -> p.getPrivilege().getName()).distinct().map(SimpleGrantedAuthority::new)
-        .collect(Collectors.toSet());
   }
 
   /**

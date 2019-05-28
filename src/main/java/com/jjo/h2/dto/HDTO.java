@@ -4,10 +4,12 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
+import org.springframework.validation.annotation.Validated;
 import com.googlecode.jmapper.annotations.JMap;
 import lombok.Data;
 
 @Data
+@Validated
 public class HDTO {
 
   @JMap
