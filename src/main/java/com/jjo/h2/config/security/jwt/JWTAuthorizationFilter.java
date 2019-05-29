@@ -52,7 +52,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
   private String getToken(HttpServletRequest request) {
     final String bearerToken = request.getHeader(SecurityConstants.TOKEN_HEADER);
     return Optional.ofNullable(bearerToken) //
-        .filter(String::isBlank) //
+        .filter(token -> !token.isBlank()) //
         .filter(token -> token.startsWith(SecurityConstants.TOKEN_PREFIX)) //
         .map(token -> token.substring(SecurityConstants.TOKEN_PREFIX.length() + 1, token.length()))
         .orElseThrow(() -> new HException(ErrorConstants.UNAUTHORIZED_REQUEST));

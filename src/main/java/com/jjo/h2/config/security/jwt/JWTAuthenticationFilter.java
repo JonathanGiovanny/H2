@@ -1,35 +1,37 @@
 package com.jjo.h2.config.security.jwt;
 
 import java.io.IOException;
-import javax.annotation.PostConstruct;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jjo.h2.config.security.SecurityConstants;
 import com.jjo.h2.dto.security.LoginDTO;
 import com.jjo.h2.exception.ErrorConstants;
 import com.jjo.h2.exception.HException;
 import com.jjo.h2.services.security.JWTService;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-  private final @NonNull AuthenticationManager authenticationManager;
+  private final AuthenticationManager authenticationManager;
 
-  private final @NonNull JWTService jwtService;
+  private final JWTService jwtService;
 
-  @PostConstruct
-  private void postConstruct() {
-    super.setFilterProcessesUrl(SecurityConstants.AUTH_LOGIN_URL);
+  public JWTAuthenticationFilter(AuthenticationManager authenticationManager, JWTService jwtService) {
+    super();
+    this.authenticationManager = authenticationManager;
+    this.jwtService = jwtService;
+
+    // This method should be called here since outside cannot be override
+    super.setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher(SecurityConstants.AUTH_LOGIN_URL, HttpMethod.POST.name()));
   }
 
   @Override
@@ -45,7 +47,11 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
       return authenticationManager.authenticate(token);
 
     } catch (IOException e) {
-      throw new HException(ErrorConstants.MISMATCH_INPUT, e);
+      response.addHeader(SecurityConstants.WWW_AUTHENTICATE, );
+      WWW-Authenticate: Bearer realm="example",
+          error="invalid_token",
+          error_description="The access token expired"
+      throw new HException(ErrorConstants.MISMATCH_INPUT);
     }
   }
 

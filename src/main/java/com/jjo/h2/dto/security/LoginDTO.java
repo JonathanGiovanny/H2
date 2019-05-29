@@ -1,14 +1,23 @@
 package com.jjo.h2.dto.security;
 
-import javax.validation.constraints.NotBlank;
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Setter
+@Getter
 public class LoginDTO {
 
-  @NotBlank
   private String username;
 
-  @NotBlank
   private String password;
+
+  @JsonCreator
+  public LoginDTO(@JsonProperty(value = "username", required = true) String username,
+      @JsonProperty(value = "password", required = true) String password) {
+    super();
+    this.username = username;
+    this.password = password;
+  }
 }

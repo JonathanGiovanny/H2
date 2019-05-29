@@ -47,14 +47,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     final JWTAuthorizationFilter authorization = new JWTAuthorizationFilter(jwtService, userDetailsService);
 
     http.cors().and().csrf().disable() //
-        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) //
+        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER) //
         // handle an authorized attempts
         .and().exceptionHandling().authenticationEntryPoint((req, rsp, e) -> rsp.sendError(HttpServletResponse.SC_UNAUTHORIZED, errorMsg(e))) //
         .and().addFilterBefore(authentication, UsernamePasswordAuthenticationFilter.class) //
         .addFilterAfter(authorization, UsernamePasswordAuthenticationFilter.class) //
-        .authorizeRequests().antMatchers(HttpMethod.POST, SecurityConstants.AUTH_LOGIN_URL, Constants.APP_NAME + "/security/users").permitAll()
+        .authorizeRequests().antMatchers(HttpMethod.POST, Constants.APP_NAME + "/security/users").permitAll()
         .anyRequest().authenticated() // Other requests authenticated
-        .and().httpBasic().disable();
+        .and().httpBasic().disable() //
+        .logout().disable();
 
     // To modify the value of X-FRAME-OPTIONS to allow frames from SameOrigin for h2 DB Console
     http.headers().frameOptions().sameOrigin();
