@@ -2,6 +2,7 @@ package com.jjo.h2.services.security;
 
 import java.util.List;
 import org.springframework.data.domain.Pageable;
+import com.jjo.h2.dto.security.SingUpDTO;
 import com.jjo.h2.dto.security.UserDTO;
 
 public interface UserService {
@@ -17,10 +18,10 @@ public interface UserService {
   /**
    * Register a user
    * 
-   * @param user
+   * @param user sing up form data
    * @return
    */
-  Long registerUser(UserDTO user);
+  Long registerUser(SingUpDTO user);
 
   /**
    * Update user info

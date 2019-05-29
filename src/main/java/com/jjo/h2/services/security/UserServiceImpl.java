@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.jjo.h2.config.DatasourceNeo4j;
+import com.jjo.h2.dto.security.SingUpDTO;
 import com.jjo.h2.dto.security.UserDTO;
 import com.jjo.h2.model.security.User;
 import com.jjo.h2.repositories.security.UserRepository;
@@ -29,10 +30,15 @@ public class UserServiceImpl implements UserService {
   private MapperUtil mapperUtil;
 
   @Override
-  public Long registerUser(UserDTO user) {
-    user.setPassword(passEncoder.encode(user.getPassword()));
-    user.setPasswordDate(LocalDate.now());
-    User entity = toEntity(user);
+  public Long registerUser(SingUpDTO user) {
+    UserDTO userDto = new UserDTO();
+    userDto.setUsername(user.getUsername());
+    userDto.setPassword(passEncoder.encode(user.getPassword()));
+    userDto.setPasswordDate(LocalDate.now());
+    userDto.setEmail(user.getEmail());
+    userDto.setProfilePic(user.getProfilePic());
+
+    User entity = toEntity(userDto);
     userRepo.save(entity);
     return entity.getId();
   }

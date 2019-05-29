@@ -13,13 +13,14 @@ import com.jjo.h2.exception.ErrorConstants;
 import com.jjo.h2.model.security.Role;
 import com.jjo.h2.model.security.User;
 import com.jjo.h2.repositories.security.UserRepository;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service("userDetailsService")
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-  private UserRepository userRepo;
+  private final @NonNull UserRepository userRepo;
 
   public UserDetails loadUserById(Long id) {
     return userRepo.findById(id).map(this::buildUserDetails)

@@ -1,18 +1,30 @@
 package com.jjo.h2.config.security;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jjo.h2.config.security.jwt.JWTAuthenticationFilter;
+import com.jjo.h2.config.security.jwt.JWTAuthorizationFilter;
+import com.jjo.h2.exception.HErrorDTO;
+import com.jjo.h2.services.security.JWTService;
+import com.jjo.h2.utils.Constants;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +34,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final @NonNull UserDetailsService userDetailsService;
 
+  private final @NonNull JWTService jwtService;
+
   @Autowired
   public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
     auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
@@ -29,10 +43,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-    http.cors().and().csrf().disable().authorizeRequests().anyRequest().permitAll().and().sessionManagement()
-        .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().httpBasic().disable();
+    final JWTAuthenticationFilter authentication = new JWTAuthenticationFilter(authenticationManager(), jwtService);
+    final JWTAuthorizationFilter authorization = new JWTAuthorizationFilter(jwtService, userDetailsService);
 
-    http.authorizeRequests().anyRequest().permitAll();
+    http.cors().and().csrf().disable() //
+        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) //
+        // handle an authorized attempts
+        .and().exceptionHandling().authenticationEntryPoint((req, rsp, e) -> rsp.sendError(HttpServletResponse.SC_UNAUTHORIZED, errorMsg(e))) //
+        .and().addFilterBefore(authentication, UsernamePasswordAuthenticationFilter.class) //
+        .addFilterAfter(authorization, UsernamePasswordAuthenticationFilter.class) //
+        .authorizeRequests().antMatchers(HttpMethod.POST, SecurityConstants.AUTH_LOGIN_URL, Constants.APP_NAME + "/security/users").permitAll()
+        .anyRequest().authenticated() // Other requests authenticated
+        .and().httpBasic().disable();
 
     // To modify the value of X-FRAME-OPTIONS to allow frames from SameOrigin for h2 DB Console
     http.headers().frameOptions().sameOrigin();
@@ -51,5 +73,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
     return source;
+  }
+
+  /**
+   * Generate JSON with error msg for the unauthorized requests
+   * 
+   * @param authException
+   * @return
+   * @throws JsonProcessingException
+   */
+  private String errorMsg(AuthenticationException authException) throws JsonProcessingException {
+    ObjectMapper objectMapper = new ObjectMapper();
+    HErrorDTO exception = HErrorDTO.builder() //
+        .userMessage(authException.getMessage()) //
+        .techMessage(authException.getMessage()) //
+        .eventTime(LocalDateTime.now()) //
+        .build();
+    return objectMapper.writeValueAsString(exception);
   }
 }

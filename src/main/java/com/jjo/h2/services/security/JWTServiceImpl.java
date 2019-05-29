@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import com.jjo.h2.exception.ErrorConstants;
+import com.jjo.h2.exception.HException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -34,14 +36,14 @@ public class JWTServiceImpl implements JWTService {
         .setSubject(principal.getUsername()) //
         .setIssuedAt(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()))//
         .setExpiration(Date.from(LocalDateTime.now().plusMinutes(jwtExpiration).atZone(ZoneId.systemDefault()).toInstant())) //
-        .signWith(SignatureAlgorithm.HS256, TextCodec.BASE64.decode(jwtSecret)) //
+        .signWith(SignatureAlgorithm.HS256, TextCodec.BASE64.decode(jwtSecret)) // Encode the secret with Base 64
         .compact();
   }
 
   @Override
   public boolean validateToken(String token) {
     try {
-      Jwts.parser().setSigningKey(TextCodec.BASE64.decode(jwtSecret)).parseClaimsJws(token).getBody().getIssuer();
+      Jwts.parser().setSigningKey(TextCodec.BASE64.decode(jwtSecret)).parseClaimsJws(token).getBody().getSubject();
       return true;
     } catch (SignatureException ex) {
       log.error("Invalid JWT signature");
@@ -49,6 +51,7 @@ public class JWTServiceImpl implements JWTService {
       log.error("Invalid JWT token");
     } catch (ExpiredJwtException ex) {
       log.error("Expired JWT token");
+      throw new HException(ErrorConstants.EXPIRED_TOKEN);
     } catch (UnsupportedJwtException ex) {
       log.error("Unsupported JWT token");
     } catch (IllegalArgumentException ex) {
