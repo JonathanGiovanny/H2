@@ -50,11 +50,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER) //
         // handle an authorized attempts
         .and().exceptionHandling().authenticationEntryPoint((req, rsp, e) -> rsp.sendError(HttpServletResponse.SC_UNAUTHORIZED, errorMsg(e))) //
+        .and().authorizeRequests().antMatchers(HttpMethod.POST, Constants.APP_NAME + "/security/singup").permitAll()
+        .antMatchers(HttpMethod.GET, Constants.APP_NAME + "/security/singup/checkname/**").permitAll()
+        .and().authorizeRequests().anyRequest().authenticated() // Other requests authenticated
         .and().addFilterBefore(authentication, UsernamePasswordAuthenticationFilter.class) //
         .addFilterAfter(authorization, UsernamePasswordAuthenticationFilter.class) //
-        .authorizeRequests().antMatchers(HttpMethod.POST, Constants.APP_NAME + "/security/users").permitAll()
-        .anyRequest().authenticated() // Other requests authenticated
-        .and().httpBasic().disable() //
+        .httpBasic().disable() //
         .logout().disable();
 
     // To modify the value of X-FRAME-OPTIONS to allow frames from SameOrigin for h2 DB Console

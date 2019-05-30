@@ -47,10 +47,6 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
       return authenticationManager.authenticate(token);
 
     } catch (IOException e) {
-      response.addHeader(SecurityConstants.WWW_AUTHENTICATE, );
-      WWW-Authenticate: Bearer realm="example",
-          error="invalid_token",
-          error_description="The access token expired"
       throw new HException(ErrorConstants.MISMATCH_INPUT);
     }
   }

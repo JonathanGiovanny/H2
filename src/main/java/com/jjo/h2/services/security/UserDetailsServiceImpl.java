@@ -29,7 +29,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    return userRepo.findByUsername(username).or(() -> userRepo.findByEmail(username)).map(this::buildUserDetails)
+    return userRepo.findByUsernameOrEmail(username, username).map(this::buildUserDetails)
         .orElseThrow(() -> new UsernameNotFoundException(ErrorConstants.MISSING_USER));
   }
 

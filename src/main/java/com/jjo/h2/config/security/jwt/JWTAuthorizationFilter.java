@@ -28,7 +28,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-    final String token = getToken(request);
+    final String token = getToken(request, response);
 
     if (jwtService.validateToken(token)) {
       final String username = jwtService.getClaims(token).getSubject();
@@ -44,17 +44,30 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
   }
 
   /**
+   * Will filter the requests that do not need authentication
+   */
+  @Override
+  protected boolean shouldNotFilter(HttpServletRequest request) {
+//    HttpMethod.POST, Constants.APP_NAME + "/security/singup").permitAll()
+//  .antMatchers(HttpMethod.GET, Constants.APP_NAME + "/security/singup/checkname/**"
+    return false;
+  }
+
+  /**
    * Get the security token from the request
    * 
    * @param request Http Request
    * @return Token
    */
-  private String getToken(HttpServletRequest request) {
+  private String getToken(HttpServletRequest request, HttpServletResponse response) {
     final String bearerToken = request.getHeader(SecurityConstants.TOKEN_HEADER);
     return Optional.ofNullable(bearerToken) //
         .filter(token -> !token.isBlank()) //
         .filter(token -> token.startsWith(SecurityConstants.TOKEN_PREFIX)) //
-        .map(token -> token.substring(SecurityConstants.TOKEN_PREFIX.length() + 1, token.length()))
-        .orElseThrow(() -> new HException(ErrorConstants.UNAUTHORIZED_REQUEST));
+        .map(token -> token.substring(SecurityConstants.TOKEN_PREFIX.length() + 1, token.length())) //
+        .orElseThrow(() -> {
+          response.addHeader(SecurityConstants.WWW_AUTHENTICATE, SecurityConstants.TOKEN_PREFIX + "error=\"invalid_token\"");
+          return new HException(ErrorConstants.UNAUTHORIZED_REQUEST);
+        });
   }
 }

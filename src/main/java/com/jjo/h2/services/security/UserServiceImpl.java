@@ -23,11 +23,16 @@ import lombok.RequiredArgsConstructor;
 @Transactional(value = DatasourceNeo4j.TRANSACTION_MANAGER)
 public class UserServiceImpl implements UserService {
 
-  private UserRepository userRepo;
+  private final UserRepository userRepo;
 
-  private PasswordEncoder passEncoder;
+  private final PasswordEncoder passEncoder;
 
-  private MapperUtil mapperUtil;
+  private final MapperUtil mapperUtil;
+
+  @Override
+  public Boolean existsUsernameOrEmail(String usernameOrEmail) {
+    return userRepo.existsByUsernameOrEmail(usernameOrEmail, usernameOrEmail);
+  }
 
   @Override
   public Long registerUser(SingUpDTO user) {

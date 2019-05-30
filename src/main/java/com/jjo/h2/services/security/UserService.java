@@ -8,6 +8,13 @@ import com.jjo.h2.dto.security.UserDTO;
 public interface UserService {
 
   /**
+   * Validates that the username and / or email will be unique
+   * @param usernameOrEmail
+   * @return
+   */
+  Boolean existsUsernameOrEmail(String usernameOrEmail);
+  
+  /**
    * Get all users
    * 
    * @param pageable

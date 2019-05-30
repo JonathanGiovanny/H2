@@ -19,22 +19,27 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(Constants.APP_NAME + "/security/users")
+@RequestMapping(Constants.APP_NAME + "/security")
 public class UserController {
 
   private final UserService userService;
 
-  @GetMapping
-  public ResponseEntity<List<UserDTO>> getUsers(Pageable pageable) {
-    return ResponseEntity.ok(userService.getUsers(pageable));
+  @GetMapping("/singup/checkname/{username}")
+  public ResponseEntity<Boolean> checkUsernameOrEmailAvailability(@PathVariable String username) {
+    return ResponseEntity.ok(userService.existsUsernameOrEmail(username));
   }
-
-  @PostMapping
+  
+  @PostMapping("/singup")
   public ResponseEntity<Void> registerUser(@RequestBody SingUpDTO user) {
     return ResponseEntity.created(URI.create(userService.registerUser(user).toString())).build();
   }
 
-  @PutMapping("/{id}")
+  @GetMapping("/users")
+  public ResponseEntity<List<UserDTO>> getUsers(Pageable pageable) {
+    return ResponseEntity.ok(userService.getUsers(pageable));
+  }
+
+  @PutMapping("/users/{id}")
   public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @RequestBody UserDTO user) {
     return ResponseEntity.ok(userService.updateUser(id, user));
   }
