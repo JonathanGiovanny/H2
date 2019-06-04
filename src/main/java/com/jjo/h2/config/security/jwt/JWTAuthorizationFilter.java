@@ -44,16 +44,6 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
   }
 
   /**
-   * Will filter the requests that do not need authentication
-   */
-  @Override
-  protected boolean shouldNotFilter(HttpServletRequest request) {
-//    HttpMethod.POST, Constants.APP_NAME + "/security/singup").permitAll()
-//  .antMatchers(HttpMethod.GET, Constants.APP_NAME + "/security/singup/checkname/**"
-    return false;
-  }
-
-  /**
    * Get the security token from the request
    * 
    * @param request Http Request

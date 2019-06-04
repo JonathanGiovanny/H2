@@ -12,7 +12,7 @@ public interface UserService {
    * @param usernameOrEmail
    * @return
    */
-  Boolean existsUsernameOrEmail(String usernameOrEmail);
+  Boolean availableUsernameOrEmail(String usernameOrEmail);
   
   /**
    * Get all users

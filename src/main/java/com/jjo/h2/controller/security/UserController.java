@@ -26,7 +26,7 @@ public class UserController {
 
   @GetMapping("/singup/checkname/{username}")
   public ResponseEntity<Boolean> checkUsernameOrEmailAvailability(@PathVariable String username) {
-    return ResponseEntity.ok(userService.existsUsernameOrEmail(username));
+    return ResponseEntity.ok(userService.availableUsernameOrEmail(username));
   }
   
   @PostMapping("/singup")

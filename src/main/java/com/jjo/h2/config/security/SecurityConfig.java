@@ -5,7 +5,7 @@ import java.util.Arrays;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpMethod;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -24,12 +24,12 @@ import com.jjo.h2.config.security.jwt.JWTAuthenticationFilter;
 import com.jjo.h2.config.security.jwt.JWTAuthorizationFilter;
 import com.jjo.h2.exception.HErrorDTO;
 import com.jjo.h2.services.security.JWTService;
-import com.jjo.h2.utils.Constants;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
+@Order(1)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final @NonNull UserDetailsService userDetailsService;
@@ -47,16 +47,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     final JWTAuthorizationFilter authorization = new JWTAuthorizationFilter(jwtService, userDetailsService);
 
     http.cors().and().csrf().disable() //
-        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER) //
-        // handle an authorized attempts
-        .and().exceptionHandling().authenticationEntryPoint((req, rsp, e) -> rsp.sendError(HttpServletResponse.SC_UNAUTHORIZED, errorMsg(e))) //
-        .and().authorizeRequests().antMatchers(HttpMethod.POST, Constants.APP_NAME + "/security/singup").permitAll()
-        .antMatchers(HttpMethod.GET, Constants.APP_NAME + "/security/singup/checkname/**").permitAll()
-        .and().authorizeRequests().anyRequest().authenticated() // Other requests authenticated
-        .and().addFilterBefore(authentication, UsernamePasswordAuthenticationFilter.class) //
-        .addFilterAfter(authorization, UsernamePasswordAuthenticationFilter.class) //
         .httpBasic().disable() //
         .logout().disable();
+
+    http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER) //
+        // handle an authorized attempts
+        .and().exceptionHandling().authenticationEntryPoint((req, rsp, e) -> rsp.sendError(HttpServletResponse.SC_UNAUTHORIZED, errorMsg(e))) //
+        .and().authorizeRequests().anyRequest().authenticated() // Other requests authenticated
+        .and().addFilterBefore(authentication, UsernamePasswordAuthenticationFilter.class) //
+        .addFilterAfter(authorization, UsernamePasswordAuthenticationFilter.class); //
 
     // To modify the value of X-FRAME-OPTIONS to allow frames from SameOrigin for h2 DB Console
     http.headers().frameOptions().sameOrigin();

@@ -23,7 +23,7 @@ public @interface ValidList {
 
   Class<? extends Payload>[] payload() default {};
 
-  Class<? extends Validator> validator() default DefaultValidator.class;
+  Class<? extends Validator> customValidator() default DefaultValidator.class;
 
 }
 

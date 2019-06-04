@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import com.jjo.h2.exception.ErrorConstants;
 import com.jjo.h2.model.security.Role;
 import com.jjo.h2.model.security.User;
@@ -28,6 +29,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
   }
 
   @Override
+  @Transactional(timeout = 3)
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     return userRepo.findByUsernameOrEmail(username, username).map(this::buildUserDetails)
         .orElseThrow(() -> new UsernameNotFoundException(ErrorConstants.MISSING_USER));

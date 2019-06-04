@@ -30,8 +30,8 @@ public class UserServiceImpl implements UserService {
   private final MapperUtil mapperUtil;
 
   @Override
-  public Boolean existsUsernameOrEmail(String usernameOrEmail) {
-    return userRepo.existsByUsernameOrEmail(usernameOrEmail, usernameOrEmail);
+  public Boolean availableUsernameOrEmail(String usernameOrEmail) {
+    return userRepo.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail).isEmpty();
   }
 
   @Override
