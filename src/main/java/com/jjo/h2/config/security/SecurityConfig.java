@@ -1,11 +1,12 @@
 package com.jjo.h2.config.security;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -29,7 +30,6 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
-@Order(1)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final @NonNull UserDetailsService userDetailsService;
@@ -52,7 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER) //
         // handle an authorized attempts
-        .and().exceptionHandling().authenticationEntryPoint((req, rsp, e) -> rsp.sendError(HttpServletResponse.SC_UNAUTHORIZED, errorMsg(e))) //
+        .and().exceptionHandling().authenticationEntryPoint((req, rsp, e) -> generateUnauthorizedEntry(req, rsp, e)) //
         .and().authorizeRequests().anyRequest().authenticated() // Other requests authenticated
         .and().addFilterBefore(authentication, UsernamePasswordAuthenticationFilter.class) //
         .addFilterAfter(authorization, UsernamePasswordAuthenticationFilter.class); //
@@ -76,6 +76,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     return source;
   }
 
+  private void generateUnauthorizedEntry(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws JsonProcessingException, IOException {
+    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, errorMsg(e));
+    response.addHeader("WWW-Authenticate", "Basic realm=\"JWT\"");
+  }
+  
   /**
    * Generate JSON with error msg for the unauthorized requests
    * 
