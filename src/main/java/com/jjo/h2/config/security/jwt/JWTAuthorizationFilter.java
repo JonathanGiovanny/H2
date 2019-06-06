@@ -13,8 +13,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 import com.jjo.h2.config.security.SecurityConstants;
-import com.jjo.h2.exception.ErrorConstants;
-import com.jjo.h2.exception.HException;
 import com.jjo.h2.services.security.JWTService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -55,9 +53,6 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         .filter(token -> !token.isBlank()) //
         .filter(token -> token.startsWith(SecurityConstants.TOKEN_PREFIX)) //
         .map(token -> token.substring(SecurityConstants.TOKEN_PREFIX.length() + 1, token.length())) //
-        .orElseThrow(() -> {
-          response.addHeader(SecurityConstants.WWW_AUTHENTICATE, SecurityConstants.TOKEN_PREFIX + "error=\"invalid_token\"");
-          return new HException(ErrorConstants.UNAUTHORIZED_REQUEST);
-        });
+        .orElse("");
   }
 }

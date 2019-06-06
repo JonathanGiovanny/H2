@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -16,9 +17,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jjo.h2.config.security.SecurityConstants;
 import com.jjo.h2.dto.security.LoginDTO;
 import com.jjo.h2.exception.ErrorConstants;
-import com.jjo.h2.exception.HException;
 import com.jjo.h2.services.security.JWTService;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
   private final AuthenticationManager authenticationManager;
@@ -47,7 +49,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
       return authenticationManager.authenticate(token);
 
     } catch (IOException e) {
-      throw new HException(ErrorConstants.MISMATCH_INPUT);
+      log.error(ErrorConstants.MISMATCH_INPUT, e);
+      throw new InternalAuthenticationServiceException(ErrorConstants.MISMATCH_INPUT, e);
     }
   }
 

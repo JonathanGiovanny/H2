@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SecurityConstants {
 
-  public static final String AUTH_LOGIN_URL = "/" + Constants.APP_NAME + "/security/login";
+  public static final String SECURITY_PATH = "/" + Constants.APP_NAME + "/security/";
+  public static final String AUTH_LOGIN_URL = SECURITY_PATH + "login";
   public static final String TOKEN_PREFIX = "JWT ";
   public static final String TOKEN_HEADER = "Authorization";
 

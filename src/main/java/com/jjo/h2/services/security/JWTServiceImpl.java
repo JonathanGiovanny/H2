@@ -3,10 +3,12 @@ package com.jjo.h2.services.security;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Objects;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import com.jjo.h2.config.security.SecurityConstants;
 import com.jjo.h2.exception.ErrorConstants;
 import com.jjo.h2.exception.HException;
 import io.jsonwebtoken.Claims;
@@ -41,8 +43,12 @@ public class JWTServiceImpl implements JWTService {
   }
 
   @Override
-  public boolean validateToken(String token) {
+  public boolean validateToken(final String token) {
     try {
+      if (Objects.isNull(token) || token.isBlank() || !token.startsWith(SecurityConstants.TOKEN_PREFIX)) {
+        return false;
+      }
+
       Jwts.parser().setSigningKey(TextCodec.BASE64.decode(jwtSecret)).parseClaimsJws(token).getBody().getSubject();
       return true;
     } catch (SignatureException ex) {

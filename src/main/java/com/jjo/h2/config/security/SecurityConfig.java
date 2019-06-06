@@ -1,12 +1,12 @@
 package com.jjo.h2.config.security;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -20,10 +20,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jjo.h2.config.security.jwt.JWTAuthenticationFilter;
 import com.jjo.h2.config.security.jwt.JWTAuthorizationFilter;
-import com.jjo.h2.exception.HErrorDTO;
 import com.jjo.h2.services.security.JWTService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -53,7 +51,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER) //
         // handle an authorized attempts
         .and().exceptionHandling().authenticationEntryPoint((req, rsp, e) -> generateUnauthorizedEntry(req, rsp, e)) //
-        .and().authorizeRequests().anyRequest().authenticated() // Other requests authenticated
+        .and().authorizeRequests().antMatchers(HttpMethod.GET, SecurityConstants.SECURITY_PATH + "singup/checkname/**").permitAll()
+        .antMatchers(HttpMethod.POST, SecurityConstants.SECURITY_PATH + "singup").permitAll() //
+        .anyRequest().authenticated() // Other requests authenticated
         .and().addFilterBefore(authentication, UsernamePasswordAuthenticationFilter.class) //
         .addFilterAfter(authorization, UsernamePasswordAuthenticationFilter.class); //
 
@@ -76,25 +76,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     return source;
   }
 
-  private void generateUnauthorizedEntry(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws JsonProcessingException, IOException {
-    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, errorMsg(e));
-    response.addHeader("WWW-Authenticate", "Basic realm=\"JWT\"");
-  }
-  
   /**
-   * Generate JSON with error msg for the unauthorized requests
    * 
-   * @param authException
-   * @return
+   * @param request
+   * @param response
+   * @param e
    * @throws JsonProcessingException
+   * @throws IOException
    */
-  private String errorMsg(AuthenticationException authException) throws JsonProcessingException {
-    ObjectMapper objectMapper = new ObjectMapper();
-    HErrorDTO exception = HErrorDTO.builder() //
-        .userMessage(authException.getMessage()) //
-        .techMessage(authException.getMessage()) //
-        .eventTime(LocalDateTime.now()) //
-        .build();
-    return objectMapper.writeValueAsString(exception);
+  private void generateUnauthorizedEntry(HttpServletRequest request, HttpServletResponse response, AuthenticationException e)
+      throws JsonProcessingException, IOException {
+    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
+    response.addHeader("WWW-Authenticate", "Basic realm=\"JWT\"");
   }
 }
