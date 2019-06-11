@@ -50,7 +50,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER) //
         // handle an authorized attempts
-        .and().exceptionHandling().authenticationEntryPoint((req, rsp, e) -> generateUnauthorizedEntry(req, rsp, e)) //
+        .and().exceptionHandling().authenticationEntryPoint((request, response, exception) -> generateUnauthorizedEntry(request, response, exception)) //
         .and().authorizeRequests().antMatchers(HttpMethod.GET, SecurityConstants.SECURITY_PATH + "singup/checkname/**").permitAll()
         .antMatchers(HttpMethod.POST, SecurityConstants.SECURITY_PATH + "singup").permitAll() //
         .anyRequest().authenticated() // Other requests authenticated
@@ -86,7 +86,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
    */
   private void generateUnauthorizedEntry(HttpServletRequest request, HttpServletResponse response, AuthenticationException e)
       throws JsonProcessingException, IOException {
-    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
     response.addHeader("WWW-Authenticate", "Basic realm=\"JWT\"");
+    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
   }
 }
