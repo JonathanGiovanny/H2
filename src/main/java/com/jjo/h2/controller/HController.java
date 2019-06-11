@@ -20,14 +20,13 @@ import com.jjo.h2.controller.validator.HDTOValidator;
 import com.jjo.h2.controller.validator.ValidList;
 import com.jjo.h2.dto.HDTO;
 import com.jjo.h2.services.HService;
-import com.jjo.h2.utils.Constants;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(Constants.APP_NAME + "/h")
+@RequestMapping("/h")
 public class HController {
 
   private final @NonNull HService hService;

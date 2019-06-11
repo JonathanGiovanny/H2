@@ -11,15 +11,15 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.jjo.h2.config.security.SecurityConstants;
 import com.jjo.h2.dto.security.SingUpDTO;
 import com.jjo.h2.dto.security.UserDTO;
 import com.jjo.h2.services.security.UserService;
-import com.jjo.h2.utils.Constants;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(Constants.APP_NAME + "/security")
+@RequestMapping(SecurityConstants.SECURITY_PATH)
 public class UserController {
 
   private final UserService userService;

@@ -51,8 +51,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER) //
         // handle an authorized attempts
         .and().exceptionHandling().authenticationEntryPoint((request, response, exception) -> generateUnauthorizedEntry(request, response, exception)) //
-        .and().authorizeRequests().antMatchers(HttpMethod.GET, SecurityConstants.SECURITY_PATH + "singup/checkname/**").permitAll()
-        .antMatchers(HttpMethod.POST, SecurityConstants.SECURITY_PATH + "singup").permitAll() //
+        .and().authorizeRequests().antMatchers(HttpMethod.GET, SecurityConstants.SECURITY_PATH + "/singup/checkname/**").permitAll()
+        .antMatchers(HttpMethod.POST, SecurityConstants.SECURITY_PATH + "/singup").permitAll() //
         .anyRequest().authenticated() // Other requests authenticated
         .and().addFilterBefore(authentication, UsernamePasswordAuthenticationFilter.class) //
         .addFilterAfter(authorization, UsernamePasswordAuthenticationFilter.class); //

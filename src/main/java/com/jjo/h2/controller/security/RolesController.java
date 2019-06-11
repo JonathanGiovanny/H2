@@ -15,10 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.jjo.h2.dto.security.RoleDTO;
 import com.jjo.h2.services.security.RolesService;
-import com.jjo.h2.utils.Constants;
 
 @RestController
-@RequestMapping(Constants.APP_NAME + "/security/roles")
+@RequestMapping("/security/roles")
 public class RolesController {
 
   @Autowired

@@ -15,13 +15,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.jjo.h2.dto.TagsDTO;
 import com.jjo.h2.services.TagsService;
-import com.jjo.h2.utils.Constants;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(Constants.APP_NAME + "/tags")
+@RequestMapping("/tags")
 public class TagsController {
 
   private final @NonNull TagsService tagsService;

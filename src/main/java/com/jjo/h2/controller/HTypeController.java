@@ -18,13 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jjo.h2.controller.validator.HTypeValidator;
 import com.jjo.h2.dto.HTypeDTO;
 import com.jjo.h2.services.HTypeService;
-import com.jjo.h2.utils.Constants;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(Constants.APP_NAME + "/h/types")
+@RequestMapping("/h/types")
 public class HTypeController {
 
   private final @NonNull HTypeService hTypeService;

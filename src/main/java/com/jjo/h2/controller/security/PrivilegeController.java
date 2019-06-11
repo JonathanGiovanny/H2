@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.jjo.h2.config.security.SecurityConstants;
 import com.jjo.h2.dto.security.PrivilegeDTO;
 import com.jjo.h2.services.security.PrivilegeService;
-import com.jjo.h2.utils.Constants;
 
 @RestController
-@RequestMapping(Constants.APP_NAME + "/security/privileges")
+@RequestMapping(SecurityConstants.SECURITY_PATH + "/privileges")
 public class PrivilegeController {
 
   @Autowired

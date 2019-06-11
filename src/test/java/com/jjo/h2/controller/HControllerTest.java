@@ -2,7 +2,6 @@ package com.jjo.h2.controller;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import java.util.Arrays;
 import java.util.List;
@@ -17,17 +16,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import com.jjo.h2.controller.validator.HDTOValidator;
 import com.jjo.h2.dto.HDTO;
 import com.jjo.h2.dto.HTypeDTO;
 import com.jjo.h2.services.HService;
-import com.jjo.h2.utils.Constants;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebMvcTest(HController.class)
 public class HControllerTest {
 
-  private static final String BASE_PATH = "/" + Constants.APP_NAME + "/h";
+  private static final String BASE_PATH = "/h";
 
   private static final Long ID = 1L;
   private static final Integer ID_I = 1;
@@ -86,10 +85,12 @@ public class HControllerTest {
     given(hService.findAll(ArgumentMatchers.any(Pageable.class))).willReturn(expectedResult);
 
     // Then
-    mockMvc
+    MvcResult result = mockMvc
     .perform(get(BASE_PATH).contentType(MediaType.APPLICATION_JSON)) //
     .andExpect(status().isOk()) //
-    .andExpect(jsonPath("$[0].id").value(ID));
+    .andReturn();
+
+    result.getResponse().getContentAsByteArray();
   }
 
 //  @PostMapping("/search")

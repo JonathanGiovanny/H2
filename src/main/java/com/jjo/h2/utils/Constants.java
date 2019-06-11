@@ -6,5 +6,4 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Constants {
 
-	public static final String APP_NAME = "H";
 }
