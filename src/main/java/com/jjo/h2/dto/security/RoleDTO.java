@@ -29,7 +29,6 @@ public class RoleDTO {
 
       AccessData ac = new AccessData();
       ac.setPrivilege(priv);
-      ac.setOrder(p.getOrder());
 
       return ac;
     }).collect(Collectors.toSet());

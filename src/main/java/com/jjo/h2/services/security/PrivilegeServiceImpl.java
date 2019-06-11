@@ -39,7 +39,7 @@ public class PrivilegeServiceImpl implements PrivilegeService {
   public PrivilegeDTO updatePrivilege(Long id, PrivilegeDTO privilegeDto) {
     Privilege privilege = privilegeRepo.findById(id).orElseThrow();
     privilege.setName(Utils.isNotNullOr(privilegeDto.getName(), privilege.getName()));
-    privilege.setIcon(Utils.isNotNullOr(privilegeDto.getIcon(), privilege.getIcon()));
+    privilege.setDescription(Utils.isNotNullOr(privilegeDto.getDescription(), privilege.getDescription()));
     return toDTO(privilegeRepo.save(privilege));
   }
 

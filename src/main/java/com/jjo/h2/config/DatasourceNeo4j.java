@@ -1,5 +1,7 @@
 package com.jjo.h2.config;
 
+import javax.sql.DataSource;
+import org.liquigraph.spring.starter.LiquigraphDataSource;
 import org.neo4j.ogm.session.SessionFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.data.neo4j.Neo4jProperties;
@@ -9,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.neo4j.annotation.EnableNeo4jAuditing;
 import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
 import org.springframework.data.neo4j.transaction.Neo4jTransactionManager;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 @Configuration
 @EnableNeo4jAuditing(auditorAwareRef = "auditorAware")
@@ -34,6 +37,13 @@ public class DatasourceNeo4j {
   @Bean
   public org.neo4j.ogm.config.Configuration configurationNeo4j() {
     return neo4jProperties().createConfiguration();
+  }
+
+  @Bean(name = "neoDataSource")
+  @LiquigraphDataSource
+  public DataSource dataSource() {
+    final String NEO4J_URL = "jdbc:neo4j:" + neo4jProperties().getUri();
+    return new DriverManagerDataSource(NEO4J_URL);
   }
 
   @Bean(name = SESSION_FACTORY)

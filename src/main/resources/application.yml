@@ -10,7 +10,7 @@ spring:
         driver-class-name: org.h2.Driver
     data:
         neo4j:
-            uri: file:///var/tmp/neo4j.db
+            uri: file:/var/tmp/neo4j.db
             username: admin
             password: Asdf963.
 

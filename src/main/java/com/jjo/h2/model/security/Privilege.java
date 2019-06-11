@@ -4,7 +4,6 @@ import java.io.Serializable;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
-import org.neo4j.ogm.annotation.Property;
 import com.googlecode.jmapper.annotations.JMap;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,9 +27,5 @@ public class Privilege implements Serializable {
   private String name;
 
   @JMap
-  private String icon;
-
-  @JMap
-  @Property(name = "PRIVILEGE_ID")
-  private String privilegeId;
+  private String description;
 }

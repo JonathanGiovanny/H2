@@ -41,8 +41,7 @@ public class Role implements Serializable {
       PrivilegeDTO priv = new PrivilegeDTO();
       priv.setId(p.getPrivilege().getId());
       priv.setName(p.getPrivilege().getName());
-      priv.setIcon(p.getPrivilege().getIcon());
-      priv.setOrder(p.getOrder());
+      priv.setDescription(p.getPrivilege().getDescription());
       return priv;
     }).collect(Collectors.toSet());
   }

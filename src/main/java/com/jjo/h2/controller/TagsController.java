@@ -5,17 +5,14 @@ import java.util.List;
 import javax.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.jjo.h2.controller.validator.TagsValidator;
 import com.jjo.h2.dto.TagsDTO;
 import com.jjo.h2.services.TagsService;
 import com.jjo.h2.utils.Constants;
@@ -29,21 +26,14 @@ public class TagsController {
 
   private final @NonNull TagsService tagsService;
 
-  private final @NonNull TagsValidator tagsValidator;
-
-  @InitBinder
-  protected void initBinder(WebDataBinder binder) {
-    binder.addValidators(tagsValidator);
-  }
-
   @GetMapping("/{id}")
   public ResponseEntity<TagsDTO> getTag(@PathVariable Long id) {
     return ResponseEntity.ok(tagsService.getTag(id));
   }
 
-  @PostMapping("/search")
-  public ResponseEntity<List<TagsDTO>> findByFilter(@Valid @RequestBody TagsDTO tags, Pageable pageable) {
-    return ResponseEntity.ok(tagsService.findByNameLike(tags.getName(), pageable));
+  @GetMapping("/search/{filter}")
+  public ResponseEntity<List<TagsDTO>> findByFilter(@PathVariable String filter, Pageable pageable) {
+    return ResponseEntity.ok(tagsService.findByNameLike(filter, pageable));
   }
 
   @GetMapping

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<changelog xmlns="http://www.liquigraph.org/schema/1.0/liquigraph.xsd">
+    <changeset id="CREATE_PRIVILEGES" author="jonathan.camargo">
+        <query>CREATE (p:Privilege {name:'READ_H', description:'Query the H elements and increase clicks'})</query>
+        <query>CREATE (p:Privilege {name:'MODIFY_H', description:'Modify the H elements'})</query>
+        <query>CREATE (p:Privilege {name:'DELETE_H', description:'Delete an H elements'})</query>
+        <query>CREATE (p:Privilege {name:'FILTER_H', description:'Filter to be applied on the main list which includes tags and types returning an H element'})</query>
+        <query>CREATE (p:Privilege {name:'READ_TAGS', description:'Query the Tags info'})</query>
+        <query>CREATE (p:Privilege {name:'MODIFY_TAGS', description:'Modify the Tags elements'})</query>
+        <query>CREATE (p:Privilege {name:'DELETE_TAGS', description:'Delete Tags'})</query>
+        <query>CREATE (p:Privilege {name:'READ_TYPES', description:'Query the Types info'})</query>
+        <query>CREATE (p:Privilege {name:'MODIFY_TYPES', description:'Modify the Types elements'})</query>
+        <query>CREATE (p:Privilege {name:'DELETE_TYPES', description:'Delete types'})</query>
+    </changeset>
+
+    <changeset id="CREATE_SEC_PRIVILEGES" author="jonathan.camargo">
+        <query>CREATE (p:Privilege {name:'READ_USERS', description:'Query all users'})</query>
+        <query>CREATE (p:Privilege {name:'READ_ROLES', description:'Query the roles and its privileges'})</query>
+        <query>CREATE (p:Privilege {name:'MODIFY_ROLES', description:'Modify a ROLE privileges'})</query>
+    </changeset>
+
+    <changeset id="CREATE_ROLES" author="jonathan.camargo">
+        <query>MATCH p:Privilege {name: 'READ_H'}, p2: PRIVILEGE {name: 'FILTER_H'}
+        CREATE ((r:Role {name:'ROLE_USER'}) -[:HAS_ACCESS_TO {order: 0}]-> (p)),
+        		((r:Role {name:'ROLE_USER'}) -[:HAS_ACCESS_TO {order: 0}]-> (p2))</query>
+    </changeset>
+</changelog>
