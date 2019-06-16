@@ -20,8 +20,28 @@
     </changeset>
 
     <changeset id="CREATE_ROLES" author="jonathan.camargo">
-        <query>MATCH p:Privilege {name: 'READ_H'}, p2: PRIVILEGE {name: 'FILTER_H'}
-        CREATE ((r:Role {name:'ROLE_USER'}) -[:HAS_ACCESS_TO {order: 0}]-> (p)),
-        		((r:Role {name:'ROLE_USER'}) -[:HAS_ACCESS_TO {order: 0}]-> (p2))</query>
+        <query>CREATE (r:Role {name:'ROLE_USER'})</query>
+        <query>MATCH (p:Privilege {name: 'READ_H'}), (r:Role {name: 'ROLE_USER'}) CREATE (r) -[:HAS_ACCESS_TO {order: 0}]-> (p)</query>
+        <query>MATCH (p:Privilege {name: 'FILTER_H'}), (r:Role {name: 'ROLE_USER'}) CREATE (r) -[:HAS_ACCESS_TO {order: 0}]-> (p)</query>
+
+        <query>CREATE (r:Role {name:'ROLE_EDITOR'})</query>
+        <query>MATCH (p:Privilege {name: 'READ_H'}), (r:Role {name: 'ROLE_EDITOR'}) CREATE (r) -[:HAS_ACCESS_TO {order: 0}]-> (p)</query>
+        <query>MATCH (p:Privilege {name: 'MODIFY_H'}), (r:Role {name: 'ROLE_EDITOR'}) CREATE (r) -[:HAS_ACCESS_TO {order: 0}]-> (p)</query>
+        <query>MATCH (p:Privilege {name: 'FILTER_H'}), (r:Role {name: 'ROLE_EDITOR'}) CREATE (r) -[:HAS_ACCESS_TO {order: 0}]-> (p)</query>
+        <query>MATCH (p:Privilege {name: 'READ_TAGS'}), (r:Role {name: 'ROLE_EDITOR'}) CREATE (r) -[:HAS_ACCESS_TO {order: 0}]-> (p)</query>
+        <query>MATCH (p:Privilege {name: 'MODIFY_TAGS'}), (r:Role {name: 'ROLE_EDITOR'}) CREATE (r) -[:HAS_ACCESS_TO {order: 0}]-> (p)</query>
+        <query>MATCH (p:Privilege {name: 'READ_TYPES'}), (r:Role {name: 'ROLE_EDITOR'}) CREATE (r) -[:HAS_ACCESS_TO {order: 0}]-> (p)</query>
+        <query>MATCH (p:Privilege {name: 'MODIFY_TYPES'}), (r:Role {name: 'ROLE_EDITOR'}) CREATE (r) -[:HAS_ACCESS_TO {order: 0}]-> (p)</query>
+
+        <query>CREATE (r:Role {name:'ROLE_ADMIN'})</query>
+        <query>MATCH (p:Privilege), (r:Role {name: 'ROLE_ADMIN'}) CREATE (r) -[:HAS_ACCESS_TO {order: 0}]-> (p)</query>
+    </changeset>
+
+    <changeset id="CREATE_USERS" author="jonathan.camargo">
+        <query>CREATE (u:User {username:'admin',
+        						password:'$2y$12$BDkDyb4OqEkiVh0o8.RliO2D7NKwrKyHByNNBUzW.WJE7H47MPnxm',
+        						email:'jongiocam@gmail.com',
+        						status: 'A'})</query>
+        <query>MATCH (u: User {username: 'admin'}), (r:Role {name: 'ROLE_ADMIN'}) CREATE (u) -[:HAS]-> (r)</query>
     </changeset>
 </changelog>

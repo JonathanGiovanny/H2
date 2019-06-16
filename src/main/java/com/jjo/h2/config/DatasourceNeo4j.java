@@ -43,7 +43,10 @@ public class DatasourceNeo4j {
   @LiquigraphDataSource
   public DataSource dataSource() {
     final String NEO4J_URL = "jdbc:neo4j:" + neo4jProperties().getUri();
-    return new DriverManagerDataSource(NEO4J_URL);
+    DriverManagerDataSource datasource = new DriverManagerDataSource(NEO4J_URL);
+    datasource.setUsername(neo4jProperties().getUsername());
+    datasource.setPassword(neo4jProperties().getPassword());
+    return datasource;
   }
 
   @Bean(name = SESSION_FACTORY)

@@ -13,6 +13,7 @@ import com.jjo.h2.config.DatasourceNeo4j;
 import com.jjo.h2.dto.security.SingUpDTO;
 import com.jjo.h2.dto.security.UserDTO;
 import com.jjo.h2.model.security.User;
+import com.jjo.h2.repositories.security.RoleRepository;
 import com.jjo.h2.repositories.security.UserRepository;
 import com.jjo.h2.utils.MapperUtil;
 import com.jjo.h2.utils.Utils;
@@ -24,6 +25,8 @@ import lombok.RequiredArgsConstructor;
 public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepo;
+  
+  private final RoleRepository roleRepo;
 
   private final PasswordEncoder passEncoder;
 
@@ -44,6 +47,7 @@ public class UserServiceImpl implements UserService {
     userDto.setProfilePic(user.getProfilePic());
 
     User entity = toEntity(userDto);
+    entity.setRoles(roleRepo.findByName("ROLE_ADMIN"));
     userRepo.save(entity);
     return entity.getId();
   }
