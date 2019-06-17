@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.jjo.h2.dto.HTypeDTO;
-import com.jjo.h2.exception.ErrorConstants;
+import com.jjo.h2.exception.Errors;
 import com.jjo.h2.exception.HException;
 import com.jjo.h2.model.HType;
 import com.jjo.h2.repositories.HTypeRepository;
@@ -51,7 +51,7 @@ public class HTypeServiceImpl implements HTypeService {
         ht -> Objects.nonNull(existingName) && Objects.nonNull(ht.getId()) && !existingName.getId().equals(ht.getId());
 
     if (hasExistingValue.or(hasExistingValueAndOtherId).test(hType)) {
-      throw new HException(String.format(ErrorConstants.FIELD_SHOULD_UNIQUE, "name"));
+      throw new HException(Errors.FIELD_SHOULD_UNIQUE, "name");
     }
 
     return toDTO(hTypeRepo.save(toEntity(hType)));

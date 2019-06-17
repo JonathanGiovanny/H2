@@ -5,11 +5,15 @@ import org.neo4j.ogm.annotation.EndNode;
 import org.neo4j.ogm.annotation.RelationshipEntity;
 import org.neo4j.ogm.annotation.StartNode;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @NoArgsConstructor
 @RelationshipEntity(type = "HAS_ACCESS_TO")
+@ToString(exclude = {"role"})
+@EqualsAndHashCode(exclude = {"role"})
 public class AccessData implements Serializable {
 
   /**

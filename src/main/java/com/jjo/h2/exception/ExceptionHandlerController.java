@@ -1,12 +1,5 @@
 package com.jjo.h2.exception;
 
-import static com.jjo.h2.exception.ErrorConstants.BAD_QUERY;
-import static com.jjo.h2.exception.ErrorConstants.GENERIC_ERROR_MSG;
-import static com.jjo.h2.exception.ErrorConstants.INVALID_DATE_FORMAT;
-import static com.jjo.h2.exception.ErrorConstants.MISMATCH_FIELD;
-import static com.jjo.h2.exception.ErrorConstants.MISMATCH_INPUT;
-import static com.jjo.h2.exception.ErrorConstants.MISSING_FIELD;
-import static com.jjo.h2.exception.ErrorConstants.NO_DATA_MSG;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
@@ -43,8 +36,8 @@ public class ExceptionHandlerController {
    * @return
    */
   @ExceptionHandler(HException.class)
-  protected ResponseEntity<Set<HErrorDTO>> handleHException(final HException exception) {
-    return ResponseEntity.badRequest().body(Set.of(exBuilder(exception.getMessage(), exception)));
+  protected ResponseEntity<Set<HErrorDTO>> handleHException(final HttpServletRequest request, final HException exception) {
+    return ResponseEntity.badRequest().body(Set.of(exBuilder(exception.getUserMessage(), exception.getTechMessage(), request.getRequestURI(), exception)));
   }
 
   /**
@@ -54,8 +47,8 @@ public class ExceptionHandlerController {
    * @return
    */
   @ExceptionHandler(Exception.class)
-  protected ResponseEntity<Set<HErrorDTO>> handleOtherException(final Exception exception) {
-    return ResponseEntity.badRequest().body(Set.of(exBuilder(GENERIC_ERROR_MSG, exception)));
+  protected ResponseEntity<Set<HErrorDTO>> handleOtherException(final HttpServletRequest request, final Exception exception) {
+    return ResponseEntity.badRequest().body(Set.of(exBuilder(Errors.GENERIC_ERROR.getCode(), Errors.GENERIC_ERROR.getMessage(), request.getRequestURI(), exception)));
   }
 
   /**
@@ -65,8 +58,8 @@ public class ExceptionHandlerController {
    * @return
    */
   @ExceptionHandler(NoSuchElementException.class)
-  protected ResponseEntity<Set<HErrorDTO>> handleNoElementException(final Exception exception) {
-    return ResponseEntity.badRequest().body(Set.of(exBuilder(NO_DATA_MSG, exception)));
+  protected ResponseEntity<Set<HErrorDTO>> handleNoElementException(final HttpServletRequest request, final Exception exception) {
+    return ResponseEntity.badRequest().body(Set.of(exBuilder(Errors.NO_DATA.getCode(), Errors.NO_DATA.getMessage(), request.getRequestURI(), exception)));
   }
 
   /**
@@ -77,9 +70,8 @@ public class ExceptionHandlerController {
    * @return
    */
   @ExceptionHandler(EntityNotFoundException.class)
-  protected ResponseEntity<Set<HErrorDTO>> handleEntityNotFoundException(final HttpServletRequest request,
-      final Exception exception) {
-    return ResponseEntity.badRequest().body(Set.of(exBuilder(exception.getMessage(), exception)));
+  protected ResponseEntity<Set<HErrorDTO>> handleEntityNotFoundException(final HttpServletRequest request, final Exception exception) {
+    return ResponseEntity.badRequest().body(Set.of(exBuilder(exception.getMessage(), exception.getMessage(), request.getRequestURI(), exception)));
   }
 
   /**
@@ -91,13 +83,12 @@ public class ExceptionHandlerController {
    * @throws Throwable
    */
   @ExceptionHandler(JMapperException.class)
-  protected ResponseEntity<Set<HErrorDTO>> handleMapperException(final HttpServletRequest request,
-      final Exception exception) throws Throwable {
+  protected ResponseEntity<Set<HErrorDTO>> handleMapperException(final HttpServletRequest request, final Exception exception) throws Throwable {
     if (exception.getCause() instanceof EntityNotFoundException) {
       EntityNotFoundException entityException = (EntityNotFoundException) exception.getCause();
       return handleEntityNotFoundException(request, entityException);
     }
-    return ResponseEntity.badRequest().body(Set.of(exBuilder(GENERIC_ERROR_MSG, exception)));
+    return ResponseEntity.badRequest().body(Set.of(exBuilder(Errors.GENERIC_ERROR.getCode(), Errors.GENERIC_ERROR.getCode(), request.getRequestURI(), exception)));
   }
 
   /**
@@ -107,17 +98,21 @@ public class ExceptionHandlerController {
    * @return
    */
   @ExceptionHandler({MismatchedInputException.class, HttpMessageNotReadableException.class})
-  protected ResponseEntity<Set<HErrorDTO>> handleJSONException(final Exception exception) {
+  protected ResponseEntity<Set<HErrorDTO>> handleJSONException(final HttpServletRequest request, final Exception exception) {
     String exMessage = exception.getMessage();
     Pattern p = Pattern.compile("\\[\\\"\\w*\\\"\\]");
     Matcher m = p.matcher(exMessage);
     String userErrorMessage;
+    String techErrorMessage;
     if (m.find()) {
-      userErrorMessage = String.format(MISMATCH_FIELD, m.group(m.groupCount()).replace("\"", "'"));
+      String value = m.group(m.groupCount()).replace("\"", "'");
+      userErrorMessage = String.format(Errors.MISMATCH_FIELD.getCode(), value);
+      techErrorMessage = String.format(Errors.MISMATCH_FIELD.getMessage(), value);
     } else {
-      userErrorMessage = MISMATCH_INPUT;
+      userErrorMessage = Errors.MISMATCH_INPUT.getCode();
+      techErrorMessage = Errors.MISMATCH_INPUT.getMessage();
     }
-    return ResponseEntity.badRequest().body(Set.of(exBuilder(userErrorMessage, exception)));
+    return ResponseEntity.badRequest().body(Set.of(exBuilder(userErrorMessage, techErrorMessage, request.getRequestURI(), exception)));
   }
 
   /**
@@ -127,17 +122,18 @@ public class ExceptionHandlerController {
    * @return
    */
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  protected ResponseEntity<Set<HErrorDTO>> handleMethodArgumentNotValidException(final Exception exception) {
+  protected ResponseEntity<Set<HErrorDTO>> handleMethodArgumentNotValidException(final HttpServletRequest request, final Exception exception) {
     MethodArgumentNotValidException methodArgumentNotValidException = (MethodArgumentNotValidException) exception;
 
     List<ObjectError> l = methodArgumentNotValidException.getBindingResult().getAllErrors();
 
     Set<HErrorDTO> errors = l.stream().filter(objectError -> objectError instanceof FieldError) //
         .map(objectError -> (FieldError) objectError) //
-        .map(fieldError -> HErrorDTO.builder() //
+        .map(fieldError -> getMessages(fieldError))
+        .map(msgs -> HErrorDTO.builder() //
             .eventTime(LocalDateTime.now()) //
-            .userMessage(getUserMessage(fieldError)) //
-            .techMessage(fieldError.toString()) //
+            .userMessage(msgs[0]) //
+            .techMessage(msgs[1]) //
             .build())
         .collect(Collectors.toSet());
 
@@ -151,12 +147,12 @@ public class ExceptionHandlerController {
    * @return
    */
   @ExceptionHandler(DateTimeParseException.class)
-  protected ResponseEntity<Set<HErrorDTO>> handleDateTimeParseException(final DateTimeParseException exception) {
-    return ResponseEntity.badRequest().body(Set.of(exBuilder(INVALID_DATE_FORMAT, exception)));
+  protected ResponseEntity<Set<HErrorDTO>> handleDateTimeParseException(final HttpServletRequest request, final DateTimeParseException exception) {
+    return ResponseEntity.badRequest().body(Set.of(exBuilder(Errors.INVALID_DATE_FORMAT.getCode(), Errors.INVALID_DATE_FORMAT.getMessage(), request.getRequestURI(), exception)));
   }
 
   @ExceptionHandler({SQLException.class, SQLGrammarException.class, InvalidDataAccessResourceUsageException.class})
-  protected ResponseEntity<Set<HErrorDTO>> handleSQLException(final Exception exception) {
+  protected ResponseEntity<Set<HErrorDTO>> handleSQLException(final HttpServletRequest request, final Exception exception) {
     Exception e;
 
     if (exception instanceof SQLGrammarException) {
@@ -165,7 +161,7 @@ public class ExceptionHandlerController {
       e = exception;
     }
 
-    return ResponseEntity.badRequest().body(Set.of(exBuilder(BAD_QUERY, e)));
+    return ResponseEntity.badRequest().body(Set.of(exBuilder(Errors.BAD_QUERY.getCode(), Errors.BAD_QUERY.getMessage(), request.getRequestURI(), e)));
   }
 
   /**
@@ -174,31 +170,37 @@ public class ExceptionHandlerController {
    * @param fieldError
    * @return
    */
-  private String getUserMessage(FieldError fieldError) {
-    String msg;
+  private String[] getMessages(FieldError fieldError) {
+    String userMsg;
+    String techMsg;
 
     if (fieldError.getCode().toLowerCase().contains("null")) {
-      msg = String.format(MISSING_FIELD, fieldError.getField());
+      userMsg = String.format(Errors.MISSING_FIELD.getCode(), fieldError.getField());
+      techMsg = String.format(Errors.MISSING_FIELD.getMessage(), fieldError.getField());
     } else {
-      msg = fieldError.getDefaultMessage();
+      userMsg = fieldError.getDefaultMessage();
+      techMsg = fieldError.toString();
     }
 
-    return msg;
+    return new String[] {userMsg, techMsg};
   }
 
   /**
    * Build the DTO to be send as response
    * 
    * @param userMessage
+   * @param techMessage
+   * @param path
    * @param e
    * @return
    */
-  private HErrorDTO exBuilder(String userMessage, Exception e) {
+  private HErrorDTO exBuilder(String userMessage, String techMessage, String path, Exception e) {
     log.error(userMessage, e);
     return HErrorDTO.builder() //
         .userMessage(userMessage) //
-        .techMessage(e.getMessage()) //
+        .techMessage(techMessage) //
         .eventTime(LocalDateTime.now()) //
+        .path(path) //
         .build();
   }
 }

@@ -40,7 +40,9 @@ public class UserServiceImpl implements UserService {
   @Override
   public Long registerUser(SingUpDTO user) {
     User entity = mapper.singUpToUser(user);
+    entity.setPassword(passEncoder.encode(entity.getPassword()));
     entity.setRoles(roleRepo.findByName("ROLE_ADMIN"));
+
     userRepo.save(entity);
     return entity.getId();
   }

@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.jjo.h2.dto.TagsDTO;
-import com.jjo.h2.exception.ErrorConstants;
+import com.jjo.h2.exception.Errors;
 import com.jjo.h2.exception.HException;
 import com.jjo.h2.model.Tags;
 import com.jjo.h2.repositories.TagsRepository;
@@ -45,7 +45,7 @@ public class TagsServiceImpl implements TagsService {
   @Override
   public TagsDTO saveTag(TagsDTO tag) {
     if (findByName(tag.getName()) != null) {
-      throw new HException(String.format(ErrorConstants.FIELD_SHOULD_UNIQUE, "name"));
+      throw new HException(Errors.FIELD_SHOULD_UNIQUE, "name");
     }
 
     return toDTO(tagsRepo.save(toEntity(tag)));
@@ -57,7 +57,7 @@ public class TagsServiceImpl implements TagsService {
 
     TagsDTO existingTag = findByName(tagDto.getName());
     if (existingTag != null && !id.equals(existingTag.getId())) {
-      throw new HException(String.format(ErrorConstants.FIELD_SHOULD_UNIQUE, "name"));
+      throw new HException(Errors.FIELD_SHOULD_UNIQUE, "name");
     }
 
     Tags entity = optTag.map(t -> {

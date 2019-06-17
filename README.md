@@ -3,5 +3,20 @@ __Description:__ The project is kinda a basic CRUD, which will contain the struc
 
 ## DB schemes
 __H2__ data related schema
-__Ignite__ cache layer
 __Neo4j__ security schema
+
+## Instructions
+1. Create neo4j admin user
+```
+CALL dbms.security.createUser('admin', 'your_pass', false)
+```
+
+2. Generate the classes needed from the mapper and the DSLQuery
+```
+mvn clean install -DskipTests=true
+```
+
+3. You can run the app now
+
+### IDE configuration
+Add the target/generated-sources to the build path in order the IDE to find out the generated classes 

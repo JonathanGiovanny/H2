@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import com.jjo.h2.dto.HDTO;
 import com.jjo.h2.dto.HTypeDTO;
 import com.jjo.h2.dto.TagsDTO;
-import com.jjo.h2.exception.ErrorConstants;
+import com.jjo.h2.exception.Errors;
 import com.jjo.h2.exception.HException;
 import com.jjo.h2.model.H;
 import com.jjo.h2.model.HHistory;
@@ -29,6 +29,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class HServiceImpl implements HService {
 
+  private static final String URL = "url";
+  
   private final @NonNull HRepository hRepo;
 
   private final @NonNull HHistoryRepository hHisRepo;
@@ -51,7 +53,7 @@ public class HServiceImpl implements HService {
     List<HDTO> existingH = findAll(filter, Pageable.unpaged());
 
     if (!Utils.isNullOrEmpty(existingH)) {
-      throw new HException(String.format(ErrorConstants.FIELD_SHOULD_UNIQUE, "url"));
+      throw new HException(Errors.FIELD_SHOULD_UNIQUE, URL);
     }
 
     return toDTO(hRepo.save(toEntity(h)));
@@ -64,7 +66,7 @@ public class HServiceImpl implements HService {
     List<H> existingH = hRepo.findAll(Example.of(toEntity(filter)), Pageable.unpaged()).getContent();
 
     if (!Utils.isNullOrEmpty(existingH) && existingH.stream().anyMatch(exh -> !id.equals(exh.getId()))) {
-      throw new HException(String.format(ErrorConstants.FIELD_SHOULD_UNIQUE, "url"));
+      throw new HException(Errors.FIELD_SHOULD_UNIQUE, "url");
     }
 
     H entity = hRepo.findById(id).map(hEntity -> copyData(h, hEntity)).orElse(toEntity(h));

@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import com.jjo.h2.exception.ErrorConstants;
+import com.jjo.h2.exception.Errors;
 import com.jjo.h2.model.security.Role;
 import com.jjo.h2.model.security.User;
 import com.jjo.h2.repositories.security.UserRepository;
@@ -24,13 +24,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
   public UserDetails loadUserById(Long id) {
     return userRepo.findById(id).map(this::buildUserDetails)
-        .orElseThrow(() -> new UsernameNotFoundException(ErrorConstants.MISSING_USER + " with id: " + id));
+        .orElseThrow(() -> new UsernameNotFoundException(Errors.MISSING_USER.getMessage() + " with id: " + id));
   }
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     return userRepo.findByUsernameOrEmail(username, username).map(this::buildUserDetails)
-        .orElseThrow(() -> new UsernameNotFoundException(ErrorConstants.MISSING_USER));
+        .orElseThrow(() -> new UsernameNotFoundException(Errors.MISSING_USER.getMessage()));
   }
 
   /**

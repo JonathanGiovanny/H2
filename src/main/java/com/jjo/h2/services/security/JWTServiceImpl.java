@@ -9,7 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import com.jjo.h2.config.security.SecurityConstants;
-import com.jjo.h2.exception.ErrorConstants;
+import com.jjo.h2.exception.Errors;
 import com.jjo.h2.exception.HException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -57,7 +57,7 @@ public class JWTServiceImpl implements JWTService {
       log.error("Invalid JWT token");
     } catch (ExpiredJwtException ex) {
       log.error("Expired JWT token");
-      throw new HException(ErrorConstants.EXPIRED_TOKEN);
+      throw new HException(Errors.EXPIRED_TOKEN);
     } catch (UnsupportedJwtException ex) {
       log.error("Unsupported JWT token");
     } catch (IllegalArgumentException ex) {

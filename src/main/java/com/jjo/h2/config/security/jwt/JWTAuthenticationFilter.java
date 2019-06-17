@@ -16,7 +16,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jjo.h2.config.security.SecurityConstants;
 import com.jjo.h2.dto.security.LoginDTO;
-import com.jjo.h2.exception.ErrorConstants;
+import com.jjo.h2.exception.Errors;
 import com.jjo.h2.services.security.JWTService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -49,8 +49,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
       return authenticationManager.authenticate(token);
 
     } catch (IOException e) {
-      log.error(ErrorConstants.MISMATCH_INPUT, e);
-      throw new InternalAuthenticationServiceException(ErrorConstants.MISMATCH_INPUT, e);
+      log.error(Errors.MISMATCH_INPUT.getMessage(), e);
+      throw new InternalAuthenticationServiceException(Errors.MISMATCH_INPUT.getMessage(), e);
     }
   }
 
