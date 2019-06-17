@@ -12,7 +12,6 @@ import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.neo4j.repository.config.Neo4jAuditingEventListener;
-import com.googlecode.jmapper.annotations.JMap;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -29,32 +28,23 @@ public class User implements Serializable {
 
   @Id
   @GeneratedValue
-  @JMap
   private Long id;
 
-  @JMap
   private String username;
 
-  @JMap
   private String password;
 
-  @JMap
   private String email;
 
-  @JMap
   private StatusEnum status;
-  
-  @JMap
+
   @CreatedDate
   private LocalDateTime createdDate;
 
-  @JMap
   private LocalDate passwordDate;
 
-  @JMap
   private transient Blob profilePic;
 
-  @JMap
   @Relationship(type = "HAS")
   private Set<Role> roles;
 }

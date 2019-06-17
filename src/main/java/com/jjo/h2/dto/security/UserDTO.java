@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
-import com.googlecode.jmapper.annotations.JMap;
 import com.jjo.h2.model.security.Role;
 import com.jjo.h2.model.security.StatusEnum;
 import lombok.Data;
@@ -14,32 +13,23 @@ import lombok.Data;
 @Data
 public class UserDTO {
 
-  @JMap
   private Long id;
 
-  @JMap
   private String username;
 
-  @JMap
   @NotNull
   private String password;
 
-  @JMap
   @Email
   private String email;
 
-  @JMap
   private StatusEnum status;
 
-  @JMap
   private LocalDateTime createdDate;
 
-  @JMap
   private LocalDate passwordDate;
 
-  @JMap
   private Blob profilePic;
 
-  @JMap
   private Set<Role> roles;
 }
