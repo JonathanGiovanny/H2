@@ -6,8 +6,6 @@ import com.jjo.h2.model.security.User;
 
 public interface UserService {
 
-  Boolean availableUsernameOrEmail(String usernameOrEmail);
-
   Boolean availableUsernameOrEmail(String username, String email);
 
   List<User> getUsers(Pageable pageable);

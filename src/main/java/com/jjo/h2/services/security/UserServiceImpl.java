@@ -29,13 +29,8 @@ public class UserServiceImpl implements UserService {
   private final PasswordEncoder passEncoder;
 
   @Override
-  public Boolean availableUsernameOrEmail(String usernameOrEmail) {
-    return userRepo.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail).isEmpty();
-  }
-
-  @Override
   public Boolean availableUsernameOrEmail(String username, String email) {
-    return userRepo.findByUsernameOrEmail(username, email).isEmpty();
+    return userRepo.findByUsernameOrEmail(username, email, 1).isEmpty();
   }
 
   @Override

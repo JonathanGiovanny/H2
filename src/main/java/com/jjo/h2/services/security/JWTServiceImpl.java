@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import com.jjo.h2.config.security.SecurityConstants;
 import com.jjo.h2.exception.Errors;
 import com.jjo.h2.exception.HException;
 import io.jsonwebtoken.Claims;
@@ -45,7 +44,7 @@ public class JWTServiceImpl implements JWTService {
   @Override
   public boolean validateToken(final String token) {
     try {
-      if (Objects.isNull(token) || token.isBlank() || !token.startsWith(SecurityConstants.TOKEN_PREFIX)) {
+      if (Objects.isNull(token) || token.isBlank()) {
         return false;
       }
 

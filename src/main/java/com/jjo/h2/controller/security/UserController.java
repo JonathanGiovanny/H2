@@ -32,7 +32,7 @@ public class UserController {
 
   @GetMapping("/singup/checkname/{username}")
   public ResponseEntity<Boolean> checkUsernameOrEmailAvailability(@PathVariable String username) {
-    return ResponseEntity.ok(userService.availableUsernameOrEmail(username));
+    return ResponseEntity.ok(userService.availableUsernameOrEmail(username, username));
   }
   
   @PostMapping("/singup")
