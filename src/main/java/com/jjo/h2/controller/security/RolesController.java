@@ -2,7 +2,6 @@ package com.jjo.h2.controller.security;
 
 import java.net.URI;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,13 +14,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.jjo.h2.dto.security.RoleDTO;
 import com.jjo.h2.services.security.RolesService;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/security/roles")
 public class RolesController {
 
-  @Autowired
-  private RolesService rolesService;
+  private final RolesService rolesService;
 
   @GetMapping
   public ResponseEntity<List<RoleDTO>> getRoles() {

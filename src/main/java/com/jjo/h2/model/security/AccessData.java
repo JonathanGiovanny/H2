@@ -21,6 +21,8 @@ public class AccessData implements Serializable {
    */
   private static final long serialVersionUID = -396978327961976257L;
 
+  private Long id;
+
   private Double order;
 
   @StartNode

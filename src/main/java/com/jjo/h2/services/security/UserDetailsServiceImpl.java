@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import com.jjo.h2.exception.Errors;
 import com.jjo.h2.model.security.Role;
 import com.jjo.h2.model.security.User;
+import com.jjo.h2.repositories.security.PrivilegeRepository;
+import com.jjo.h2.repositories.security.RoleRepository;
 import com.jjo.h2.repositories.security.UserRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,10 @@ import lombok.RequiredArgsConstructor;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
   private final @NonNull UserRepository userRepo;
+
+  private final @NonNull RoleRepository roleRepo;
+
+  private final @NonNull PrivilegeRepository privRepo;
 
   public UserDetails loadUserById(Long id) {
     return userRepo.findById(id).map(this::buildUserDetails)

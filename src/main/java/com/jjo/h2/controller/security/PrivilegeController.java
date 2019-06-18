@@ -2,7 +2,6 @@ package com.jjo.h2.controller.security;
 
 import java.net.URI;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,13 +15,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jjo.h2.config.security.SecurityConstants;
 import com.jjo.h2.dto.security.PrivilegeDTO;
 import com.jjo.h2.services.security.PrivilegeService;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping(SecurityConstants.SECURITY_PATH + "/privileges")
 public class PrivilegeController {
 
-  @Autowired
-  private PrivilegeService privilegeService;
+  private final @NonNull PrivilegeService privilegeService;
 
   @GetMapping
   public ResponseEntity<List<PrivilegeDTO>> getRoles(Pageable pageable) {

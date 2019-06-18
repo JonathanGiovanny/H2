@@ -2,40 +2,17 @@ package com.jjo.h2.services.security;
 
 import java.util.List;
 import org.springframework.data.domain.Pageable;
-import com.jjo.h2.dto.security.SingUpDTO;
-import com.jjo.h2.dto.security.UserDTO;
+import com.jjo.h2.model.security.User;
 
 public interface UserService {
 
-  /**
-   * Validates that the username and / or email will be unique
-   * @param usernameOrEmail
-   * @return
-   */
   Boolean availableUsernameOrEmail(String usernameOrEmail);
-  
-  /**
-   * Get all users
-   * 
-   * @param pageable
-   * @return
-   */
-  List<UserDTO> getUsers(Pageable pageable);
 
-  /**
-   * Register a user
-   * 
-   * @param user sing up form data
-   * @return
-   */
-  Long registerUser(SingUpDTO user);
+  Boolean availableUsernameOrEmail(String username, String email);
 
-  /**
-   * Update user info
-   * 
-   * @param id
-   * @param user
-   * @return
-   */
-  UserDTO updateUser(Long id, UserDTO user);
+  List<User> getUsers(Pageable pageable);
+
+  Long registerUser(User user);
+
+  User updateUser(Long id, User user);
 }
