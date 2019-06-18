@@ -22,6 +22,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jjo.h2.config.security.jwt.JWTAuthenticationFilter;
 import com.jjo.h2.config.security.jwt.JWTAuthorizationFilter;
+import com.jjo.h2.exception.Errors;
 import com.jjo.h2.services.security.JWTService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -86,7 +87,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
    */
   private void generateUnauthorizedEntry(HttpServletRequest request, HttpServletResponse response, AuthenticationException e)
       throws JsonProcessingException, IOException {
-    response.addHeader(SecurityConstants.WWW_AUTHENTICATE, "Basic realm=\"JWT\"");
+    final Errors expired = (Errors) request.getAttribute(Errors.class.getName());
+    response.addHeader(SecurityConstants.WWW_AUTHENTICATE, "Basic realm=\"JWT\", reason=\"" + (expired != null ? expired.getMessage() : e.getMessage()) + "\"");
     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
   }
 }

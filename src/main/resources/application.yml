@@ -17,7 +17,8 @@ spring:
 
 server:
    port: 8090
-   contextPath: /H
+   servlet:
+      contextPath: /H
 
 hibernate:
     dialect: default
@@ -25,4 +26,4 @@ hibernate:
 h:
    config:
       jwtSecret: UmFuZG9tIGNoYXJhY3RlciBjb3VudCB0b29sIHNvIHRoZSBzZWNyZXQga2V5IGl0cyBhdCBsZWFzdCAyNTYgY2hhcmFjdGVycyB0byBlbnN1cmUgbWF4aW11bSBzZWN1cml0eQ==
-      jwtExpiration: 1
+      jwtExpiration: 20

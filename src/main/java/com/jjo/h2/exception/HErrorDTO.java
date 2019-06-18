@@ -16,7 +16,7 @@ public class HErrorDTO {
   @JMap
   private String techMessage;
   @JMap
-  private LocalDateTime eventTime;
+  private LocalDateTime timestamp;
   @JMap
   private String path;
 }

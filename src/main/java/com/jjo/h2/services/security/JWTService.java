@@ -1,5 +1,6 @@
 package com.jjo.h2.services.security;
 
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.security.core.Authentication;
 import io.jsonwebtoken.Claims;
 
@@ -19,7 +20,7 @@ public interface JWTService {
    * @param token
    * @return
    */
-  boolean validateToken(String token);
+  boolean validateToken(String token, HttpServletRequest request);
 
   /**
    * Get the claims embedded on the token

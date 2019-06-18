@@ -130,11 +130,7 @@ public class ExceptionHandlerController {
     Set<HErrorDTO> errors = l.stream().filter(objectError -> objectError instanceof FieldError) //
         .map(objectError -> (FieldError) objectError) //
         .map(fieldError -> getMessages(fieldError))
-        .map(msgs -> HErrorDTO.builder() //
-            .eventTime(LocalDateTime.now()) //
-            .userMessage(msgs[0]) //
-            .techMessage(msgs[1]) //
-            .build())
+        .map(msgs -> exBuilder(msgs[0], msgs[1], request.getRequestURI(), exception))
         .collect(Collectors.toSet());
 
     return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(errors);
@@ -199,7 +195,7 @@ public class ExceptionHandlerController {
     return HErrorDTO.builder() //
         .userMessage(userMessage) //
         .techMessage(techMessage) //
-        .eventTime(LocalDateTime.now()) //
+        .timestamp(LocalDateTime.now()) //
         .path(path) //
         .build();
   }

@@ -28,7 +28,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
     final String token = getToken(request, response);
 
-    if (jwtService.validateToken(token)) {
+    if (jwtService.validateToken(token, request)) {
       final String username = jwtService.getClaims(token).getSubject();
 
       final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
@@ -52,7 +52,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     return Optional.ofNullable(bearerToken) //
         .filter(token -> !token.isBlank()) //
         .filter(token -> token.startsWith(SecurityConstants.TOKEN_PREFIX)) //
-        .map(token -> token.substring(SecurityConstants.TOKEN_PREFIX.length() + 1, token.length())) //
+        .map(token -> token.substring(SecurityConstants.TOKEN_PREFIX.length(), token.length())) //
         .orElse("");
   }
 }
