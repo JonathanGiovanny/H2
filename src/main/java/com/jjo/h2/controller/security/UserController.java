@@ -17,8 +17,8 @@ import com.jjo.h2.dto.security.SingUpDTO;
 import com.jjo.h2.dto.security.UserDTO;
 import com.jjo.h2.exception.Errors;
 import com.jjo.h2.exception.HException;
+import com.jjo.h2.mapper.security.UserMapper;
 import com.jjo.h2.services.security.UserService;
-import com.jjo.h2.services.security.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -28,7 +28,7 @@ public class UserController {
 
   private final UserService userService;
 
-  private final UserMapper mapper = UserMapper.INSTANCE;
+  private final UserMapper mapper;
 
   @GetMapping("/singup/checkname/{username}")
   public ResponseEntity<Boolean> checkUsernameOrEmailAvailability(@PathVariable String username) {

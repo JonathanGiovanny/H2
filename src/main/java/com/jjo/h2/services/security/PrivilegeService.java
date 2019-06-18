@@ -2,47 +2,17 @@ package com.jjo.h2.services.security;
 
 import java.util.List;
 import org.springframework.data.domain.Pageable;
-import com.jjo.h2.dto.security.PrivilegeDTO;
+import com.jjo.h2.model.security.Privilege;
 
 public interface PrivilegeService {
 
-  /**
-   * Query the privileges table to get one value per Id
-   * 
-   * @param id
-   * @return
-   */
-  PrivilegeDTO getPrivilege(Long id);
+  Privilege getPrivilege(Long id);
 
-  /**
-   * Get all the privileges
-   * 
-   * @param pageable
-   * @return
-   */
-  List<PrivilegeDTO> findAll(Pageable pageable);
+  List<Privilege> findAll(Pageable pageable);
 
-  /**
-   * Save the privilege
-   * 
-   * @param privilege
-   * @return
-   */
-  PrivilegeDTO savePrivilege(PrivilegeDTO privilege);
+  Privilege savePrivilege(Privilege privilege);
 
-  /**
-   * Update the privilege
-   * 
-   * @param id
-   * @param privilegeDto
-   * @return
-   */
-  PrivilegeDTO updatePrivilege(Long id, PrivilegeDTO privilegeDto);
+  Privilege updatePrivilege(Long id, Privilege privilegeDto);
 
-  /**
-   * Delete one privilege
-   * 
-   * @param id
-   */
   void deletePrivilege(Long id);
 }

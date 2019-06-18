@@ -3,77 +3,52 @@ package com.jjo.h2.services.security;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.jjo.h2.config.DatasourceNeo4j;
-import com.jjo.h2.dto.security.RoleDTO;
 import com.jjo.h2.model.security.Role;
 import com.jjo.h2.repositories.security.RoleRepository;
-import com.jjo.h2.utils.MapperUtil;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 @Service
 @Transactional(value = DatasourceNeo4j.TRANSACTION_MANAGER)
 public class RolesServiceImpl implements RolesService {
 
-  @Autowired
-  private RoleRepository roleRepo;
-
-  @Autowired
-  private MapperUtil mapperUtil;
+  private final @NonNull RoleRepository roleRepo;
 
   @Override
-  public RoleDTO getRoleById(Long id) {
-    return toDTO(roleRepo.findById(id).orElseThrow());
+  public Role getRoleById(Long id) {
+    return roleRepo.findById(id).orElseThrow();
   }
 
   @Override
-  public List<RoleDTO> getRoles() {
-    return StreamSupport.stream(roleRepo.findAll().spliterator(), false).map(this::toDTO).collect(Collectors.toList());
+  public List<Role> getRoles() {
+    return StreamSupport.stream(roleRepo.findAll().spliterator(), false).collect(Collectors.toList());
   }
 
   @Override
-  public Long createRole(RoleDTO role) {
-    return roleRepo.save(toEntity(role)).getId();
+  public Role createRole(Role role) {
+    return roleRepo.save(role);
   }
 
   @Override
-  public RoleDTO updateRole(Long id, RoleDTO role) {
+  public Role updateRole(Long id, Role role) {
     Role entity = roleRepo.findById(id).orElseThrow();
     entity.setName(role.getName());
-    return toDTO(roleRepo.save(entity));
+    return roleRepo.save(entity);
   }
 
   @Override
-  public RoleDTO updateRolePrivileges(Long id, RoleDTO role) {
+  public Role updateRolePrivileges(Long id, Role role) {
     Role entity = roleRepo.findById(id).orElseThrow();
-    Role incomingData = toEntity(role);
-    entity.setPrivileges(incomingData.getPrivileges());
-    return toDTO(roleRepo.save(entity));
+    entity.setPrivileges(role.getPrivileges());
+    return roleRepo.save(entity);
   }
 
   @Override
   public void deleteRole(Long id) {
     roleRepo.deleteById(id);
-  }
-
-  /**
-   * Call the mapper and transform the object
-   * 
-   * @param dto
-   * @return
-   */
-  private Role toEntity(RoleDTO dto) {
-    return mapperUtil.getMapper(Role.class, RoleDTO.class).getDestination(dto);
-  }
-
-  /**
-   * Call the mapper and transform the object
-   * 
-   * @param entity
-   * @return
-   */
-  private RoleDTO toDTO(Role entity) {
-    return mapperUtil.getMapper(RoleDTO.class, Role.class).getDestination(entity);
   }
 }

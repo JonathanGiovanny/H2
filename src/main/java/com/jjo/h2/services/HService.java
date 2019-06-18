@@ -2,25 +2,14 @@ package com.jjo.h2.services;
 
 import java.util.List;
 import org.springframework.data.domain.Pageable;
-import com.jjo.h2.dto.HDTO;
+import com.jjo.h2.exception.HError;
+import com.jjo.h2.model.H;
 
 public interface HService {
 
-  /**
-   * Get an specific H by its id
-   * 
-   * @param id
-   * @return
-   */
-  HDTO getH(Long id);
+  H getH(Long id);
 
-  /**
-   * Save / Update the record
-   * 
-   * @param h
-   * @return
-   */
-  HDTO saveH(HDTO h);
+  H saveH(H h);
 
   /**
    * Modify an entity with out changing the tags or clicks
@@ -28,7 +17,7 @@ public interface HService {
    * @param h
    * @return
    */
-  HDTO updateH(Long id, HDTO h);
+  H updateH(Long id, H h);
 
   /**
    * Get all the H records based on the filter
@@ -37,7 +26,7 @@ public interface HService {
    * @param pageable
    * @return
    */
-  List<HDTO> findAll(HDTO filter, Pageable pageable);
+  List<H> findAll(H filter, Pageable pageable);
 
   /**
    * Get all the H records
@@ -45,7 +34,7 @@ public interface HService {
    * @param pageable
    * @return
    */
-  List<HDTO> findAll(Pageable pageable);
+  List<H> findAll(Pageable pageable);
 
   /**
    * Delete a record based on the id
@@ -61,5 +50,5 @@ public interface HService {
    * @param id
    * @return
    */
-  HDTO increaseClick(Long id);
+  H increaseClick(Long id);
 }

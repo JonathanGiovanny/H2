@@ -1,4 +1,4 @@
-package com.jjo.h2.services.exception;
+package com.jjo.h2.config.security;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;

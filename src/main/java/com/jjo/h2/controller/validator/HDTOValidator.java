@@ -1,6 +1,5 @@
 package com.jjo.h2.controller.validator;
 
-import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -24,7 +23,7 @@ public class HDTOValidator implements Validator {
 
   @Override
   public boolean supports(Class<?> clazz) {
-    return HDTO.class.isAssignableFrom(clazz) || List.class.isAssignableFrom(clazz);
+    return HDTO.class.isAssignableFrom(clazz);
   }
 
   @Override

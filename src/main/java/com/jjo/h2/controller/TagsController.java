@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.jjo.h2.dto.TagsDTO;
+import com.jjo.h2.mapper.TagsMapper;
 import com.jjo.h2.services.TagsService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -25,29 +26,31 @@ public class TagsController {
 
   private final @NonNull TagsService tagsService;
 
+  private final @NonNull TagsMapper mapper;
+
   @GetMapping("/{id}")
   public ResponseEntity<TagsDTO> getTag(@PathVariable Long id) {
-    return ResponseEntity.ok(tagsService.getTag(id));
+    return ResponseEntity.ok(mapper.entityToDto(tagsService.getTag(id)));
   }
 
   @GetMapping("/search/{filter}")
   public ResponseEntity<List<TagsDTO>> findByFilter(@PathVariable String filter, Pageable pageable) {
-    return ResponseEntity.ok(tagsService.findByNameLike(filter, pageable));
+    return ResponseEntity.ok(mapper.entityToDto(tagsService.findByNameLike(filter, pageable)));
   }
 
   @GetMapping
   public ResponseEntity<List<TagsDTO>> findAll(Pageable pageable) {
-    return ResponseEntity.ok(tagsService.findAll(pageable));
+    return ResponseEntity.ok(mapper.entityToDto(tagsService.findAll(pageable)));
   }
 
   @PostMapping
   public ResponseEntity<Void> saveTag(@Valid @RequestBody TagsDTO tag) {
-    return ResponseEntity.created(URI.create(tagsService.saveTag(tag).getId().toString())).build();
+    return ResponseEntity.created(URI.create(tagsService.saveTag(mapper.dtoToEntity(tag)).getId().toString())).build();
   }
 
   @PutMapping("/{id}")
   public ResponseEntity<TagsDTO> updateTag(@PathVariable Long id, @Valid @RequestBody TagsDTO tag) {
-    return ResponseEntity.ok(tagsService.updateTag(id, tag));
+    return ResponseEntity.ok(mapper.entityToDto(tagsService.updateTag(id, mapper.dtoToEntity(tag))));
   }
 
   @DeleteMapping("/{id}")

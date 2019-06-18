@@ -14,7 +14,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import com.googlecode.jmapper.annotations.JMap;
 import com.jjo.h2.model.audit.Auditable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -33,37 +32,29 @@ public class H extends Auditable implements Serializable {
   private static final long serialVersionUID = 4709089064220157044L;
 
   @Id
-  @JMap
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "H_ID")
   private Long id;
 
-  @JMap
   @Column(name = "H_NAME")
   private String name;
 
-  @JMap
   @Column(name = "H_URL", nullable = false)
   private String url;
 
-  @JMap
   @Column(name = "H_COVER")
   private String cover;
 
-  @JMap
   @Column(name = "H_CLICKS")
   private Long clicks;
 
-  @JMap
   @Column(name = "H_SCORE")
   private Double score;
 
-  @JMap
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "H_TYPE__HT_ID")
   private HType type;
 
-  @JMap
   @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
   @JoinTable(name = "H_TAGS",
       joinColumns = @JoinColumn(name = "H_ID", referencedColumnName = "H_ID"),

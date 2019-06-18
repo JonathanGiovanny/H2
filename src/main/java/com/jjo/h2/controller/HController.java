@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.jjo.h2.controller.validator.HDTOValidator;
-import com.jjo.h2.controller.validator.ValidList;
 import com.jjo.h2.dto.HDTO;
+import com.jjo.h2.mapper.HMapper;
 import com.jjo.h2.services.HService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -31,8 +31,10 @@ public class HController {
 
   private final @NonNull HService hService;
 
-  private final HDTOValidator hValid;
+  private final @NonNull HDTOValidator hValid;
 
+  private final @NonNull HMapper mapper;
+  
   @InitBinder
   protected void initBinder(WebDataBinder binder) {
     binder.addValidators(hValid);
@@ -40,27 +42,27 @@ public class HController {
 
   @GetMapping("/{id}")
   public ResponseEntity<HDTO> getH(@PathVariable Long id) {
-    return ResponseEntity.ok(hService.getH(id));
+    return ResponseEntity.ok(mapper.entityToDTO(hService.getH(id)));
   }
 
   @GetMapping
   public ResponseEntity<List<HDTO>> findAll(Pageable pageable) {
-    return ResponseEntity.ok(hService.findAll(pageable));
+    return ResponseEntity.ok(mapper.entityToDTO(hService.findAll(pageable)));
   }
 
   @PostMapping("/search")
   public ResponseEntity<List<HDTO>> searchH(@RequestBody HDTO h, Pageable pageable) {
-    return ResponseEntity.ok(hService.findAll(h, pageable));
+    return ResponseEntity.ok(mapper.entityToDTO(hService.findAll(mapper.dtoToEntity(h), pageable)));
   }
 
   @PostMapping
-  public ResponseEntity<Void> saveH(@Valid @ValidList @RequestBody List<HDTO> h) {
-    return ResponseEntity.created(URI.create(hService.saveH(h.get(0)).getId().toString())).build();
+  public ResponseEntity<Void> saveH(@Valid @RequestBody HDTO h) {
+    return ResponseEntity.created(URI.create(hService.saveH(mapper.dtoToEntity(h)).getId().toString())).build();
   }
 
   @PatchMapping("/{id}")
   public ResponseEntity<HDTO> saveH(@PathVariable Long id, @Valid @RequestBody HDTO h) {
-    return ResponseEntity.ok(hService.updateH(id, h));
+    return ResponseEntity.ok(mapper.entityToDTO(hService.updateH(id, mapper.dtoToEntity(h))));
   }
 
   @DeleteMapping("/{id}")
@@ -71,6 +73,6 @@ public class HController {
 
   @PatchMapping("/{id}/click")
   public ResponseEntity<HDTO> increaseClick(@PathVariable Long id) {
-    return ResponseEntity.ok(hService.increaseClick(id));
+    return ResponseEntity.ok(mapper.entityToDTO(hService.increaseClick(id)));
   }
 }

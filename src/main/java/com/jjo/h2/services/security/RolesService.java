@@ -1,41 +1,17 @@
 package com.jjo.h2.services.security;
 
 import java.util.List;
-import com.jjo.h2.dto.security.RoleDTO;
+import com.jjo.h2.model.security.Role;
 
 public interface RolesService {
 
-  /**
-   * Get the role by its id
-   * 
-   * @param id
-   * @return
-   */
-  RoleDTO getRoleById(Long id);
+  Role getRoleById(Long id);
 
-  /**
-   * Get all roles (not paginated because it is not intended to have many)
-   * 
-   * @return
-   */
-  List<RoleDTO> getRoles();
+  List<Role> getRoles();
 
-  /**
-   * Create a role
-   * 
-   * @param role
-   * @return
-   */
-  Long createRole(RoleDTO role);
+  Role createRole(Role role);
 
-  /**
-   * Update the role with the id
-   * 
-   * @param id
-   * @param role
-   * @return
-   */
-  RoleDTO updateRole(Long id, RoleDTO role);
+  Role updateRole(Long id, Role role);
 
   /**
    * Update the list of privileges for a Role
@@ -44,12 +20,7 @@ public interface RolesService {
    * @param role
    * @return
    */
-  RoleDTO updateRolePrivileges(Long id, RoleDTO role);
+  Role updateRolePrivileges(Long id, Role role);
 
-  /**
-   * Delete the role with the id
-   * 
-   * @param id
-   */
   void deleteRole(Long id);
 }

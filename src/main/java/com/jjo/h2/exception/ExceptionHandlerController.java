@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolationException;
 import org.hibernate.exception.SQLGrammarException;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import com.googlecode.jmapper.exceptions.JMapperException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -37,7 +37,8 @@ public class ExceptionHandlerController {
    */
   @ExceptionHandler(HException.class)
   protected ResponseEntity<Set<HErrorDTO>> handleHException(final HttpServletRequest request, final HException exception) {
-    return ResponseEntity.badRequest().body(Set.of(exBuilder(exception.getUserMessage(), exception.getTechMessage(), request.getRequestURI(), exception)));
+    return ResponseEntity.badRequest()
+        .body(Set.of(exBuilder(exception.getUserMessage(), exception.getTechMessage(), request.getRequestURI(), exception)));
   }
 
   /**
@@ -48,7 +49,8 @@ public class ExceptionHandlerController {
    */
   @ExceptionHandler(Exception.class)
   protected ResponseEntity<Set<HErrorDTO>> handleOtherException(final HttpServletRequest request, final Exception exception) {
-    return ResponseEntity.badRequest().body(Set.of(exBuilder(Errors.GENERIC_ERROR.getCode(), Errors.GENERIC_ERROR.getMessage(), request.getRequestURI(), exception)));
+    return ResponseEntity.badRequest()
+        .body(Set.of(exBuilder(Errors.GENERIC_ERROR.getCode(), Errors.GENERIC_ERROR.getMessage(), request.getRequestURI(), exception)));
   }
 
   /**
@@ -59,7 +61,8 @@ public class ExceptionHandlerController {
    */
   @ExceptionHandler(NoSuchElementException.class)
   protected ResponseEntity<Set<HErrorDTO>> handleNoElementException(final HttpServletRequest request, final Exception exception) {
-    return ResponseEntity.badRequest().body(Set.of(exBuilder(Errors.NO_DATA.getCode(), Errors.NO_DATA.getMessage(), request.getRequestURI(), exception)));
+    return ResponseEntity.badRequest()
+        .body(Set.of(exBuilder(Errors.NO_DATA.getCode(), Errors.NO_DATA.getMessage(), request.getRequestURI(), exception)));
   }
 
   /**
@@ -72,23 +75,6 @@ public class ExceptionHandlerController {
   @ExceptionHandler(EntityNotFoundException.class)
   protected ResponseEntity<Set<HErrorDTO>> handleEntityNotFoundException(final HttpServletRequest request, final Exception exception) {
     return ResponseEntity.badRequest().body(Set.of(exBuilder(exception.getMessage(), exception.getMessage(), request.getRequestURI(), exception)));
-  }
-
-  /**
-   * Error generated for the mapper
-   * 
-   * @param request
-   * @param exception
-   * @return
-   * @throws Throwable
-   */
-  @ExceptionHandler(JMapperException.class)
-  protected ResponseEntity<Set<HErrorDTO>> handleMapperException(final HttpServletRequest request, final Exception exception) throws Throwable {
-    if (exception.getCause() instanceof EntityNotFoundException) {
-      EntityNotFoundException entityException = (EntityNotFoundException) exception.getCause();
-      return handleEntityNotFoundException(request, entityException);
-    }
-    return ResponseEntity.badRequest().body(Set.of(exBuilder(Errors.GENERIC_ERROR.getCode(), Errors.GENERIC_ERROR.getCode(), request.getRequestURI(), exception)));
   }
 
   /**
@@ -115,8 +101,20 @@ public class ExceptionHandlerController {
     return ResponseEntity.badRequest().body(Set.of(exBuilder(userErrorMessage, techErrorMessage, request.getRequestURI(), exception)));
   }
 
+  @ExceptionHandler({ConstraintViolationException.class})
+  protected ResponseEntity<Set<HErrorDTO>> handleConstraintViolationException(final HttpServletRequest request, final Exception exception) {
+    ConstraintViolationException constraintViolation = (ConstraintViolationException) exception;
+    Set<HErrorDTO> errors = constraintViolation.getConstraintViolations().stream().distinct()
+        .map(constraint -> {
+          final String message = constraint.getPropertyPath().toString() + " " + constraint.getMessage();
+          return exBuilder(message, message, request.getRequestURI(), exception);
+        })
+        .collect(Collectors.toSet());
+    return ResponseEntity.badRequest().body(errors);
+  }
+
   /**
-   * Javax validations exception
+   * Spring validations exception
    * 
    * @param exception
    * @return
@@ -129,8 +127,7 @@ public class ExceptionHandlerController {
 
     Set<HErrorDTO> errors = l.stream().filter(objectError -> objectError instanceof FieldError) //
         .map(objectError -> (FieldError) objectError) //
-        .map(fieldError -> getMessages(fieldError))
-        .map(msgs -> exBuilder(msgs[0], msgs[1], request.getRequestURI(), exception))
+        .map(fieldError -> getMessages(fieldError)).map(msgs -> exBuilder(msgs[0], msgs[1], request.getRequestURI(), exception))
         .collect(Collectors.toSet());
 
     return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(errors);
@@ -144,7 +141,8 @@ public class ExceptionHandlerController {
    */
   @ExceptionHandler(DateTimeParseException.class)
   protected ResponseEntity<Set<HErrorDTO>> handleDateTimeParseException(final HttpServletRequest request, final DateTimeParseException exception) {
-    return ResponseEntity.badRequest().body(Set.of(exBuilder(Errors.INVALID_DATE_FORMAT.getCode(), Errors.INVALID_DATE_FORMAT.getMessage(), request.getRequestURI(), exception)));
+    return ResponseEntity.badRequest()
+        .body(Set.of(exBuilder(Errors.INVALID_DATE_FORMAT.getCode(), Errors.INVALID_DATE_FORMAT.getMessage(), request.getRequestURI(), exception)));
   }
 
   @ExceptionHandler({SQLException.class, SQLGrammarException.class, InvalidDataAccessResourceUsageException.class})

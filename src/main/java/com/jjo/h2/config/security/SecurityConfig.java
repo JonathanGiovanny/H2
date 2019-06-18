@@ -88,7 +88,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   private void generateUnauthorizedEntry(HttpServletRequest request, HttpServletResponse response, AuthenticationException e)
       throws JsonProcessingException, IOException {
     final Errors expired = (Errors) request.getAttribute(Errors.class.getName());
-    response.addHeader(SecurityConstants.WWW_AUTHENTICATE, "Basic realm=\"JWT\", reason=\"" + (expired != null ? expired.getMessage() : e.getMessage()) + "\"");
+    response.addHeader(SecurityConstants.WWW_AUTHENTICATE, "Basic realm=\"JWT\", error_description=\"" + (expired != null ? expired.getMessage() : e.getMessage()) + "\"");
     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
   }
 }

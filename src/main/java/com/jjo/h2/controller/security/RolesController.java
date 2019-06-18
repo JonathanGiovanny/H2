@@ -12,40 +12,45 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.jjo.h2.config.security.SecurityConstants;
 import com.jjo.h2.dto.security.RoleDTO;
+import com.jjo.h2.mapper.security.RoleMapper;
 import com.jjo.h2.services.security.RolesService;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/security/roles")
+@RequestMapping(SecurityConstants.SECURITY_PATH + "/roles")
 public class RolesController {
 
-  private final RolesService rolesService;
+  private final @NonNull RolesService rolesService;
+
+  private final @NonNull RoleMapper mapper;
 
   @GetMapping
   public ResponseEntity<List<RoleDTO>> getRoles() {
-    return ResponseEntity.ok(rolesService.getRoles());
+    return ResponseEntity.ok(mapper.entityToDto(rolesService.getRoles()));
   }
 
   @GetMapping("/{id}")
   public ResponseEntity<RoleDTO> getRoles(@PathVariable Long id) {
-    return ResponseEntity.ok(rolesService.getRoleById(id));
+    return ResponseEntity.ok(mapper.entityToDto(rolesService.getRoleById(id)));
   }
 
   @PostMapping
   public ResponseEntity<Void> saveRole(@RequestBody RoleDTO role) {
-    return ResponseEntity.created(URI.create(rolesService.createRole(role).toString())).build();
+    return ResponseEntity.created(URI.create(rolesService.createRole(mapper.dtoToEntity(role)).toString())).build();
   }
 
   @PutMapping("/{id}")
   public ResponseEntity<RoleDTO> updateRole(@PathVariable Long id, @RequestBody RoleDTO role) {
-    return ResponseEntity.ok(rolesService.updateRole(id, role));
+    return ResponseEntity.ok(mapper.entityToDto(rolesService.updateRole(id, mapper.dtoToEntity(role))));
   }
 
   @PatchMapping("/{id}/privileges")
   public ResponseEntity<RoleDTO> updateRolePriv(@PathVariable Long id, @RequestBody RoleDTO role) {
-    return ResponseEntity.ok(rolesService.updateRolePrivileges(id, role));
+    return ResponseEntity.ok(mapper.entityToDto(rolesService.updateRolePrivileges(id, mapper.dtoToEntity(role))));
   }
 
   @DeleteMapping("/{id}")

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.jjo.h2.config.security.SecurityConstants;
 import com.jjo.h2.dto.security.PrivilegeDTO;
+import com.jjo.h2.mapper.security.PrivilegeMapper;
 import com.jjo.h2.services.security.PrivilegeService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -25,19 +26,21 @@ public class PrivilegeController {
 
   private final @NonNull PrivilegeService privilegeService;
 
+  private final @NonNull PrivilegeMapper mapper;
+
   @GetMapping
   public ResponseEntity<List<PrivilegeDTO>> getRoles(Pageable pageable) {
-    return ResponseEntity.ok(privilegeService.findAll(pageable));
+    return ResponseEntity.ok(mapper.entityToDto(privilegeService.findAll(pageable)));
   }
 
   @PostMapping
   public ResponseEntity<Void> saveRole(@RequestBody PrivilegeDTO privilege) {
-    return ResponseEntity.created(URI.create(privilegeService.savePrivilege(privilege).getId().toString())).build();
+    return ResponseEntity.created(URI.create(privilegeService.savePrivilege(mapper.dtoToEntity(privilege)).getId().toString())).build();
   }
 
   @PutMapping("/{id}")
   public ResponseEntity<PrivilegeDTO> updateRole(@PathVariable Long id, @RequestBody PrivilegeDTO privilege) {
-    return ResponseEntity.ok(privilegeService.updatePrivilege(id, privilege));
+    return ResponseEntity.ok(mapper.entityToDto(privilegeService.updatePrivilege(id, mapper.dtoToEntity(privilege))));
   }
 
   @DeleteMapping("/{id}")

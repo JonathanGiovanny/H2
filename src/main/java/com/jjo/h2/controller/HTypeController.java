@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.jjo.h2.controller.validator.HTypeValidator;
 import com.jjo.h2.dto.HTypeDTO;
+import com.jjo.h2.mapper.HTypeMapper;
 import com.jjo.h2.services.HTypeService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,8 @@ public class HTypeController {
 
   private final @NonNull HTypeValidator htValidator;
 
+  private final @NonNull HTypeMapper mapper;
+
   @InitBinder
   protected void initBinder(WebDataBinder binder) {
     binder.addValidators(htValidator);
@@ -37,29 +40,29 @@ public class HTypeController {
 
   @GetMapping("/{id}")
   public ResponseEntity<HTypeDTO> getHType(@PathVariable Integer id) {
-    return ResponseEntity.ok(hTypeService.getHType(id));
+    return ResponseEntity.ok(mapper.entityToDto(hTypeService.getHType(id)));
   }
 
   @GetMapping
   public ResponseEntity<List<HTypeDTO>> findAll(Pageable pageable) {
-    return ResponseEntity.ok(hTypeService.findAll(pageable));
+    return ResponseEntity.ok(mapper.entityToDto(hTypeService.findAll(pageable)));
   }
 
   @GetMapping("/search/{filter}")
   public ResponseEntity<List<HTypeDTO>> findByFilter(@PathVariable String filter, Pageable pageable) {
-    return ResponseEntity.ok(hTypeService.findByNameLike(filter, pageable));
+    return ResponseEntity.ok(mapper.entityToDto(hTypeService.findByNameLike(filter, pageable)));
   }
 
   @PostMapping
   public ResponseEntity<HTypeDTO> saveHType(@Valid @RequestBody HTypeDTO hType) {
-    HTypeDTO savedHt = hTypeService.saveHType(hType);
+    HTypeDTO savedHt = mapper.entityToDto(hTypeService.saveHType(mapper.dtoToEntity(hType)));
     return ResponseEntity.created(URI.create(savedHt.getId().toString())).build();
   }
 
   @PutMapping("/{id}")
   public ResponseEntity<HTypeDTO> updateHType(@PathVariable Integer id, @Valid @RequestBody HTypeDTO hType) {
     hType.setId(id);
-    return ResponseEntity.ok(hTypeService.saveHType(hType));
+    return ResponseEntity.ok(mapper.entityToDto(hTypeService.saveHType(mapper.dtoToEntity(hType))));
   }
 
   @DeleteMapping("/{id}")

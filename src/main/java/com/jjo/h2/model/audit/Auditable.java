@@ -9,7 +9,6 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import com.googlecode.jmapper.annotations.JMap;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,7 +32,6 @@ public class Auditable implements Serializable {
   @Column(name = "CREATED_BY")
   private String createdBy;
 
-  @JMap
   @LastModifiedDate
   @Column(name = "MODIFIED_DATE")
   private LocalDateTime modifiedDate;
