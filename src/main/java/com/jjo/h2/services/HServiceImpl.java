@@ -29,8 +29,7 @@ public class HServiceImpl implements HService {
 
   private final @NonNull TagsService tagsService;
 
-  @Override
-  public H getH(Long id) {
+  private H getH(Long id) {
     return hRepo.findById(id).orElse(null);
   }
 

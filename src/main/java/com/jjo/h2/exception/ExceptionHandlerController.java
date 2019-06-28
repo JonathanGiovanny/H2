@@ -11,12 +11,13 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolationException;
 import org.hibernate.exception.SQLGrammarException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -53,6 +54,12 @@ public class ExceptionHandlerController {
         .body(Set.of(exBuilder(Errors.GENERIC_ERROR.getCode(), Errors.GENERIC_ERROR.getMessage(), request.getRequestURI(), exception)));
   }
 
+  @ExceptionHandler({AccessDeniedException.class})
+  protected ResponseEntity<Set<HErrorDTO>> handleAccessDeniedException(final HttpServletRequest request, final Exception exception) {
+    return ResponseEntity.status(HttpStatus.FORBIDDEN)
+        .body(Set.of(exBuilder(Errors.UNAUTHORIZED_REQUEST.getCode(), Errors.UNAUTHORIZED_REQUEST.getMessage(), request.getRequestURI(), exception)));
+  }
+
   /**
    * Functional exception, generic message
    * 
@@ -65,24 +72,11 @@ public class ExceptionHandlerController {
         .body(Set.of(exBuilder(Errors.NO_DATA.getCode(), Errors.NO_DATA.getMessage(), request.getRequestURI(), exception)));
   }
 
-  /**
-   * Not data found for a specific value
-   * 
-   * @param request
-   * @param exception
-   * @return
-   */
   @ExceptionHandler(EntityNotFoundException.class)
   protected ResponseEntity<Set<HErrorDTO>> handleEntityNotFoundException(final HttpServletRequest request, final Exception exception) {
     return ResponseEntity.badRequest().body(Set.of(exBuilder(exception.getMessage(), exception.getMessage(), request.getRequestURI(), exception)));
   }
 
-  /**
-   * Wrong signature for the request
-   * 
-   * @param exception
-   * @return
-   */
   @ExceptionHandler({MismatchedInputException.class, HttpMessageNotReadableException.class})
   protected ResponseEntity<Set<HErrorDTO>> handleJSONException(final HttpServletRequest request, final Exception exception) {
     String exMessage = exception.getMessage();
@@ -101,16 +95,11 @@ public class ExceptionHandlerController {
     return ResponseEntity.badRequest().body(Set.of(exBuilder(userErrorMessage, techErrorMessage, request.getRequestURI(), exception)));
   }
 
-  @ExceptionHandler({ConstraintViolationException.class})
+  @ExceptionHandler({DataIntegrityViolationException.class})
   protected ResponseEntity<Set<HErrorDTO>> handleConstraintViolationException(final HttpServletRequest request, final Exception exception) {
-    ConstraintViolationException constraintViolation = (ConstraintViolationException) exception;
-    Set<HErrorDTO> errors = constraintViolation.getConstraintViolations().stream().distinct()
-        .map(constraint -> {
-          final String message = constraint.getPropertyPath().toString() + " " + constraint.getMessage();
-          return exBuilder(message, message, request.getRequestURI(), exception);
-        })
-        .collect(Collectors.toSet());
-    return ResponseEntity.badRequest().body(errors);
+    DataIntegrityViolationException dataIntegrityViolation = (DataIntegrityViolationException) exception;
+    return ResponseEntity.badRequest()
+        .body(Set.of(exBuilder(Errors.BAD_QUERY.getCode(), dataIntegrityViolation.getMessage(), request.getRequestURI(), exception)));
   }
 
   /**

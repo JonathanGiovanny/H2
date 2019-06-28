@@ -7,8 +7,6 @@ import com.jjo.h2.model.H;
 
 public interface HService {
 
-  H getH(Long id);
-
   H saveH(H h);
 
   /**

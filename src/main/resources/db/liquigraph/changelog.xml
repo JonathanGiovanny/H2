@@ -44,4 +44,8 @@
         						status: 'A'})</query>
         <query>MATCH (u: User {username: 'admin'}), (r:Role {name: 'ROLE_ADMIN'}) CREATE (u) -[:HAS]-> (r)</query>
     </changeset>
+
+	<changeset id="REMOVE_USER_READ_H_PRIV" author="jonathan.camargo">
+		<query>MATCH (:Role {name:'ROLE_USER'})-[r:HAS_ACCESS_TO]->(:Privilege {name: 'READ_H'}) DELETE r</query>
+	</changeset>
 </changelog>
