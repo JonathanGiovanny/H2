@@ -1,10 +1,13 @@
 package com.jjo.h2.controller;
 
+import static com.jjo.h2.config.security.SecurityConstants.DELETE_TYPES;
+import static com.jjo.h2.config.security.SecurityConstants.MODIFY_TYPES;
 import java.net.URI;
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,18 +57,21 @@ public class HTypeController {
   }
 
   @PostMapping
+  @PreAuthorize(MODIFY_TYPES)
   public ResponseEntity<HTypeDTO> saveHType(@Valid @RequestBody HTypeDTO hType) {
     HTypeDTO savedHt = mapper.entityToDto(hTypeService.saveHType(mapper.dtoToEntity(hType)));
     return ResponseEntity.created(URI.create(savedHt.getId().toString())).build();
   }
 
   @PutMapping("/{id}")
+  @PreAuthorize(MODIFY_TYPES)
   public ResponseEntity<HTypeDTO> updateHType(@PathVariable Integer id, @Valid @RequestBody HTypeDTO hType) {
     hType.setId(id);
     return ResponseEntity.ok(mapper.entityToDto(hTypeService.saveHType(mapper.dtoToEntity(hType))));
   }
 
   @DeleteMapping("/{id}")
+  @PreAuthorize(DELETE_TYPES)
   public ResponseEntity<Void> saveHType(@PathVariable Integer id) {
     hTypeService.deleteHType(id);
     return ResponseEntity.noContent().build();

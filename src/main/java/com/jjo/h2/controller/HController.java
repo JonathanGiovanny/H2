@@ -1,9 +1,7 @@
 package com.jjo.h2.controller;
 
 import static com.jjo.h2.config.security.SecurityConstants.DELETE_H;
-import static com.jjo.h2.config.security.SecurityConstants.FILTER_H;
 import static com.jjo.h2.config.security.SecurityConstants.MODIFY_H;
-import static com.jjo.h2.config.security.SecurityConstants.READ_H;
 import java.net.URI;
 import java.security.Principal;
 import java.util.List;
@@ -47,13 +45,11 @@ public class HController {
   }
 
   @GetMapping
-  @PreAuthorize(READ_H)
   public ResponseEntity<List<HDTO>> findAll(Pageable pageable, Principal principal) {
     return ResponseEntity.ok(mapper.entityToDTO(hService.findAll(pageable)));
   }
 
   @PostMapping("/search")
-  @PreAuthorize(FILTER_H)
   public ResponseEntity<List<HDTO>> searchH(@RequestBody HDTO h, Pageable pageable) {
     return ResponseEntity.ok(mapper.entityToDTO(hService.findAll(mapper.dtoToEntity(h), pageable)));
   }

@@ -1,5 +1,6 @@
 package com.jjo.h2.services.security;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.security.core.GrantedAuthority;
@@ -10,6 +11,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import com.jjo.h2.exception.Errors;
+import com.jjo.h2.model.security.AccessData;
+import com.jjo.h2.model.security.Privilege;
 import com.jjo.h2.model.security.Role;
 import com.jjo.h2.model.security.User;
 import com.jjo.h2.repositories.security.PrivilegeRepository;
@@ -60,7 +63,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
    * @return
    */
   private Set<GrantedAuthority> getGrantedAuthorities(Set<Role> roles) {
-    return roles.stream().flatMap(r -> r.getPrivileges().stream()).map(p -> p.getPrivilege().getName()).distinct().map(SimpleGrantedAuthority::new)
-        .collect(Collectors.toSet());
+    return roles.stream().map(r -> Optional.ofNullable(r.getPrivileges()).orElse(Set.of())).flatMap(Set::stream).map(AccessData::getPrivilege)
+        .map(Privilege::getName).distinct().map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
   }
 }

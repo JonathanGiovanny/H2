@@ -1,9 +1,11 @@
 package com.jjo.h2.controller.security;
 
+import static com.jjo.h2.config.security.SecurityConstants.ADMIN;
 import java.net.URI;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
+@PreAuthorize(ADMIN)
 @RequestMapping(SecurityConstants.SECURITY_PATH + "/privileges")
 public class PrivilegeController {
 
@@ -44,7 +47,7 @@ public class PrivilegeController {
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> updateRole(@PathVariable Long id) {
+  public ResponseEntity<Void> deleteRole(@PathVariable Long id) {
     privilegeService.deletePrivilege(id);
     return ResponseEntity.noContent().build();
   }

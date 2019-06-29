@@ -1,10 +1,12 @@
 package com.jjo.h2.controller.security;
 
+import static com.jjo.h2.config.security.SecurityConstants.ADMIN;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,6 +46,7 @@ public class UserController {
   }
 
   @GetMapping("/users")
+  @PreAuthorize(ADMIN)
   public ResponseEntity<List<UserDTO>> getUsers(Pageable pageable) {
     return ResponseEntity.ok(userService.getUsers(pageable).stream().map(mapper::entityToDto).collect(Collectors.toList()));
   }

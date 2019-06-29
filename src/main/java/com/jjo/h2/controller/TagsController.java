@@ -1,10 +1,13 @@
 package com.jjo.h2.controller;
 
+import static com.jjo.h2.config.security.SecurityConstants.DELETE_TAGS;
+import static com.jjo.h2.config.security.SecurityConstants.MODIFY_TAGS;
 import java.net.URI;
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,16 +47,19 @@ public class TagsController {
   }
 
   @PostMapping
+  @PreAuthorize(MODIFY_TAGS)
   public ResponseEntity<Void> saveTag(@Valid @RequestBody TagsDTO tag) {
     return ResponseEntity.created(URI.create(tagsService.saveTag(mapper.dtoToEntity(tag)).getId().toString())).build();
   }
 
   @PutMapping("/{id}")
+  @PreAuthorize(MODIFY_TAGS)
   public ResponseEntity<TagsDTO> updateTag(@PathVariable Long id, @Valid @RequestBody TagsDTO tag) {
     return ResponseEntity.ok(mapper.entityToDto(tagsService.updateTag(id, mapper.dtoToEntity(tag))));
   }
 
   @DeleteMapping("/{id}")
+  @PreAuthorize(DELETE_TAGS)
   public ResponseEntity<Void> deleteTag(@PathVariable Long id) {
     tagsService.deleteTag(id);
     return ResponseEntity.noContent().build();

@@ -39,7 +39,7 @@
 
     <changeset id="CREATE_USERS" author="jonathan.camargo">
         <query>CREATE (u:User {username:'admin',
-        						password:'$2y$12$BDkDyb4OqEkiVh0o8.RliO2D7NKwrKyHByNNBUzW.WJE7H47MPnxm',
+        						password:'$2a$12$BDkDyb4OqEkiVh0o8.RliO2D7NKwrKyHByNNBUzW.WJE7H47MPnxm',
         						email:'jongiocam@gmail.com',
         						status: 'A'})</query>
         <query>MATCH (u: User {username: 'admin'}), (r:Role {name: 'ROLE_ADMIN'}) CREATE (u) -[:HAS]-> (r)</query>
@@ -47,5 +47,41 @@
 
 	<changeset id="REMOVE_USER_READ_H_PRIV" author="jonathan.camargo">
 		<query>MATCH (:Role {name:'ROLE_USER'})-[r:HAS_ACCESS_TO]->(:Privilege {name: 'READ_H'}) DELETE r</query>
+	</changeset>
+
+	<changeset id="GROUP_ALL_READS_IN_ONE_PRIVILEGE" author="jonathan.camargo">
+		<query>MATCH (:Role)-[r:HAS_ACCESS_TO]->(:Privilege {name: 'READ_H'}) DELETE r</query>
+		<query>MATCH (:Role)-[r:HAS_ACCESS_TO]->(:Privilege {name: 'FILTER_H'}) DELETE r</query>
+		<query>MATCH (:Role)-[r:HAS_ACCESS_TO]->(:Privilege {name: 'READ_TAGS'}) DELETE r</query>
+		<query>MATCH (:Role)-[r:HAS_ACCESS_TO]->(:Privilege {name: 'READ_TYPES'}) DELETE r</query>
+
+		<query>MATCH (p:Privilege {name: 'READ_H'}) DELETE p</query>
+		<query>MATCH (p:Privilege {name: 'FILTER_H'}) DELETE p</query>
+		<query>MATCH (p:Privilege {name: 'READ_TAGS'}) DELETE p</query>
+		<query>MATCH (p:Privilege {name: 'READ_TYPES'}) DELETE p</query>
+
+        <query>CREATE (p:Privilege {name:'READ', description:'Query from all the tables'})</query>
+
+        <query>MATCH (p:Privilege {name:'READ'}), (r:Role) CREATE (r) -[:HAS_ACCESS_TO {order: 0}]-> (p)</query>
+	</changeset>
+
+	<changeset id="DELETE_READ_PRIVILEGE" author="jonathan.camargo">
+		<query>MATCH (:Role)-[r:HAS_ACCESS_TO]->(:Privilege {name: 'READ'}) DELETE r</query>
+
+		<query>MATCH (p:Privilege {name: 'READ'}) DELETE p</query>
+	</changeset>
+
+	<changeset id="DELETE_SEC_PRIVILEGES" author="jonathan.camargo">
+		<query>MATCH (:Role)-[r:HAS_ACCESS_TO]->(:Privilege {name: 'READ_USERS'}) DELETE r</query>
+		<query>MATCH (:Role)-[r:HAS_ACCESS_TO]->(:Privilege {name: 'READ_ROLES'}) DELETE r</query>
+		<query>MATCH (:Role)-[r:HAS_ACCESS_TO]->(:Privilege {name: 'MODIFY_ROLES'}) DELETE r</query>
+
+		<query>MATCH (p:Privilege {name: 'READ_USERS'}) DELETE p</query>
+		<query>MATCH (p:Privilege {name: 'READ_ROLES'}) DELETE p</query>
+		<query>MATCH (p:Privilege {name: 'MODIFY_ROLES'}) DELETE p</query>
+	</changeset>
+	
+	<changeset id="UPDATE_ADMIN_PASSWORD" author="jonathan.camargo">
+		<query>MATCH (u:User {username:'admin'}) SET u.password='$2a$12$BDkDyb4OqEkiVh0o8.RliO2D7NKwrKyHByNNBUzW.WJE7H47MPnxm'</query>
 	</changeset>
 </changelog>
