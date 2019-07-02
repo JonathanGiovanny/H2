@@ -24,6 +24,11 @@ public class RolesServiceImpl implements RolesService {
   }
 
   @Override
+  public Role getRoleByName(String name) {
+    return roleRepo.findByName(name);
+  }
+
+  @Override
   public List<Role> getRoles() {
     return StreamSupport.stream(roleRepo.findAll().spliterator(), false).collect(Collectors.toList());
   }

@@ -2,6 +2,7 @@ package com.jjo.h2.services.security;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.UnaryOperator;
 import org.springframework.data.domain.Pageable;
@@ -12,9 +13,9 @@ import com.jjo.h2.config.DatasourceNeo4j;
 import com.jjo.h2.dto.security.UserDTO;
 import com.jjo.h2.model.security.RolesEnum;
 import com.jjo.h2.model.security.User;
-import com.jjo.h2.repositories.security.RoleRepository;
 import com.jjo.h2.repositories.security.UserRepository;
 import com.jjo.h2.utils.Utils;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -22,11 +23,11 @@ import lombok.RequiredArgsConstructor;
 @Transactional(value = DatasourceNeo4j.TRANSACTION_MANAGER)
 public class UserServiceImpl implements UserService {
 
-  private final UserRepository userRepo;
+  private final @NonNull UserRepository userRepo;
 
-  private final RoleRepository roleRepo;
+  private final @NonNull RolesService roleService;
 
-  private final PasswordEncoder passEncoder;
+  private final @NonNull PasswordEncoder passEncoder;
 
   @Override
   public Boolean availableUsernameOrEmail(String username, String email) {
@@ -36,7 +37,7 @@ public class UserServiceImpl implements UserService {
   @Override
   public Long registerUser(User user) {
     user.setPassword(passEncoder.encode(user.getPassword()));
-    user.setRoles(roleRepo.findByName(RolesEnum.ROLE_USER.name()));
+    user.setRoles(Set.of(roleService.getRoleByName(RolesEnum.ROLE_USER.name())));
 
     return userRepo.save(user).getId();
   }
@@ -49,7 +50,7 @@ public class UserServiceImpl implements UserService {
   @Override
   public User updateUser(Long id, User user) {
     User entity = userRepo.findById(id).orElseThrow();
-    // copyDTO(user, entity);
+    //copyDTO(user, entity);
     return userRepo.save(entity);
   }
 
