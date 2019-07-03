@@ -20,5 +20,5 @@ public class SecurityConstants {
   public static final String MODIFY_TYPES = "hasPermission(#this, 'MODIFY_TYPES')";
   public static final String DELETE_TYPES = "hasPermission(#this, 'DELETE_TYPES')";
 
-  public static final String ADMIN = "hasRole('ROLE_ADMIN')";
+  public static final String ADMIN = "hasRole('ADMIN')";
 }
