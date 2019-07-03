@@ -15,8 +15,6 @@ import com.jjo.h2.model.security.AccessData;
 import com.jjo.h2.model.security.Privilege;
 import com.jjo.h2.model.security.Role;
 import com.jjo.h2.model.security.User;
-import com.jjo.h2.repositories.security.PrivilegeRepository;
-import com.jjo.h2.repositories.security.RoleRepository;
 import com.jjo.h2.repositories.security.UserRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -26,10 +24,6 @@ import lombok.RequiredArgsConstructor;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
   private final @NonNull UserRepository userRepo;
-
-  private final @NonNull RoleRepository roleRepo;
-
-  private final @NonNull PrivilegeRepository privRepo;
 
   public UserDetails loadUserById(Long id) {
     return userRepo.findById(id).map(this::buildUserDetails)
@@ -51,7 +45,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
   private UserDetails buildUserDetails(User user) {
     UserBuilder builder = org.springframework.security.core.userdetails.User.withUsername(user.getUsername());
     builder.password(user.getPassword());
-    builder.authorities(getGrantedAuthorities(user.getRoles()));
+    Set<GrantedAuthority> authorities = getGrantedRoles(user.getRoles());
+    authorities.addAll(getGrantedAuthorities(user.getRoles()));
+    builder.authorities(authorities);
 
     return builder.build();
   }
@@ -63,7 +59,19 @@ public class UserDetailsServiceImpl implements UserDetailsService {
    * @return
    */
   private Set<GrantedAuthority> getGrantedAuthorities(Set<Role> roles) {
-    return roles.stream().map(r -> Optional.ofNullable(r.getPrivileges()).orElse(Set.of())).flatMap(Set::stream).map(AccessData::getPrivilege)
-        .map(Privilege::getName).distinct().map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
+    return roles.stream().map(r -> Optional.ofNullable(r.getPrivileges()).orElse(Set.of())) //
+        .flatMap(Set::stream) //
+        .map(AccessData::getPrivilege) //
+        .map(Privilege::getName).distinct() //
+        .map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
+  }
+
+  /**
+   * The role has to be added as an authority
+   * @param roles
+   * @return
+   */
+  private Set<GrantedAuthority> getGrantedRoles(Set<Role> roles) {
+    return roles.stream().map(Role::getName).map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
   }
 }

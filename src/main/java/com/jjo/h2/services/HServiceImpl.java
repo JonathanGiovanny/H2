@@ -9,7 +9,6 @@ import com.jjo.h2.exception.Errors;
 import com.jjo.h2.exception.HException;
 import com.jjo.h2.model.H;
 import com.jjo.h2.model.HHistory;
-import com.jjo.h2.repositories.HHistoryRepository;
 import com.jjo.h2.repositories.HRepository;
 import com.jjo.h2.utils.Utils;
 import lombok.NonNull;
@@ -23,7 +22,7 @@ public class HServiceImpl implements HService {
   
   private final @NonNull HRepository hRepo;
 
-  private final @NonNull HHistoryRepository hHisRepo;
+  private final @NonNull HHistoryService hHisService;
 
   private final @NonNull HTypeService htService;
 
@@ -80,7 +79,7 @@ public class HServiceImpl implements HService {
     hRepo.save(h);
 
     HHistory hh = HHistory.builder().h(h).date(LocalDateTime.now()).build();
-    hHisRepo.save(hh);
+    hHisService.save(hh);
 
     return getH(id);
   }
