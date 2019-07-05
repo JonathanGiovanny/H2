@@ -12,5 +12,7 @@ public interface UserService {
 
   Long registerUser(User user);
 
-  User updateUser(Long id, User user);
+  User updateUser(String username, User user);
+
+  void updatePassword(String username, String password);
 }

@@ -1,7 +1,6 @@
 package com.jjo.h2.mapper.security;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import com.jjo.h2.dto.security.SingUpDTO;
 import com.jjo.h2.dto.security.UserDTO;
 import com.jjo.h2.model.security.User;
@@ -9,7 +8,6 @@ import com.jjo.h2.model.security.User;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-  @Mapping(target = "passwordDate", defaultValue = "java.time.LocalDate.now()")
   User singUpToUser(SingUpDTO singUp);
 
   User dtoToEntity(UserDTO userDto);

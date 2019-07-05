@@ -8,21 +8,22 @@ import lombok.Getter;
 @Getter
 public enum Errors {
 
-  GENERIC_ERROR("general.error", "Se ha presentado un problema"),
-  NO_DATA("no.data", "No se han encontrado datos"),
-  NO_DATA_BY_ID_MSG("no.data.by:%s", "El elemento con id %s no existe"),
-  MISSING_FIELD("missing.field:%s", "El campo '%s' es obligatorio"),
-  MISMATCH_FIELD("mismatch.%s.field", "El campo '%s' puede contener un formato o tipo de dato no esperado"),
-  MISMATCH_INPUT("mismatch.request", "El Request contiene errores"),
-  INVALID_DATE_FORMAT("invalid.date", "El formato de la fecha no es válido"),
-  FIELD_SHOULD_UNIQUE("invalid:%s", "El campo '%s' debe ser único, ya existe un registro con este valor"),
-  BAD_QUERY("invalid.database.process", "Se presento un error en la transacción de los datos"),
+  GENERIC_ERROR("general.error", "There has been a problem"),
+  NO_DATA("no.data", "Not data found"),
+  NO_DATA_BY_ID_MSG("no.data.by:%s", "The element with id %s does not exist"),
+  MISSING_FIELD("missing.field:%s", "The field '%s' is required"),
+  MISMATCH_FIELD("mismatch.%s.field", "The field '%s' can contain an unexpected format or data type"),
+  MISMATCH_INPUT("mismatch.request", "The request contain errors"),
+  INVALID_DATE_FORMAT("invalid.date", "The date format is not valid"),
+  FIELD_SHOULD_UNIQUE("invalid:%s", "The field '%s', must be unique, it already exists a record with that value"),
+  BAD_QUERY("invalid.database.process", "There has been an error with the transaction"),
 
-  MISSING_USER("missing.user", "Usuario no encontrado"),
-  EXISTING_USER("existing.user", "El nombre de usuario o correo ya existe"),
+  MISSING_USER("missing.user", "User not found"),
+  EXISTING_USER("existing.user", "The username or email is already in use"),
+  SAME_PASSWORD("password.same", "The password can not be the current"),
 
-  UNAUTHORIZED_REQUEST("unauthorized.request", "Se ha intentado acceder a un recurso sin la debida autorización"),
-  EXPIRED_TOKEN("token.expired", "Su sesión ha expirado");
+  UNAUTHORIZED_REQUEST("unauthorized.request", "Cannot access to this resource without authorization"),
+  EXPIRED_TOKEN("token.expired", "Session has expired");
 
   private String code;
   private String message;

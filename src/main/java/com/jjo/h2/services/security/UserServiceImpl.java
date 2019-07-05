@@ -3,18 +3,16 @@ package com.jjo.h2.services.security;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
-import java.util.function.BiPredicate;
-import java.util.function.UnaryOperator;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.jjo.h2.config.DatasourceNeo4j;
-import com.jjo.h2.dto.security.UserDTO;
+import com.jjo.h2.exception.Errors;
+import com.jjo.h2.exception.HException;
 import com.jjo.h2.model.security.RolesEnum;
 import com.jjo.h2.model.security.User;
 import com.jjo.h2.repositories.security.UserRepository;
-import com.jjo.h2.utils.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +27,10 @@ public class UserServiceImpl implements UserService {
 
   private final @NonNull PasswordEncoder passEncoder;
 
+  private User getUserByUsername(String username) {
+    return userRepo.findByUsername(username).get();
+  }
+  
   @Override
   public Boolean availableUsernameOrEmail(String username, String email) {
     return userRepo.findByUsernameOrEmail(username, email, 1).isEmpty();
@@ -48,39 +50,34 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public User updateUser(Long id, User user) {
-    User entity = userRepo.findById(id).orElseThrow();
+  public User updateUser(String username, User user) {
+    User entity = getUserByUsername(username);
     //copyDTO(user, entity);
     return userRepo.save(entity);
   }
 
-  private User updatePassword(User user) {
-    User entity = userRepo.findById(user.getId()).orElseThrow();
-    BiPredicate<String, String> passwordsNotMatch = (String dtoP, String eP) -> !passEncoder.matches(user.getPassword(), entity.getPassword());
+  @Override
+  public void updatePassword(String username, String password) {
+    User user = getUserByUsername(username);
 
-    UnaryOperator<String> f = str -> {
-      entity.setPasswordDate(LocalDate.now());
-      return null;
-    };
+    passwordValidator(user, password);
 
-    entity.setPassword(Utils.isNotNullOr(user.getPassword(), entity.getPassword(), passwordsNotMatch, f));
-    return null;
+    user.setPasswordDate(LocalDate.now());
+    user.setPassword(passEncoder.encode(password));
+    userRepo.save(user);
   }
 
   /**
-   * Copy the data from the dto to the entity
-   * 
-   * @param dto
-   * @param entity
+   * Generates all the validations regarding the password rules
+   * @param user
+   * @param password
    * @return
    */
-  private User copyDTO(UserDTO dto, User entity) {
-    entity.setEmail(Utils.isNotNullOr(dto.getEmail(), entity.getEmail()));
-    entity.setStatus(Utils.isNotNullOr(dto.getStatus(), entity.getStatus()));
-    entity.setProfilePic(Utils.isNotNullOr(dto.getProfilePic(), entity.getProfilePic()));
-    if (dto.getRoles() != null && entity.getRoles().size() == dto.getRoles().size() && entity.getRoles().containsAll(dto.getRoles())) {
-      entity.setRoles(dto.getRoles());
+  private boolean passwordValidator(User user, String password) {
+    // New password should not be current
+    if (!passEncoder.matches(user.getPassword(), password)) {
+      throw new HException(Errors.SAME_PASSWORD);
     }
-    return entity;
+    return true;
   }
 }

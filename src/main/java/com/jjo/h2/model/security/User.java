@@ -36,12 +36,12 @@ public class User implements Serializable {
 
   private String email;
 
-  private StatusEnum status;
+  private StatusEnum status = StatusEnum.A;
 
   @CreatedDate
   private LocalDateTime createdDate;
 
-  private LocalDate passwordDate;
+  private LocalDate passwordDate = LocalDate.now();
 
   private transient Blob profilePic;
 

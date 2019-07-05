@@ -51,8 +51,14 @@ public class UserController {
     return ResponseEntity.ok(userService.getUsers(pageable).stream().map(mapper::entityToDto).collect(Collectors.toList()));
   }
 
-  @PatchMapping("/users/{id}")
-  public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @RequestBody UserDTO user) {
-    return ResponseEntity.ok(mapper.entityToDto(userService.updateUser(id, mapper.dtoToEntity(user))));
+  @PatchMapping("/users/{username}")
+  public ResponseEntity<UserDTO> updateUser(@PathVariable String username, @RequestBody UserDTO user) {
+    return ResponseEntity.ok(mapper.entityToDto(userService.updateUser(username, mapper.dtoToEntity(user))));
+  }
+
+  @PatchMapping("/users/{username}/change-password")
+  public ResponseEntity<Void> updatePassword(@PathVariable String username, @RequestBody String password) {
+    userService.updatePassword(username, password);
+    return ResponseEntity.ok().build();
   }
 }
