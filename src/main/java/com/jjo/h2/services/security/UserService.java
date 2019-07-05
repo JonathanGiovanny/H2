@@ -8,6 +8,8 @@ public interface UserService {
 
   Boolean availableUsernameOrEmail(String username, String email);
 
+  void incrementUserAttempt(String username);
+
   List<User> getUsers(Pageable pageable);
 
   Long registerUser(User user);

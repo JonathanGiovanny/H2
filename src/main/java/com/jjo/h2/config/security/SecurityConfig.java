@@ -24,6 +24,7 @@ import com.jjo.h2.config.security.jwt.JWTAuthenticationFilter;
 import com.jjo.h2.config.security.jwt.JWTAuthorizationFilter;
 import com.jjo.h2.exception.Errors;
 import com.jjo.h2.services.security.JWTService;
+import com.jjo.h2.services.security.LoginAttemptService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -35,6 +36,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final @NonNull JWTService jwtService;
 
+  private final @NonNull LoginAttemptService loginAttemptService;
+
   @Autowired
   public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
     auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
@@ -42,7 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-    final JWTAuthenticationFilter authentication = new JWTAuthenticationFilter(authenticationManager(), jwtService);
+    final JWTAuthenticationFilter authentication = new JWTAuthenticationFilter(authenticationManager(), jwtService, loginAttemptService);
     final JWTAuthorizationFilter authorization = new JWTAuthorizationFilter(jwtService, userDetailsService);
 
     http.cors().and().csrf().disable() //

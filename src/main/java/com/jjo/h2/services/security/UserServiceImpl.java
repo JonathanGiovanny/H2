@@ -27,13 +27,24 @@ public class UserServiceImpl implements UserService {
 
   private final @NonNull PasswordEncoder passEncoder;
 
+  private User save(User user) {
+    return userRepo.save(user);
+  }
+
   private User getUserByUsername(String username) {
     return userRepo.findByUsername(username).get();
   }
-  
+
   @Override
   public Boolean availableUsernameOrEmail(String username, String email) {
     return userRepo.findByUsernameOrEmail(username, email, 1).isEmpty();
+  }
+
+  @Override
+  public void incrementUserAttempt(String username) {
+    User user = getUserByUsername(username);
+    user.setLoginAttempts(user.getLoginAttempts() + 1);
+    save(user);
   }
 
   @Override
@@ -41,7 +52,7 @@ public class UserServiceImpl implements UserService {
     user.setPassword(passEncoder.encode(user.getPassword()));
     user.setRoles(Set.of(roleService.getRoleByName(RolesEnum.ROLE_USER.name())));
 
-    return userRepo.save(user).getId();
+    return save(user).getId();
   }
 
   @Override
@@ -52,8 +63,8 @@ public class UserServiceImpl implements UserService {
   @Override
   public User updateUser(String username, User user) {
     User entity = getUserByUsername(username);
-    //copyDTO(user, entity);
-    return userRepo.save(entity);
+    // copyDTO(user, entity);
+    return save(entity);
   }
 
   @Override
@@ -64,11 +75,12 @@ public class UserServiceImpl implements UserService {
 
     user.setPasswordDate(LocalDate.now());
     user.setPassword(passEncoder.encode(password));
-    userRepo.save(user);
+    save(user);
   }
 
   /**
    * Generates all the validations regarding the password rules
+   * 
    * @param user
    * @param password
    * @return

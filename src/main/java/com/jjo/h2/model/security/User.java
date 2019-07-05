@@ -36,6 +36,8 @@ public class User implements Serializable {
 
   private String email;
 
+  private Integer loginAttempts;
+
   private StatusEnum status = StatusEnum.A;
 
   @CreatedDate

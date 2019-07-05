@@ -11,12 +11,13 @@ __Neo4j__ security schema
 CALL dbms.security.createUser('admin', 'your_pass', false)
 ```
 
-2. Generate the classes needed from the mapper and the DSLQuery
+
+3. Generate the classes needed from the mapper and the DSLQuery
 ```
 mvn clean install -DskipTests=true
 ```
 
-3. You can run the app now
+4. You can run the app now
 
 ### IDE configuration
 Add the target/generated-sources to the build path in order the IDE to find out the generated classes 
