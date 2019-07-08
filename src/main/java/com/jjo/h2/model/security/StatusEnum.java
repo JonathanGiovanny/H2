@@ -8,7 +8,7 @@ import lombok.Getter;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public enum StatusEnum {
 
-  A("ACTIVE"), B("BLOCKED"), I("INACTIVE"), C("CONFLICTED");
+  A("ACTIVE"), B("BLOCKED"), I("INACTIVE");
 
   private String description;
 }

@@ -3,6 +3,7 @@ package com.jjo.h2.services.security;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import com.jjo.h2.config.DatasourceNeo4j;
 import com.jjo.h2.exception.Errors;
 import com.jjo.h2.exception.HException;
 import com.jjo.h2.model.security.RolesEnum;
+import com.jjo.h2.model.security.StatusEnum;
 import com.jjo.h2.model.security.User;
 import com.jjo.h2.repositories.security.UserRepository;
 import lombok.NonNull;
@@ -20,6 +22,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Transactional(value = DatasourceNeo4j.TRANSACTION_MANAGER)
 public class UserServiceImpl implements UserService {
+
+  @Value("${h.config.user.loginAttempts}")
+  private int loginAttempts;
 
   private final @NonNull UserRepository userRepo;
 
@@ -43,7 +48,18 @@ public class UserServiceImpl implements UserService {
   @Override
   public void incrementUserAttempt(String username) {
     User user = getUserByUsername(username);
-    user.setLoginAttempts(user.getLoginAttempts() + 1);
+    int userAttempts = user.getLoginAttempts() + 1;
+    user.setLoginAttempts(userAttempts);
+    if (userAttempts >= loginAttempts) {
+      user.setStatus(StatusEnum.B);
+    }
+    save(user);
+  }
+
+  @Override
+  public void userAttemptReset(String username) {
+    User user = getUserByUsername(username);
+    user.setLoginAttempts(0);
     save(user);
   }
 

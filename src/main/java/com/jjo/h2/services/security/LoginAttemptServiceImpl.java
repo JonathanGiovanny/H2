@@ -2,6 +2,7 @@ package com.jjo.h2.services.security;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -27,7 +28,7 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
 
   @Override
   public void registerFailedAttempt(WebAuthenticationDetails details) {
-    attemptsCache.compute(details.getRemoteAddress(), (key, value) -> Objects.isNull(value) ? buildAttempt(1) : increaseAttempt(value));
+    attemptsCache.compute(details.getRemoteAddress(), (key, value) -> Objects.isNull(value) ? buildFailedAttempt(1) : increaseAttempt(value));
   }
 
   @Override
@@ -42,27 +43,31 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
 
   @Override
   public void removeExpiredAttempts() {
-    attemptsCache.entrySet().removeIf(a -> Duration.between(a.getValue().getTime(), LocalDateTime.now()).toMinutes() >= minutesBanned);
+    attemptsCache.entrySet().removeIf(this::isExpired);
+  }
+
+  private boolean isExpired(Entry<String, Attempt> attempts) {
+    return Duration.between(attempts.getValue().getTime(), LocalDateTime.now()).toMinutes() >= minutesBanned;
   }
 
   private int getRemainingAttempts(WebAuthenticationDetails details) {
-    return loginAttempts - attemptsCache.get(details.getRemoteAddress()).getAttempts();
+    return loginAttempts - attemptsCache.get(details.getRemoteAddress()).getFailedAttempts();
   }
 
   private Attempt increaseAttempt(Attempt a) {
-    return buildAttempt(a.getAttempts() + 1);
+    return buildFailedAttempt(a.getFailedAttempts() + 1);
   }
 
-  private Attempt buildAttempt(int attempt) {
+  private Attempt buildFailedAttempt(int attempt) {
     Attempt a = new Attempt();
-    a.setAttempts(attempt);
+    a.setFailedAttempts(attempt);
     a.setTime(LocalDateTime.now());
     return a;
   }
 
   @Data
   class Attempt {
-    private int attempts;
+    private int failedAttempts;
     private LocalDateTime time;
   }
 }

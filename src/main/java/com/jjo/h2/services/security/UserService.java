@@ -9,6 +9,8 @@ public interface UserService {
   Boolean availableUsernameOrEmail(String username, String email);
 
   void incrementUserAttempt(String username);
+  
+  void userAttemptReset(String username);
 
   List<User> getUsers(Pageable pageable);
 
