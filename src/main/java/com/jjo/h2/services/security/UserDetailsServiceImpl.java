@@ -14,6 +14,7 @@ import com.jjo.h2.exception.Errors;
 import com.jjo.h2.model.security.AccessData;
 import com.jjo.h2.model.security.Privilege;
 import com.jjo.h2.model.security.Role;
+import com.jjo.h2.model.security.StatusEnum;
 import com.jjo.h2.model.security.User;
 import com.jjo.h2.repositories.security.UserRepository;
 import lombok.NonNull;
@@ -43,6 +44,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     Set<GrantedAuthority> authorities = getGrantedRoles(user.getRoles());
     authorities.addAll(getGrantedAuthorities(user.getRoles()));
     builder.authorities(authorities);
+
+    builder.accountLocked(StatusEnum.B.equals(user.getStatus()));
+    builder.disabled(StatusEnum.I.equals(user.getStatus()));
 
     return builder.build();
   }

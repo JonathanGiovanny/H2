@@ -18,6 +18,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.LockedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -58,6 +60,16 @@ public class ExceptionHandlerController {
   protected ResponseEntity<Set<HErrorDTO>> handleAccessDeniedException(final HttpServletRequest request, final Exception exception) {
     return ResponseEntity.status(HttpStatus.FORBIDDEN)
         .body(Set.of(exBuilder(Errors.UNAUTHORIZED_REQUEST.getCode(), Errors.UNAUTHORIZED_REQUEST.getMessage(), request.getRequestURI(), exception)));
+  }
+
+  @ExceptionHandler({AuthenticationException.class})
+  protected ResponseEntity<Set<HErrorDTO>> handleAuthenticationException(final HttpServletRequest request, final Exception exception) {
+    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Set.of(exBuilder("user.locked", "User is locked", request.getRequestURI(), exception)));
+  }
+
+  @ExceptionHandler({LockedException.class})
+  protected ResponseEntity<Set<HErrorDTO>> handleAuthenticationLockedException(final HttpServletRequest request, final Exception exception) {
+    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Set.of(exBuilder("user.locked", "User is locked", request.getRequestURI(), exception)));
   }
 
   /**

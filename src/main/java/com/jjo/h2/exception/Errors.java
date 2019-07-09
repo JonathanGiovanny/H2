@@ -22,6 +22,7 @@ public enum Errors {
   EXISTING_USER("existing.user", "The username or email is already in use"),
   SAME_PASSWORD("password.same", "The password can not be the current"),
   BANNED_IP("banned.ip", "The ip %s has been banned for multiple login attempts"),
+  LOGIN_FAILED("login.failed", "Login failed"),
 
   UNAUTHORIZED_REQUEST("unauthorized.request", "Cannot access to this resource without authorization"),
   EXPIRED_TOKEN("token.expired", "Session has expired");

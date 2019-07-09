@@ -25,7 +25,7 @@ public class AuthenticationFailureEventListener implements ApplicationListener<A
     loginAttemptService.registerFailedAttempt(details);
 
     final String username = event.getAuthentication().getName();
-    if (userService.availableUsernameOrEmail(username, null)) {
+    if (!userService.availableUsernameOrEmail(username, null)) {
       userService.incrementUserAttempt(username);
     }
   }

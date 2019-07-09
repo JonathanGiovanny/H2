@@ -50,7 +50,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     http.cors().and().csrf().disable() //
         .httpBasic().disable() //
-        .logout().disable();
+        .logout().disable() //
+        .formLogin().disable() //
+        .jee().disable();
 
     http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER) //
         // handle an authorized attempts
@@ -91,7 +93,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   private void generateUnauthorizedEntry(HttpServletRequest request, HttpServletResponse response, AuthenticationException e)
       throws JsonProcessingException, IOException {
     final Errors expired = (Errors) request.getAttribute(Errors.class.getName());
-    response.addHeader(SecurityConstants.WWW_AUTHENTICATE, "Basic realm=\"JWT\", error_description=\"" + (expired != null ? expired.getMessage() : e.getMessage()) + "\"");
-    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
+    final Errors error = expired != null ? expired : Errors.LOGIN_FAILED;
+    response.addHeader(SecurityConstants.WWW_AUTHENTICATE, "Basic realm=\"JWT\", error_description=\"" + error.getCode() + "\"");
+    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, error.getMessage());
   }
 }

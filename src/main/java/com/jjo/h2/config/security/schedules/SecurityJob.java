@@ -18,7 +18,7 @@ public class SecurityJob {
 
   @Scheduled(cron = "${h.config.ip.cronBannedIps}")
   public void deleteBannedIps() {
-    log.info("Cleanning banned ips");
     loginAttemptService.removeExpiredAttempts();
+    log.info("Cleanning banned ips");
   }
 }
