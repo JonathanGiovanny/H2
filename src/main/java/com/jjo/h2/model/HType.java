@@ -21,6 +21,6 @@ public class HType implements Serializable {
   @Column(name = "HT_ID")
   private Integer id;
 
-  @Column(name = "HT_NAME", nullable = false)
+  @Column(name = "HT_NAME", nullable = false, unique = true)
   private String name;
 }

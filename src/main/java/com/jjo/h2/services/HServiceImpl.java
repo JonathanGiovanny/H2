@@ -2,7 +2,6 @@ package com.jjo.h2.services;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.jjo.h2.exception.Errors;
@@ -47,14 +46,13 @@ public class HServiceImpl implements HService {
   public H updateH(Long id, H h) {
     H filter = new H();
     filter.setUrl(h.getUrl());
-    List<H> existingH = hRepo.findAll(Example.of(filter), Pageable.unpaged()).getContent();
+    List<H> existingH = findAll(h, Pageable.unpaged());
 
     if (!Utils.isNullOrEmpty(existingH) && existingH.stream().anyMatch(exh -> !id.equals(exh.getId()))) {
-      throw new HException(Errors.FIELD_SHOULD_UNIQUE, "url");
+      throw new HException(Errors.FIELD_SHOULD_UNIQUE, URL);
     }
 
-    H entity = hRepo.findById(id).orElse(h);
-    return hRepo.save(entity);
+    return hRepo.save(h);
   }
 
   @Override
@@ -76,12 +74,12 @@ public class HServiceImpl implements HService {
   public H increaseClick(Long id) {
     H h = hRepo.getOne(id);
     h.setClicks(h.getClicks() + 1);
-    hRepo.save(h);
+    H resultingH = hRepo.save(h);
 
-    HHistory hh = HHistory.builder().h(h).date(LocalDateTime.now()).build();
+    HHistory hh = HHistory.builder().h(resultingH).date(LocalDateTime.now()).build();
     hHisService.save(hh);
 
-    return getH(id);
+    return resultingH;
   }
 
 //  /**

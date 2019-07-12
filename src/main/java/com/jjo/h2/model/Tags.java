@@ -21,6 +21,6 @@ public class Tags implements Serializable {
   @Column(name = "TAG_ID")
   private Long id;
 
-  @Column(name = "TAG_NAME", nullable = false)
+  @Column(name = "TAG_NAME", nullable = false, unique = true)
   private String name;
 }

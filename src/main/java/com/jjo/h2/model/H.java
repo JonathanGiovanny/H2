@@ -39,7 +39,7 @@ public class H extends Auditable implements Serializable {
   @Column(name = "H_NAME")
   private String name;
 
-  @Column(name = "H_URL", nullable = false)
+  @Column(name = "H_URL", nullable = false, unique = true)
   private String url;
 
   @Column(name = "H_COVER")
