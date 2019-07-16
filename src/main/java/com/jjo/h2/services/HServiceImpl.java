@@ -35,7 +35,7 @@ public class HServiceImpl implements HService {
   public H saveH(H h) {
     List<H> existingH = findAll(h, Pageable.unpaged());
 
-    if (!Utils.isNullOrEmpty(existingH)) {
+    if (!Utils.isNullOrEmpty(existingH) && existingH.stream().anyMatch(exh -> !h.getId().equals(exh.getId()))) {
       throw new HException(Errors.FIELD_SHOULD_UNIQUE, URL);
     }
 
@@ -44,15 +44,7 @@ public class HServiceImpl implements HService {
 
   @Override
   public H updateH(Long id, H h) {
-    H filter = new H();
-    filter.setUrl(h.getUrl());
-    List<H> existingH = findAll(h, Pageable.unpaged());
-
-    if (!Utils.isNullOrEmpty(existingH) && existingH.stream().anyMatch(exh -> !id.equals(exh.getId()))) {
-      throw new HException(Errors.FIELD_SHOULD_UNIQUE, URL);
-    }
-
-    return hRepo.save(h);
+    return saveH(h);
   }
 
   @Override
