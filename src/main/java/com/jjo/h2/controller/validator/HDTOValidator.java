@@ -1,6 +1,7 @@
 package com.jjo.h2.controller.validator;
 
 import java.util.Optional;
+import java.util.Set;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -30,7 +31,7 @@ public class HDTOValidator implements Validator {
   public void validate(Object target, Errors errors) {
     HDTO dto = (HDTO) target;
 
-    Optional.ofNullable(dto).map(HDTO::getTags).ifPresent(t -> t.forEach(tag -> tagsService.getTag(tag.getId())));
+    Optional.ofNullable(dto).map(HDTO::getTags).map(Set::stream).ifPresent(t -> t.forEach(tag -> tagsService.getTag(tag.getId())));
     Optional.ofNullable(dto).map(HDTO::getType).ifPresent(t -> typeService.getHType(t.getId()));
   }
 }

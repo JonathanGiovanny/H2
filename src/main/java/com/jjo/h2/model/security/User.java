@@ -47,6 +47,8 @@ public class User implements Serializable {
 
   private transient Blob profilePic;
 
+  private String recoveryToken;
+
   @Relationship(type = "HAS")
   private Set<Role> roles;
 }

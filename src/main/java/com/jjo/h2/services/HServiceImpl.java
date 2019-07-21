@@ -2,6 +2,7 @@ package com.jjo.h2.services;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.jjo.h2.exception.Errors;
@@ -9,7 +10,6 @@ import com.jjo.h2.exception.HException;
 import com.jjo.h2.model.H;
 import com.jjo.h2.model.HHistory;
 import com.jjo.h2.repositories.HRepository;
-import com.jjo.h2.utils.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class HServiceImpl implements HService {
 
   private static final String URL = "url";
-  
+
   private final @NonNull HRepository hRepo;
 
   private final @NonNull HHistoryService hHisService;
@@ -33,13 +33,10 @@ public class HServiceImpl implements HService {
 
   @Override
   public H saveH(H h) {
-    List<H> existingH = findAll(h, Pageable.unpaged());
-
-    if (!Utils.isNullOrEmpty(existingH) && existingH.stream().anyMatch(exh -> !h.getId().equals(exh.getId()))) {
-      throw new HException(Errors.FIELD_SHOULD_UNIQUE, URL);
-    }
-
-    return hRepo.save(h);
+    return Optional.ofNullable(h)
+        .filter(entity -> validateHNameUnique(entity.getId(), entity.getName()))
+        .map(hRepo::save)
+        .get();
   }
 
   @Override
@@ -74,32 +71,11 @@ public class HServiceImpl implements HService {
     return resultingH;
   }
 
-//  /**
-//   * Copy the data from the dto to the entity
-//   * 
-//   * @param dto
-//   * @param entity
-//   * @return
-//   */
-//  private H copyData(HDTO dto, H entity) {
-//    entity.setName(Utils.isNotNullOr(dto.getName(), entity.getName()));
-//    entity.setUrl(Utils.isNotNullOr(dto.getUrl(), entity.getUrl()));
-//    entity.setCover(Utils.isNotNullOr(dto.getCover(), entity.getCover()));
-//    entity.setScore(Utils.isNotNullOr(dto.getScore(), entity.getScore()));
-//
-//    BiPredicate<HTypeDTO, HType> filterType = (d, e) -> !d.getId().equals(e.getId());
-//    Function<HTypeDTO, HType> processType = htService::toEntity;
-//
-//    HType ht = Utils.isNotNullROr(dto.getType(), entity.getType(), filterType, processType);
-//    entity.setType(ht);
-//
-//    BiPredicate<Set<TagsDTO>, Set<Tags>> filterTags = (d, e) -> true;
-//    Function<Set<TagsDTO>, Set<Tags>> processTags =
-//        t -> t.stream().map(tagsService::toEntity).collect(Collectors.toSet());
-//
-//    Set<Tags> tags = Utils.isNotNullROr(dto.getTags(), entity.getTags(), filterTags, processTags);
-//    entity.setTags(tags);
-//
-//    return entity;
-//  }
+  private boolean validateHNameUnique(Long id, String name) {
+    Optional<H> existingH = hRepo.findByNameIgnoreCase(name);
+    if (existingH.isPresent() && !existingH.get().getId().equals(id)) {
+      throw new HException(Errors.FIELD_SHOULD_UNIQUE, URL);
+    }
+    return true;
+  }
 }

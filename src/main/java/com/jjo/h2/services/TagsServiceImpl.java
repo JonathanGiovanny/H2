@@ -1,6 +1,7 @@
 package com.jjo.h2.services;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,12 @@ public class TagsServiceImpl implements TagsService {
 
   @Override
   public Tags findByName(String name) {
-    return tagsRepo.findByName(name);
+    return tagsRepo.findByNameIgnoreCase(name).get();
+  }
+
+  @Override
+  public Boolean isNameAvailable(String name) {
+    return Objects.nonNull(findByName(name));
   }
 
   @Override
@@ -39,32 +45,27 @@ public class TagsServiceImpl implements TagsService {
 
   @Override
   public Tags saveTag(Tags tag) {
-    if (findByName(tag.getName()) != null) {
-      throw new HException(Errors.FIELD_SHOULD_UNIQUE, "name");
-    }
-
-    return tagsRepo.save(tag);
+    return Optional.ofNullable(tag)
+        .filter(entity -> validateTagNameUnique(entity.getId(), entity.getName()))
+        .map(tagsRepo::save)
+        .get();
   }
 
   @Override
-  public Tags updateTag(Long id, Tags tagDto) {
-    Optional<Tags> optTag = tagsRepo.findById(id);
-
-    Tags existingTag = findByName(tagDto.getName());
-    if (existingTag != null && !id.equals(existingTag.getId())) {
-      throw new HException(Errors.FIELD_SHOULD_UNIQUE, "name");
-    }
-
-    Tags entity = optTag.map(t -> {
-      t.setName(tagDto.getName());
-      return t;
-    }).orElse(tagDto);
-
-    return tagsRepo.save(entity);
+  public Tags updateTag(Long id, Tags tag) {
+    return saveTag(tag);
   }
 
   @Override
   public void deleteTag(Long id) {
     tagsRepo.deleteById(id);
+  }
+
+  private boolean validateTagNameUnique(Long id, String name) {
+    Optional<Tags> existingH = tagsRepo.findByNameIgnoreCase(name);
+    if (existingH.isPresent() && !existingH.get().getId().equals(id)) {
+      throw new HException(Errors.FIELD_SHOULD_UNIQUE, "name");
+    }
+    return true;
   }
 }

@@ -46,6 +46,12 @@ public class TagsController {
     return ResponseEntity.ok(mapper.entityToDto(tagsService.findAll(pageable)));
   }
 
+  @GetMapping("/{name}")
+  @PreAuthorize(MODIFY_TAGS)
+  public ResponseEntity<Boolean> availableName(@PathVariable String name) {
+    return ResponseEntity.ok(tagsService.isNameAvailable(name));
+  }
+
   @PostMapping
   @PreAuthorize(MODIFY_TAGS)
   public ResponseEntity<Void> saveTag(@Valid @RequestBody TagsDTO tag) {

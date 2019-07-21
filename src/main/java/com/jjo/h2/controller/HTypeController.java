@@ -56,6 +56,12 @@ public class HTypeController {
     return ResponseEntity.ok(mapper.entityToDto(hTypeService.findByNameLike(filter, pageable)));
   }
 
+  @GetMapping("/{name}")
+  @PreAuthorize(MODIFY_TYPES)
+  public ResponseEntity<Boolean> availableName(@PathVariable String name) {
+    return ResponseEntity.ok(hTypeService.isNameAvailable(name));
+  }
+
   @PostMapping
   @PreAuthorize(MODIFY_TYPES)
   public ResponseEntity<HTypeDTO> saveHType(@Valid @RequestBody HTypeDTO hType) {

@@ -12,6 +12,8 @@ public class SecurityConstants {
   public static final String AUTH_LOGIN_URL = SECURITY_PATH + "/login";
   public static final String TOKEN_PREFIX = "JWT ";
   public static final String TOKEN_HEADER = "Authorization";
+  public static final String ALLOW_HEADERS = "Access-Control-Allow-Headers";
+  public static final Long PREFLIGHT_AGE = 3600L;
 
   public static final String MODIFY_H = "hasPermission(#this, 'MODIFY_H')";
   public static final String DELETE_H = "hasPermission(#this, 'DELETE_H')";

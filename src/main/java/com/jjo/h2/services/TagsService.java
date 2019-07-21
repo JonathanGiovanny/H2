@@ -19,4 +19,6 @@ public interface TagsService {
   Tags updateTag(Long id, Tags tagDto);
 
   void deleteTag(Long id);
+
+  Boolean isNameAvailable(String name);
 }

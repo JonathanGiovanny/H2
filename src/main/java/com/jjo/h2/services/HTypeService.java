@@ -17,4 +17,6 @@ public interface HTypeService {
   HType saveHType(HType hType);
 
   void deleteHType(Integer id);
+
+  Boolean isNameAvailable(String name);
 }
