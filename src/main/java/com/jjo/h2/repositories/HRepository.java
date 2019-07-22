@@ -7,5 +7,5 @@ import com.jjo.h2.model.H;
 
 public interface HRepository extends JpaRepository<H, Long>, QuerydslPredicateExecutor<H>, HRepositoryCustom {
 
-  Optional<H> findByNameIgnoreCase(String name); 
+  Optional<H> findByUrlIgnoreCase(String url); 
 }

@@ -20,7 +20,7 @@ public class TagsServiceImpl implements TagsService {
 
   @Override
   public Tags getTag(Long id) {
-    return tagsRepo.getOne(id);
+    return Optional.ofNullable(tagsRepo.getOne(id)).get();
   }
 
   @Override

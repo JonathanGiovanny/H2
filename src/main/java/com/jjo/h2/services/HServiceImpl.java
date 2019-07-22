@@ -32,9 +32,13 @@ public class HServiceImpl implements HService {
   }
 
   @Override
+  public Boolean isUrlAvailable(String url) {
+    return !hRepo.findByUrlIgnoreCase(url).isPresent();
+  }
+  
   public H saveH(H h) {
     return Optional.ofNullable(h)
-        .filter(entity -> validateHNameUnique(entity.getId(), entity.getName()))
+        .filter(entity -> validateHUrlUnique(entity.getId(), entity.getName()))
         .map(hRepo::save)
         .get();
   }
@@ -71,8 +75,8 @@ public class HServiceImpl implements HService {
     return resultingH;
   }
 
-  private boolean validateHNameUnique(Long id, String name) {
-    Optional<H> existingH = hRepo.findByNameIgnoreCase(name);
+  private boolean validateHUrlUnique(Long id, String name) {
+    Optional<H> existingH = hRepo.findByUrlIgnoreCase(name);
     if (existingH.isPresent() && !existingH.get().getId().equals(id)) {
       throw new HException(Errors.FIELD_SHOULD_UNIQUE, URL);
     }

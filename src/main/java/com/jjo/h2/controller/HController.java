@@ -54,6 +54,12 @@ public class HController {
     return ResponseEntity.ok(mapper.entityToDTO(hService.findAll(mapper.dtoToEntity(h), pageable)));
   }
 
+  @GetMapping("/{url}")
+  @PreAuthorize(MODIFY_H)
+  public ResponseEntity<Boolean> availableName(@PathVariable String url) {
+    return ResponseEntity.ok(hService.isUrlAvailable(url));
+  }
+
   @PostMapping
   @PreAuthorize(MODIFY_H)
   public ResponseEntity<Void> saveH(@Valid @RequestBody HDTO h) {
