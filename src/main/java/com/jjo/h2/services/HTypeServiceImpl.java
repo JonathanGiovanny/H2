@@ -20,7 +20,7 @@ public class HTypeServiceImpl implements HTypeService {
 
   @Override
   public HType getHType(Integer id) {
-    return Optional.ofNullable(hTypeRepo.getOne(id)).get();
+    return hTypeRepo.findById(id).orElse(null);
   }
 
   @Override

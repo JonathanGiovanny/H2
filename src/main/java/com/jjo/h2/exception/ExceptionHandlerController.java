@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -128,7 +129,8 @@ public class ExceptionHandlerController {
 
     Set<HErrorDTO> errors = l.stream().filter(objectError -> objectError instanceof FieldError) //
         .map(objectError -> (FieldError) objectError) //
-        .map(fieldError -> getMessages(fieldError)).map(msgs -> exBuilder(msgs[0], msgs[1], request.getRequestURI(), exception))
+        .map(fieldError -> getMessages(fieldError)) //
+        .map(msgs -> exBuilder(msgs[0], msgs[1], request.getRequestURI(), exception)) //
         .collect(Collectors.toSet());
 
     return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(errors);
@@ -169,14 +171,13 @@ public class ExceptionHandlerController {
     String userMsg;
     String techMsg;
 
-    if (fieldError.getCode().toLowerCase().contains("null")) {
+    if (Objects.isNull(fieldError.getCode())) {
       userMsg = String.format(Errors.MISSING_FIELD.getCode(), fieldError.getField());
       techMsg = String.format(Errors.MISSING_FIELD.getMessage(), fieldError.getField());
     } else {
-      userMsg = fieldError.getDefaultMessage();
-      techMsg = fieldError.toString();
+      userMsg = fieldError.getCode();
+      techMsg = fieldError.getDefaultMessage();
     }
-
     return new String[] {userMsg, techMsg};
   }
 
