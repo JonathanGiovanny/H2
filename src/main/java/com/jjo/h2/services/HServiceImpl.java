@@ -45,6 +45,8 @@ public class HServiceImpl implements HService {
 
   @Override
   public H updateH(Long id, H h) {
+    Optional<H> existingH = hRepo.findById(id);
+    existingH.ifPresent(eh -> copyExistingValuesThatShouldNotUpdate(eh, h));
     return saveH(h);
   }
 
@@ -81,5 +83,9 @@ public class HServiceImpl implements HService {
       throw new HException(Errors.FIELD_SHOULD_UNIQUE, URL);
     }
     return true;
+  }
+
+  private void copyExistingValuesThatShouldNotUpdate(H existingEntity, H updatingEntity) {
+    updatingEntity.setClicks(existingEntity.getClicks());
   }
 }
