@@ -59,7 +59,7 @@ public class HTypeController {
   @GetMapping("/{name}")
   @PreAuthorize(MODIFY_TYPES)
   public ResponseEntity<Boolean> availableName(@PathVariable String name) {
-    return ResponseEntity.ok(hTypeService.isNameAvailable(name));
+    return ResponseEntity.ok(hTypeService.isNameAvailable(null, name));
   }
 
   @PostMapping

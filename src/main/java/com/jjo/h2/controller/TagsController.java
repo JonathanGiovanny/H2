@@ -8,14 +8,17 @@ import javax.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.jjo.h2.controller.validator.TagsValidator;
 import com.jjo.h2.dto.TagsDTO;
 import com.jjo.h2.mapper.TagsMapper;
 import com.jjo.h2.services.TagsService;
@@ -29,8 +32,15 @@ public class TagsController {
 
   private final @NonNull TagsService tagsService;
 
+  private final @NonNull TagsValidator tagsValidator;
+
   private final @NonNull TagsMapper mapper;
 
+  @InitBinder
+  protected void initBinder(WebDataBinder binder) {
+    binder.addValidators(tagsValidator);
+  }
+  
   @GetMapping("/{id}")
   public ResponseEntity<TagsDTO> getTag(@PathVariable Long id) {
     return ResponseEntity.ok(mapper.entityToDto(tagsService.getTag(id)));
@@ -49,7 +59,7 @@ public class TagsController {
   @GetMapping("/{name}")
   @PreAuthorize(MODIFY_TAGS)
   public ResponseEntity<Boolean> availableName(@PathVariable String name) {
-    return ResponseEntity.ok(tagsService.isNameAvailable(name));
+    return ResponseEntity.ok(tagsService.isNameAvailable(null, name));
   }
 
   @PostMapping

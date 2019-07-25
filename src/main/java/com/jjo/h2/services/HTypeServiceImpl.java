@@ -1,7 +1,6 @@
 package com.jjo.h2.services;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,13 +28,14 @@ public class HTypeServiceImpl implements HTypeService {
   }
 
   @Override
-  public Boolean isNameAvailable(String name) {
-    return Objects.nonNull(findByName(name));
+  public Boolean isNameAvailable(Integer id, String name) {
+    Optional<HType> foundHType = hTypeRepo.findByNameIgnoreCase(name);
+    return !foundHType.map(HType::getId).filter(foundId -> !foundId.equals(id)).isPresent();
   }
-  
+
   @Override
   public HType findByName(String name) {
-    return hTypeRepo.findByNameIgnoreCase(name).get();
+    return hTypeRepo.findByNameIgnoreCase(name).orElse(null);
   }
 
   @Override
@@ -45,10 +45,9 @@ public class HTypeServiceImpl implements HTypeService {
 
   @Override
   public HType saveHType(HType hType) {
-    return Optional.ofNullable(hType)
-        .filter(entity -> validateHTypeNameUnique(entity.getId(), entity.getName()))
-        .map(hTypeRepo::save)
-        .get();
+    return Optional.of(hType)
+        .filter(ht -> validateHTypeNameUnique(ht.getId(), ht.getName()))
+        .map(hTypeRepo::save).get();
   }
 
   @Override

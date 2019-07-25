@@ -46,10 +46,10 @@ public class H extends Auditable implements Serializable {
   private String cover;
 
   @Column(name = "H_CLICKS")
-  private Long clicks;
+  private Long clicks = 0L;
 
   @Column(name = "H_SCORE")
-  private Double score;
+  private Double score = 0.0;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "H_TYPE__HT_ID")

@@ -10,8 +10,7 @@ import com.jjo.h2.model.H;
 @Mapper(componentModel = "spring")
 public interface HMapper {
 
-  @Mapping(target = "clicks", defaultValue = "0L", ignore = true)
-  @Mapping(target = "score", defaultValue = "0.0D")
+  @Mapping(target = "clicks", ignore = true)
   @Mapping(target = "modifiedDate", ignore = true)
   H dtoToEntity(HDTO dto);
 

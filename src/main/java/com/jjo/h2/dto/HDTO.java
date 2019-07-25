@@ -1,7 +1,7 @@
 package com.jjo.h2.dto;
 
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import lombok.Data;
@@ -26,7 +26,7 @@ public class HDTO {
   @NotNull
   private HTypeDTO type;
 
-  private Set<TagsDTO> tags;
+  private List<TagsDTO> tags;
 
   @Null
   private LocalDateTime modifiedDate;

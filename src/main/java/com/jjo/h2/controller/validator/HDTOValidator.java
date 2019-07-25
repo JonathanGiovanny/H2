@@ -1,11 +1,8 @@
 package com.jjo.h2.controller.validator;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.stream.IntStream;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -40,34 +37,32 @@ public class HDTOValidator implements Validator {
   public void validate(Object target, Errors errors) {
     HDTO dto = (HDTO) target;
 
-    List<TagsDTO> tagsDto = Optional.ofNullable(dto)
-      .map(HDTO::getTags)
-      .map(Set::stream)
-      .orElse(Stream.empty())
-      .collect(Collectors.toList());
-    for (int i = 0; i < tagsDto.size(); i++) {
-      TagsDTO tag = tagsDto.get(i);
-      validateExistingTag(tag, i, errors);
+    if (Objects.nonNull(dto.getTags()) && !dto.getTags().isEmpty()) {
+      IntStream.range(0, dto.getTags().size())
+      .forEach(index -> {
+        TagsDTO tag = dto.getTags().get(index);
+        validateExistingTag(tag, index, errors);
+      });
     }
-
-    Optional.ofNullable(dto)
+    
+    Optional.of(dto)
       .map(HDTO::getType)
       .map(t -> typeService.getHType(t.getId()))
       .ifPresentOrElse(ht -> {},
-        () -> {
-        String code = String.format(com.jjo.h2.exception.Errors.NO_DATA_BY_ID_MSG.getCode(), TYPE_ID_VALUE, dto.getType().getId());
-        String message = String.format(com.jjo.h2.exception.Errors.NO_DATA_BY_ID_MSG.getMessage(), TYPE_ID_VALUE, dto.getType().getId());
-        errors.rejectValue(TYPE_ID_VALUE, code, message);
-      });
+        () -> registerError(errors, TYPE_ID_VALUE, com.jjo.h2.exception.Errors.NO_DATA_BY_ID_MSG, TYPE_ID_VALUE, dto.getType().getId()));
   }
 
   private void validateExistingTag(TagsDTO tag, int index, Errors errors) {
     Tags existingTag = tagsService.getTag(tag.getId());
-    if (Objects.nonNull(existingTag)) {
+    if (Objects.isNull(existingTag)) {
       String tagField = String.format(TAG_ID_VALUE, index);
-      String code = String.format(com.jjo.h2.exception.Errors.NO_DATA_BY_ID_MSG.getCode(), tagField, tag.getId());
-      String message = String.format(com.jjo.h2.exception.Errors.NO_DATA_BY_ID_MSG.getMessage(), tagField, tag.getId());
-      errors.rejectValue(tagField, code, message);
+      registerError(errors, tagField, com.jjo.h2.exception.Errors.NO_DATA_BY_ID_MSG, tagField, tag.getId());
     }
+  }
+
+  private void registerError(Errors errors, String field, com.jjo.h2.exception.Errors error, Object... args) {
+    String code = String.format(error.getCode(), args);
+    String message = String.format(error.getMessage(), args);
+    errors.rejectValue(field, code, message);
   }
 }

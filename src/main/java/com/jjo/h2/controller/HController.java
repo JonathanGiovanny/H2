@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -57,7 +58,7 @@ public class HController {
   @GetMapping("/{url}")
   @PreAuthorize(MODIFY_H)
   public ResponseEntity<Boolean> availableName(@PathVariable String url) {
-    return ResponseEntity.ok(hService.isUrlAvailable(url));
+    return ResponseEntity.ok(hService.isUrlAvailable(null, url));
   }
 
   @PostMapping
@@ -66,7 +67,7 @@ public class HController {
     return ResponseEntity.created(URI.create(hService.saveH(mapper.dtoToEntity(h)).getId().toString())).build();
   }
 
-  @PatchMapping("/{id}")
+  @PutMapping("/{id}")
   @PreAuthorize(MODIFY_H)
   public ResponseEntity<HDTO> updateH(@PathVariable Long id, @Valid @RequestBody HDTO h) {
     return ResponseEntity.ok(mapper.entityToDTO(hService.updateH(id, mapper.dtoToEntity(h))));

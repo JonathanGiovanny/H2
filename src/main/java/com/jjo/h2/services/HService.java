@@ -8,6 +8,8 @@ public interface HService {
 
   H saveH(H h);
 
+  Boolean isUrlAvailable(Long id, String url);
+
   H updateH(Long id, H h);
 
   /**
@@ -24,6 +26,4 @@ public interface HService {
   void deleteH(Long id);
 
   H increaseClick(Long id);
-
-  Boolean isUrlAvailable(String url);
 }

@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class HServiceImpl implements HService {
 
   private static final String URL = "url";
-
+  
   private final @NonNull HRepository hRepo;
 
   private final @NonNull HHistoryService hHisService;
@@ -32,15 +32,15 @@ public class HServiceImpl implements HService {
   }
 
   @Override
-  public Boolean isUrlAvailable(String url) {
-    return !hRepo.findByUrlIgnoreCase(url).isPresent();
+  public Boolean isUrlAvailable(Long id, String url) {
+    Optional<H> foundH = hRepo.findByUrlIgnoreCase(url);
+    return !foundH.map(H::getId).filter(foundId -> !foundId.equals(id)).isPresent();
   }
-  
+
   public H saveH(H h) {
-    return Optional.ofNullable(h)
-        .filter(entity -> validateHUrlUnique(entity.getId(), entity.getName()))
-        .map(hRepo::save)
-        .get();
+    return Optional.of(h)
+        .filter(entity -> validateHUrlUnique(entity.getId(), entity.getUrl()))
+        .map(hRepo::save).get();
   }
 
   @Override
@@ -77,15 +77,15 @@ public class HServiceImpl implements HService {
     return resultingH;
   }
 
-  private boolean validateHUrlUnique(Long id, String name) {
-    Optional<H> existingH = hRepo.findByUrlIgnoreCase(name);
+  private void copyExistingValuesThatShouldNotUpdate(H existingEntity, H updatingEntity) {
+    updatingEntity.setClicks(existingEntity.getClicks());
+  }
+
+  private boolean validateHUrlUnique(Long id, String url) {
+    Optional<H> existingH = hRepo.findByUrlIgnoreCase(url);
     if (existingH.isPresent() && !existingH.get().getId().equals(id)) {
       throw new HException(Errors.FIELD_SHOULD_UNIQUE, URL);
     }
     return true;
-  }
-
-  private void copyExistingValuesThatShouldNotUpdate(H existingEntity, H updatingEntity) {
-    updatingEntity.setClicks(existingEntity.getClicks());
   }
 }

@@ -150,14 +150,7 @@ public class ExceptionHandlerController {
 
   @ExceptionHandler({SQLException.class, SQLGrammarException.class, InvalidDataAccessResourceUsageException.class})
   protected ResponseEntity<Set<HErrorDTO>> handleSQLException(final HttpServletRequest request, final Exception exception) {
-    Exception e;
-
-    if (exception instanceof SQLGrammarException) {
-      e = (Exception) exception.getCause();
-    } else {
-      e = exception;
-    }
-
+    Exception e = (Exception) exception.getCause();
     return ResponseEntity.badRequest().body(Set.of(exBuilder(Errors.BAD_QUERY.getCode(), Errors.BAD_QUERY.getMessage(), request.getRequestURI(), e)));
   }
 

@@ -10,6 +10,8 @@ public interface HTypeService {
 
   List<HType> findAll(Pageable pageable);
 
+  Boolean isNameAvailable(Integer id, String name);
+
   HType findByName(String name);
 
   List<HType> findByNameLike(String name, Pageable pageable);
@@ -17,6 +19,4 @@ public interface HTypeService {
   HType saveHType(HType hType);
 
   void deleteHType(Integer id);
-
-  Boolean isNameAvailable(String name);
 }

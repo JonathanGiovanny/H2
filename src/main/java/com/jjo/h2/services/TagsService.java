@@ -10,6 +10,8 @@ public interface TagsService {
 
   List<Tags> findAll(Pageable pageable);
 
+  Boolean isNameAvailable(Long id, String name);
+
   Tags findByName(String name);
 
   List<Tags> findByNameLike(String name, Pageable pageable);
@@ -19,6 +21,4 @@ public interface TagsService {
   Tags updateTag(Long id, Tags tagDto);
 
   void deleteTag(Long id);
-
-  Boolean isNameAvailable(String name);
 }

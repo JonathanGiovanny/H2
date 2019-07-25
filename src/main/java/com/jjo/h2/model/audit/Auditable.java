@@ -29,7 +29,7 @@ public class Auditable implements Serializable {
   private LocalDateTime creationDate;
 
   @CreatedBy
-  @Column(name = "CREATED_BY")
+  @Column(name = "CREATED_BY", updatable = false)
   private String createdBy;
 
   @LastModifiedDate

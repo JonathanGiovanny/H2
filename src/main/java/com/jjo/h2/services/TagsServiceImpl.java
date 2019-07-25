@@ -1,7 +1,6 @@
 package com.jjo.h2.services;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,7 @@ public class TagsServiceImpl implements TagsService {
 
   @Override
   public Tags getTag(Long id) {
-    return Optional.ofNullable(tagsRepo.getOne(id)).get();
+    return tagsRepo.findById(id).orElse(null);
   }
 
   @Override
@@ -30,12 +29,13 @@ public class TagsServiceImpl implements TagsService {
 
   @Override
   public Tags findByName(String name) {
-    return tagsRepo.findByNameIgnoreCase(name).get();
+    return tagsRepo.findByNameIgnoreCase(name).orElse(null);
   }
 
   @Override
-  public Boolean isNameAvailable(String name) {
-    return Objects.nonNull(findByName(name));
+  public Boolean isNameAvailable(Long id, String name) {
+    Optional<Tags> foundTag = tagsRepo.findByNameIgnoreCase(name);
+    return !foundTag.map(Tags::getId).filter(foundId -> !foundId.equals(id)).isPresent();
   }
 
   @Override
@@ -45,10 +45,9 @@ public class TagsServiceImpl implements TagsService {
 
   @Override
   public Tags saveTag(Tags tag) {
-    return Optional.ofNullable(tag)
-        .filter(entity -> validateTagNameUnique(entity.getId(), entity.getName()))
-        .map(tagsRepo::save)
-        .get();
+    return Optional.of(tag)
+        .filter(t -> validateTagNameUnique(t.getId(), t.getName()))
+        .map(tagsRepo::save).get();
   }
 
   @Override
