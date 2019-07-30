@@ -27,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/h/types")
+@RequestMapping("/types")
 public class HTypeController {
 
   private final @NonNull HTypeService hTypeService;
