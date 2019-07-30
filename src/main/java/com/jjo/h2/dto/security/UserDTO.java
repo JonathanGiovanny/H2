@@ -1,6 +1,5 @@
 package com.jjo.h2.dto.security;
 
-import java.sql.Blob;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -29,7 +28,7 @@ public class UserDTO {
 
   private LocalDate passwordDate;
 
-  private Blob profilePic;
+  private byte[] profilePic;
 
   private Set<Role> roles;
 }

@@ -51,7 +51,7 @@ public class H extends Auditable implements Serializable {
   @Column(name = "H_SCORE")
   private Double score = 0.0;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "H_TYPE__HT_ID")
   private HType type;
 

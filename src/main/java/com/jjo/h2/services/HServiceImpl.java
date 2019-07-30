@@ -28,7 +28,7 @@ public class HServiceImpl implements HService {
   private final @NonNull TagsService tagsService;
 
   private H getH(Long id) {
-    return hRepo.findById(id).orElse(null);
+    return hRepo.findById(id).orElseThrow(() -> new HException(Errors.NO_DATA_BY_ID_MSG, "H", id));
   }
 
   @Override
@@ -45,6 +45,7 @@ public class HServiceImpl implements HService {
 
   @Override
   public H updateH(Long id, H h) {
+    h.setId(id);
     Optional<H> existingH = hRepo.findById(id);
     existingH.ifPresent(eh -> copyExistingValuesThatShouldNotUpdate(eh, h));
     return saveH(h);
@@ -67,7 +68,7 @@ public class HServiceImpl implements HService {
 
   @Override
   public H increaseClick(Long id) {
-    H h = hRepo.getOne(id);
+    H h = getH(id);
     h.setClicks(h.getClicks() + 1);
     H resultingH = hRepo.save(h);
 

@@ -1,6 +1,5 @@
 package com.jjo.h2.dto.security;
 
-import java.sql.Blob;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import lombok.Data;
@@ -18,5 +17,5 @@ public class SingUpDTO {
   @Email
   private String email;
 
-  private Blob profilePic;
+  private byte[] profilePic;
 }

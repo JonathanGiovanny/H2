@@ -1,7 +1,6 @@
 package com.jjo.h2.model.security;
 
 import java.io.Serializable;
-import java.sql.Blob;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -45,7 +44,7 @@ public class User implements Serializable {
 
   private LocalDate passwordDate = LocalDate.now();
 
-  private transient Blob profilePic;
+  private byte[] profilePic;
 
   private String recoveryToken;
 
