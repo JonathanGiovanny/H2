@@ -18,7 +18,7 @@ spring:
             password: Asdf963.
 
 server:
-   port: 8090
+   port: 8095
    servlet:
       contextPath: /H
 

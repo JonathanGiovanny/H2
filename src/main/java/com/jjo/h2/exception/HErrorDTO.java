@@ -12,5 +12,6 @@ public class HErrorDTO {
   private String userMessage;
   private String techMessage;
   private LocalDateTime timestamp;
+  private String field;
   private String path;
 }

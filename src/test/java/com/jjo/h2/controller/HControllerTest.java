@@ -3,6 +3,7 @@ package com.jjo.h2.controller;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.Before;
@@ -14,9 +15,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import com.jjo.h2.controller.validator.HDTOValidator;
 import com.jjo.h2.dto.HDTO;
 import com.jjo.h2.dto.HTypeDTO;
@@ -68,6 +71,11 @@ public class HControllerTest {
 
   @Test
   public void test_findAll() throws Exception {
+//    @GetMapping
+//    public ResponseEntity<List<HDTO>> findAll(Pageable pageable, Principal principal) {
+//      return ResponseEntity.ok(mapper.entityToDTO(hService.findAll(pageable)));
+//    }
+  }
     // Given
 //    HDTO dto = new HDTO();
 //    dto.setId(ID);
@@ -91,7 +99,6 @@ public class HControllerTest {
 //    .andReturn();
 //
 //    result.getResponse().getContentAsByteArray();
-  }
 
 //  @PostMapping("/search")
 //  public ResponseEntity<List<HDTO>> searchH(@Valid @RequestBody HDTO h, Pageable pageable) {

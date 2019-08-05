@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.tuple.Triple;
 import org.hibernate.exception.SQLGrammarException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
@@ -53,14 +54,12 @@ public class ExceptionHandlerController {
    */
   @ExceptionHandler(Exception.class)
   protected ResponseEntity<Set<HErrorDTO>> handleOtherException(final HttpServletRequest request, final Exception exception) {
-    return ResponseEntity.badRequest()
-        .body(Set.of(exBuilder(Errors.GENERIC_ERROR.getCode(), Errors.GENERIC_ERROR.getMessage(), request.getRequestURI(), exception)));
+    return ResponseEntity.badRequest().body(Set.of(exBuilder(Errors.GENERIC_ERROR, request.getRequestURI(), exception)));
   }
 
   @ExceptionHandler({AccessDeniedException.class})
   protected ResponseEntity<Set<HErrorDTO>> handleAccessDeniedException(final HttpServletRequest request, final Exception exception) {
-    return ResponseEntity.status(HttpStatus.FORBIDDEN)
-        .body(Set.of(exBuilder(Errors.UNAUTHORIZED_REQUEST.getCode(), Errors.UNAUTHORIZED_REQUEST.getMessage(), request.getRequestURI(), exception)));
+    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Set.of(exBuilder(Errors.UNAUTHORIZED_REQUEST, request.getRequestURI(), exception)));
   }
 
   @ExceptionHandler({AuthenticationException.class})
@@ -81,8 +80,7 @@ public class ExceptionHandlerController {
    */
   @ExceptionHandler(NoSuchElementException.class)
   protected ResponseEntity<Set<HErrorDTO>> handleNoElementException(final HttpServletRequest request, final Exception exception) {
-    return ResponseEntity.badRequest()
-        .body(Set.of(exBuilder(Errors.NO_DATA.getCode(), Errors.NO_DATA.getMessage(), request.getRequestURI(), exception)));
+    return ResponseEntity.badRequest().body(Set.of(exBuilder(Errors.NO_DATA, request.getRequestURI(), exception)));
   }
 
   @ExceptionHandler(EntityNotFoundException.class)
@@ -95,17 +93,15 @@ public class ExceptionHandlerController {
     String exMessage = exception.getMessage();
     Pattern p = Pattern.compile("\\[\\\"\\w*\\\"\\]");
     Matcher m = p.matcher(exMessage);
-    String userErrorMessage;
-    String techErrorMessage;
+    HErrorDTO error;
+    String path = request.getRequestURI();
     if (m.find()) {
       String value = m.group(m.groupCount()).replace("\"", "'");
-      userErrorMessage = String.format(Errors.MISMATCH_FIELD.getCode(), value);
-      techErrorMessage = String.format(Errors.MISMATCH_FIELD.getMessage(), value);
+      error = exBuilder(Errors.MISMATCH_FIELD, value, path, exception);
     } else {
-      userErrorMessage = Errors.MISMATCH_INPUT.getCode();
-      techErrorMessage = Errors.MISMATCH_INPUT.getMessage();
+      error = exBuilder(Errors.MISMATCH_INPUT, path, exception);
     }
-    return ResponseEntity.badRequest().body(Set.of(exBuilder(userErrorMessage, techErrorMessage, request.getRequestURI(), exception)));
+    return ResponseEntity.badRequest().body(Set.of(error));
   }
 
   @ExceptionHandler({DataIntegrityViolationException.class})
@@ -130,7 +126,7 @@ public class ExceptionHandlerController {
     Set<HErrorDTO> errors = l.stream().filter(objectError -> objectError instanceof FieldError) //
         .map(objectError -> (FieldError) objectError) //
         .map(fieldError -> getMessages(fieldError)) //
-        .map(msgs -> exBuilder(msgs[0], msgs[1], request.getRequestURI(), exception)) //
+        .map(msgs -> exBuilder(msgs.getLeft(), msgs.getMiddle(), msgs.getRight(), request.getRequestURI(), exception)) //
         .collect(Collectors.toSet());
 
     return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(errors);
@@ -144,14 +140,13 @@ public class ExceptionHandlerController {
    */
   @ExceptionHandler(DateTimeParseException.class)
   protected ResponseEntity<Set<HErrorDTO>> handleDateTimeParseException(final HttpServletRequest request, final DateTimeParseException exception) {
-    return ResponseEntity.badRequest()
-        .body(Set.of(exBuilder(Errors.INVALID_DATE_FORMAT.getCode(), Errors.INVALID_DATE_FORMAT.getMessage(), request.getRequestURI(), exception)));
+    return ResponseEntity.badRequest().body(Set.of(exBuilder(Errors.INVALID_DATE_FORMAT, request.getRequestURI(), exception)));
   }
 
   @ExceptionHandler({SQLException.class, SQLGrammarException.class, InvalidDataAccessResourceUsageException.class})
   protected ResponseEntity<Set<HErrorDTO>> handleSQLException(final HttpServletRequest request, final Exception exception) {
     Exception e = (Exception) exception.getCause();
-    return ResponseEntity.badRequest().body(Set.of(exBuilder(Errors.BAD_QUERY.getCode(), Errors.BAD_QUERY.getMessage(), request.getRequestURI(), e)));
+    return ResponseEntity.badRequest().body(Set.of(exBuilder(Errors.BAD_QUERY, request.getRequestURI(), e)));
   }
 
   /**
@@ -160,18 +155,19 @@ public class ExceptionHandlerController {
    * @param fieldError
    * @return
    */
-  private String[] getMessages(FieldError fieldError) {
+  private Triple<String, String, String> getMessages(FieldError fieldError) {
     String userMsg;
     String techMsg;
+    String field = fieldError.getField();
 
     if (Objects.isNull(fieldError.getCode())) {
-      userMsg = String.format(Errors.MISSING_FIELD.getCode(), fieldError.getField());
-      techMsg = String.format(Errors.MISSING_FIELD.getMessage(), fieldError.getField());
+      userMsg = Errors.MISSING_FIELD.getCode();
+      techMsg = Errors.MISSING_FIELD.getMessage();
     } else {
       userMsg = fieldError.getCode();
       techMsg = fieldError.getDefaultMessage();
     }
-    return new String[] {userMsg, techMsg};
+    return Triple.of(userMsg, techMsg, field);
   }
 
   /**
@@ -183,13 +179,26 @@ public class ExceptionHandlerController {
    * @param e
    * @return
    */
-  private HErrorDTO exBuilder(String userMessage, String techMessage, String path, Exception e) {
+  private HErrorDTO exBuilder(String userMessage, String techMessage, String field, String path, Exception e) {
     log.error(userMessage, e);
     return HErrorDTO.builder() //
+        .field(field) //
         .userMessage(userMessage) //
         .techMessage(techMessage) //
         .timestamp(LocalDateTime.now()) //
         .path(path) //
         .build();
+  }
+
+  private HErrorDTO exBuilder(String userMessage, String techMessage, String path, Exception e) {
+    return exBuilder(userMessage, techMessage, null, path, e);
+  }
+
+  private HErrorDTO exBuilder(Errors error, String field, String path, Exception e) {
+    return exBuilder(error.getCode(), error.getMessage(), field, path, e);
+  }
+
+  private HErrorDTO exBuilder(Errors error, String path, Exception e) {
+    return exBuilder(error, null, path, e);
   }
 }
