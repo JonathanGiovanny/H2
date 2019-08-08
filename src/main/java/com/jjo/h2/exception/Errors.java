@@ -10,7 +10,6 @@ public enum Errors {
 
   GENERIC_ERROR("general.error", "There has been a problem"),
   NO_DATA("no.data", "Not data found"),
-  NO_DATA_BY_ID_MSG("no.data.by:%s:%s", "The element %s with id %s does not exist"),
   MISSING_FIELD("missing.field", "The field is required"),
   MISMATCH_FIELD("mismatch.field", "The field can contain an unexpected format or data type"),
   MISMATCH_INPUT("mismatch.request", "The request contain errors"),

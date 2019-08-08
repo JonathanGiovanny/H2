@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import com.jjo.h2.exception.Errors;
 import com.jjo.h2.exception.HException;
@@ -28,7 +29,7 @@ public class HServiceImpl implements HService {
   private final @NonNull TagsService tagsService;
 
   private H getH(Long id) {
-    return hRepo.findById(id).orElseThrow(() -> new HException(Errors.NO_DATA_BY_ID_MSG, "H", id));
+    return hRepo.findById(id).orElseThrow(() -> new HException(Errors.NO_DATA, Pair.of("id", id).toString()));
   }
 
   @Override
@@ -38,9 +39,7 @@ public class HServiceImpl implements HService {
   }
 
   public H saveH(H h) {
-    return Optional.of(h)
-        .filter(entity -> validateHUrlUnique(entity.getId(), entity.getUrl()))
-        .map(hRepo::save).get();
+    return hRepo.save(h);
   }
 
   @Override
@@ -80,13 +79,5 @@ public class HServiceImpl implements HService {
 
   private void copyExistingValuesThatShouldNotUpdate(H existingEntity, H updatingEntity) {
     updatingEntity.setClicks(existingEntity.getClicks());
-  }
-
-  private boolean validateHUrlUnique(Long id, String url) {
-    Optional<H> existingH = hRepo.findByUrlIgnoreCase(url);
-    if (existingH.isPresent() && !existingH.get().getId().equals(id)) {
-      throw new HException(Errors.FIELD_SHOULD_UNIQUE, URL);
-    }
-    return true;
   }
 }
