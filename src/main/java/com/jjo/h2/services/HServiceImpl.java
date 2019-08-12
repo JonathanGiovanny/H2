@@ -1,10 +1,10 @@
 package com.jjo.h2.services;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import com.jjo.h2.exception.Errors;
 import com.jjo.h2.exception.HException;
@@ -18,8 +18,6 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class HServiceImpl implements HService {
 
-  private static final String URL = "url";
-  
   private final @NonNull HRepository hRepo;
 
   private final @NonNull HHistoryService hHisService;
@@ -29,7 +27,8 @@ public class HServiceImpl implements HService {
   private final @NonNull TagsService tagsService;
 
   private H getH(Long id) {
-    return hRepo.findById(id).orElseThrow(() -> new HException(Errors.NO_DATA, Pair.of("id", id).toString()));
+    return hRepo.findById(id)
+        .orElseThrow(() -> new HException(Errors.NO_DATA, Arrays.asList("id", id).toString()));
   }
 
   @Override

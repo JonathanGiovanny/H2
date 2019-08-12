@@ -43,7 +43,7 @@ public class ExceptionHandlerController {
   @ExceptionHandler(HException.class)
   protected ResponseEntity<Set<HErrorDTO>> handleHException(final HttpServletRequest request, final HException exception) {
     return ResponseEntity.badRequest()
-        .body(Set.of(exBuilder(exception.getUserMessage(), exception.getTechMessage(), request.getRequestURI(), exception)));
+        .body(Set.of(exBuilder(exception.getUserMessage(), exception.getTechMessage(), exception.getField(), request.getRequestURI(), exception)));
   }
 
   /**

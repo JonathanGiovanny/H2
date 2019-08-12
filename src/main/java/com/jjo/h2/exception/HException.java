@@ -30,6 +30,19 @@ public class HException extends RuntimeException {
     this.techMessage = String.format(error.getMessage(), args);
   }
 
+/**
+   * Send messages, field and Exception
+   * 
+   * @param message
+   * @param e
+   */
+  public HException(Errors error, String field, Object... args) {
+    super(error.getMessage());
+    this.userMessage = String.format(error.getCode(), args);
+    this.techMessage = String.format(error.getMessage(), args);
+    this.field = field;
+  }
+
   /**
    * Send messages and Exception
    * 

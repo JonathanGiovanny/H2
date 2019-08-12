@@ -1,7 +1,7 @@
 package com.jjo.h2.config.security;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.stereotype.Component;
@@ -31,10 +31,10 @@ public class CustomErrorAttributes extends DefaultErrorAttributes {
       techMessage = originalAttributes.get("message").toString();
     }
 
-    Map<String, Object> errorAttributes = new HashMap<>();
-    errorAttributes.put("timestamp", LocalDateTime.now());
+    Map<String, Object> errorAttributes = new LinkedHashMap<>();
     errorAttributes.put("userMessage", userMessage);
     errorAttributes.put("techMessage", techMessage);
+    errorAttributes.put("timestamp", LocalDateTime.now());
     errorAttributes.put("path", originalAttributes.get("path"));
     return errorAttributes;
   }
