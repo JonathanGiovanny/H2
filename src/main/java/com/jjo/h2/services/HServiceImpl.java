@@ -43,8 +43,7 @@ public class HServiceImpl implements HService {
   @Override
   public H updateH(Long id, H h) {
     h.setId(id);
-    Optional<H> existingH = hRepo.findById(id);
-    existingH.ifPresent(eh -> copyExistingValuesThatShouldNotUpdate(eh, h));
+    getH(id).ifPresentOrThrow(eh -> copyExistingValuesThatShouldNotUpdate(eh, h));
     return saveH(h);
   }
 
@@ -65,9 +64,10 @@ public class HServiceImpl implements HService {
 
   @Override
   public H increaseClick(Long id) {
-    H h = getH(id).getOrElse();
-    h.setClicks(h.getClicks() + 1);
-    H resultingH = hRepo.save(h);
+    H resultingH = getH(id)
+        .peek(h -> h.setClicks(h.getClicks() + 1))
+        .mapRight(hRepo::save)
+        .getOrElse();
 
     HHistory hh = HHistory.builder().h(resultingH).date(LocalDateTime.now()).build();
     hHisService.save(hh);

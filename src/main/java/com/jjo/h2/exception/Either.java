@@ -33,20 +33,20 @@ public class Either<L extends RuntimeException, R> {
     return right != null && right.isPresent();
   }
 
-  public <T> Optional<T> mapLeft(Function<? super L, T> mapper) {
-    if (isLeft()) {
-      return Optional.of(mapper.apply(left));
-    }
-    return Optional.empty();
-  }
-
-  public <T> Optional<T> mapRight(Function<? super R, T> mapper) {
+  public Either<L, R> mapRight(Function<? super R, R> mapper) {
     if (isRight()) {
-      return right.map(mapper);
+      return Either.of(left, right.map(mapper));
     }
-    return Optional.empty();
+    return this;
   }
 
+  public Either<L,R> peek(Consumer<R> action) {
+    if (isRight()) {
+      action.accept(right.get());
+    }
+    return this;
+  }
+  
   public void ifPresent(Consumer<? super R> action) {
     if (isRight()) {
       action.accept(right.get());
