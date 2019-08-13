@@ -9,7 +9,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import com.jjo.h2.dto.HDTO;
 import com.jjo.h2.dto.TagsDTO;
-import com.jjo.h2.model.Tags;
+import com.jjo.h2.exception.Either;
 import com.jjo.h2.services.HService;
 import com.jjo.h2.services.HTypeService;
 import com.jjo.h2.services.TagsService;
@@ -52,20 +52,19 @@ public class HDTOValidator implements Validator {
     }
   }
 
+  private void validateExistingTag(TagsDTO tag, int index, Errors errors) {
+    if (tagsService.getTag(tag.getId()).isLeft()) {
+      String tagField = String.format(TAG_ID_VALUE, index);
+      registerError(errors, tagField, com.jjo.h2.exception.Errors.NO_DATA);
+    }
+  }
+
   private void validateType(HDTO dto, Errors errors) {
     Optional.of(dto)
     .map(HDTO::getType)
     .map(t -> typeService.getHType(t.getId()))
-    .ifPresentOrElse(ht -> {},
-      () -> registerError(errors, TYPE_ID_VALUE, com.jjo.h2.exception.Errors.NO_DATA));
-  }
-
-  private void validateExistingTag(TagsDTO tag, int index, Errors errors) {
-    Tags existingTag = tagsService.getTag(tag.getId());
-    if (Objects.isNull(existingTag)) {
-      String tagField = String.format(TAG_ID_VALUE, index);
-      registerError(errors, tagField, com.jjo.h2.exception.Errors.NO_DATA);
-    }
+    .filter(Either::isLeft)
+    .ifPresent(either -> registerError(errors, TYPE_ID_VALUE, com.jjo.h2.exception.Errors.NO_DATA));
   }
 
 //  @PreFilter private boolean validateHUrlUnique(Long id, String url) {

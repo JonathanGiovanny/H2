@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import com.jjo.h2.exception.Errors;
-import com.jjo.h2.exception.HException;
+import com.jjo.h2.exception.Either;
 import com.jjo.h2.model.H;
 import com.jjo.h2.model.HHistory;
 import com.jjo.h2.repositories.HRepository;
+import com.jjo.h2.utils.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -26,9 +26,8 @@ public class HServiceImpl implements HService {
 
   private final @NonNull TagsService tagsService;
 
-  private H getH(Long id) {
-    return hRepo.findById(id)
-        .orElseThrow(() -> new HException(Errors.NO_DATA, Arrays.asList("id", id).toString()));
+  private Either<?, H> getH(Long id) {
+    return Either.of(Utils.throwNotExistingElement(Arrays.asList("id", id)), hRepo.findById(id));
   }
 
   @Override
@@ -61,12 +60,12 @@ public class HServiceImpl implements HService {
 
   @Override
   public void deleteH(Long id) {
-    hRepo.delete(this.getH(id));
+    this.getH(id).ifPresentOrThrow(hRepo::delete);
   }
 
   @Override
   public H increaseClick(Long id) {
-    H h = getH(id);
+    H h = getH(id).getOrElse();
     h.setClicks(h.getClicks() + 1);
     H resultingH = hRepo.save(h);
 

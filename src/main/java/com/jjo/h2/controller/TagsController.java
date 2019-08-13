@@ -43,7 +43,7 @@ public class TagsController {
   
   @GetMapping("/{id}")
   public ResponseEntity<TagsDTO> getTag(@PathVariable Long id) {
-    return ResponseEntity.ok(mapper.entityToDto(tagsService.getTag(id)));
+    return ResponseEntity.ok(mapper.entityToDto(tagsService.getTag(id).getOrElse()));
   }
 
   @GetMapping("/search/{filter}")
@@ -56,7 +56,7 @@ public class TagsController {
     return ResponseEntity.ok(mapper.entityToDto(tagsService.findAll(pageable)));
   }
 
-  @GetMapping("/{name}")
+  @GetMapping("/availableName/{name}")
   @PreAuthorize(MODIFY_TAGS)
   public ResponseEntity<Boolean> availableName(@PathVariable String name) {
     return ResponseEntity.ok(tagsService.isNameAvailable(null, name));

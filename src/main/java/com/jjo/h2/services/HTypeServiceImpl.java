@@ -1,13 +1,16 @@
 package com.jjo.h2.services;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import com.jjo.h2.exception.Either;
 import com.jjo.h2.exception.Errors;
 import com.jjo.h2.exception.HException;
 import com.jjo.h2.model.HType;
 import com.jjo.h2.repositories.HTypeRepository;
+import com.jjo.h2.utils.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -18,8 +21,8 @@ public class HTypeServiceImpl implements HTypeService {
   private final @NonNull HTypeRepository hTypeRepo;
 
   @Override
-  public HType getHType(Integer id) {
-    return hTypeRepo.findById(id).orElse(null);
+  public Either<?, HType> getHType(Integer id) {
+    return Either.of(Utils.throwNotExistingElement(Arrays.asList("id", id)), hTypeRepo.findById(id));
   }
 
   @Override
@@ -35,7 +38,8 @@ public class HTypeServiceImpl implements HTypeService {
 
   @Override
   public HType findByName(String name) {
-    return hTypeRepo.findByNameIgnoreCase(name).orElse(null);
+    return hTypeRepo.findByNameIgnoreCase(name)
+        .orElseThrow(() -> Utils.throwNotExistingElement(Arrays.asList("name", name)));
   }
 
   @Override

@@ -2,17 +2,18 @@ package com.jjo.h2.services;
 
 import java.util.List;
 import org.springframework.data.domain.Pageable;
+import com.jjo.h2.exception.Either;
 import com.jjo.h2.model.Tags;
 
 public interface TagsService {
 
-  Tags getTag(Long id);
+  Either<?, Tags> getTag(Long id);
 
   List<Tags> findAll(Pageable pageable);
 
   Boolean isNameAvailable(Long id, String name);
 
-  Tags findByName(String name);
+  Either<?, Tags> findByName(String name);
 
   List<Tags> findByNameLike(String name, Pageable pageable);
 

@@ -1,9 +1,12 @@
 package com.jjo.h2.utils;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
+import com.jjo.h2.exception.Errors;
+import com.jjo.h2.exception.HException;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -22,5 +25,9 @@ public class Utils {
    */
   public static <T> Stream<T> isNotNullOrEmpty(Collection<T> coll) {
     return Optional.ofNullable(coll).map(c -> c.stream()).orElse(Stream.empty()).filter(Objects::nonNull);
+  }
+
+  public static RuntimeException throwNotExistingElement(List<Object> fields) {
+    return new HException(Errors.NO_DATA, fields.toString());
   }
 }

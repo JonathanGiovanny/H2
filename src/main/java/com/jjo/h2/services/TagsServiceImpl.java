@@ -1,13 +1,16 @@
 package com.jjo.h2.services;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import com.jjo.h2.exception.Either;
 import com.jjo.h2.exception.Errors;
 import com.jjo.h2.exception.HException;
 import com.jjo.h2.model.Tags;
 import com.jjo.h2.repositories.TagsRepository;
+import com.jjo.h2.utils.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -18,8 +21,8 @@ public class TagsServiceImpl implements TagsService {
   private final @NonNull TagsRepository tagsRepo;
 
   @Override
-  public Tags getTag(Long id) {
-    return tagsRepo.findById(id).orElse(null);
+  public Either<?, Tags> getTag(Long id) {
+    return Either.of(Utils.throwNotExistingElement(Arrays.asList("id", id)), tagsRepo.findById(id));
   }
 
   @Override
@@ -28,8 +31,8 @@ public class TagsServiceImpl implements TagsService {
   }
 
   @Override
-  public Tags findByName(String name) {
-    return tagsRepo.findByNameIgnoreCase(name).orElse(null);
+  public Either<?, Tags> findByName(String name) {
+    return Either.of(Utils.throwNotExistingElement(Arrays.asList("name", name)), tagsRepo.findByNameIgnoreCase(name));
   }
 
   @Override
@@ -40,7 +43,7 @@ public class TagsServiceImpl implements TagsService {
 
   @Override
   public List<Tags> findByNameLike(String name, Pageable pageable) {
-    return tagsRepo.findByNameLike(name, pageable);
+    return tagsRepo.findByNameLikeIgnoreCase(name, pageable);
   }
 
   @Override

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
 <changelog xmlns="http://www.liquigraph.org/schema/1.0/liquigraph.xsd">
     <changeset id="CREATE_PRIVILEGES" author="jonathan.camargo">
         <query>CREATE (p:Privilege {name:'MODIFY_H', description:'Modify the H elements'})</query>

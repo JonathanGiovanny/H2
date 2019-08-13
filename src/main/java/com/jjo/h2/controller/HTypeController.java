@@ -43,7 +43,7 @@ public class HTypeController {
 
   @GetMapping("/{id}")
   public ResponseEntity<HTypeDTO> getHType(@PathVariable Integer id) {
-    return ResponseEntity.ok(mapper.entityToDto(hTypeService.getHType(id)));
+    return ResponseEntity.ok(mapper.entityToDto(hTypeService.getHType(id).getOrElse()));
   }
 
   @GetMapping
@@ -56,7 +56,7 @@ public class HTypeController {
     return ResponseEntity.ok(mapper.entityToDto(hTypeService.findByNameLike(filter, pageable)));
   }
 
-  @GetMapping("/{name}")
+  @GetMapping("/availableName/{name}")
   @PreAuthorize(MODIFY_TYPES)
   public ResponseEntity<Boolean> availableName(@PathVariable String name) {
     return ResponseEntity.ok(hTypeService.isNameAvailable(null, name));
