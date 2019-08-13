@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.jjo.h2.exception.Either;
@@ -48,12 +49,12 @@ public class HServiceImpl implements HService {
   }
 
   @Override
-  public List<H> findAll(Pageable pageable) {
+  public Page<H> findAll(Pageable pageable) {
     return findAll(new H(), pageable);
   }
 
   @Override
-  public List<H> findAll(H filter, Pageable pageable) {
+  public Page<H> findAll(H filter, Pageable pageable) {
     return hRepo.filter(filter, pageable);
   }
 

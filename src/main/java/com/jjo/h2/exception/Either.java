@@ -56,8 +56,9 @@ public class Either<L extends RuntimeException, R> {
   public void ifPresentOrThrow(Consumer<? super R> action) {
     if (!isRight()) {
       throw left;
+    } else {
+      action.accept(right.get());
     }
-    action.accept(right.get());
   }
 
   public R getOrElse() {

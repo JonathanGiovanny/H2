@@ -1,6 +1,6 @@
 package com.jjo.h2.services;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import com.jjo.h2.model.H;
 
@@ -19,9 +19,9 @@ public interface HService {
    * @param pageable
    * @return
    */
-  List<H> findAll(H filter, Pageable pageable);
+  Page<H> findAll(H filter, Pageable pageable);
 
-  List<H> findAll(Pageable pageable);
+  Page<H> findAll(Pageable pageable);
 
   void deleteH(Long id);
 
