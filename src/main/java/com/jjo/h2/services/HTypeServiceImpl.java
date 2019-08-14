@@ -38,8 +38,7 @@ public class HTypeServiceImpl implements HTypeService {
 
   @Override
   public HType findByName(String name) {
-    return hTypeRepo.findByNameIgnoreCase(name)
-        .orElseThrow(() -> Utils.throwNotExistingElement(Arrays.asList("name", name)));
+    return hTypeRepo.findByNameIgnoreCase(name).orElseThrow(() -> Utils.throwNotExistingElement(Arrays.asList("name", name)));
   }
 
   @Override
@@ -49,9 +48,7 @@ public class HTypeServiceImpl implements HTypeService {
 
   @Override
   public HType saveHType(HType hType) {
-    return Optional.of(hType)
-        .filter(ht -> validateHTypeNameUnique(ht.getId(), ht.getName()))
-        .map(hTypeRepo::save).get();
+    return Optional.of(hType).filter(ht -> validateHTypeNameUnique(ht.getId(), ht.getName())).map(hTypeRepo::save).get();
   }
 
   @Override
