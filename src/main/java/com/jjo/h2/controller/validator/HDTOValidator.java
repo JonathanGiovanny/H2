@@ -43,7 +43,7 @@ public class HDTOValidator implements Validator {
   }
 
   private void validateTags(List<TagsDTO> tags, Errors errors) {
-    if (Objects.nonNull(tags) && !tags.isEmpty()) {
+    if (Objects.nonNull(tags)) {
       IntStream.range(0, tags.size())
       .forEach(index -> {
         TagsDTO tag = tags.get(index);

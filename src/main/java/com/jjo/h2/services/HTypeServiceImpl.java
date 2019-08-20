@@ -1,8 +1,10 @@
 package com.jjo.h2.services;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.jjo.h2.exception.Either;
@@ -48,6 +50,8 @@ public class HTypeServiceImpl implements HTypeService {
 
   @Override
   public HType saveHType(HType hType) {
+    var something = new ArrayList<Set<List<String>>>();
+    something.get(0);
     return Optional.of(hType).filter(ht -> validateHTypeNameUnique(ht.getId(), ht.getName())).map(hTypeRepo::save).get();
   }
 

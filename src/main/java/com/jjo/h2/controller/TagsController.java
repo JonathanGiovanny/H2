@@ -43,7 +43,7 @@ public class TagsController {
   
   @GetMapping("/{id}")
   public ResponseEntity<TagsDTO> getTag(@PathVariable Long id) {
-    return ResponseEntity.ok(mapper.entityToDto(tagsService.getTag(id).getOrElse()));
+    return ResponseEntity.ok(mapper.entityToDto(tagsService.getTag(id).getOrElseThrow()));
   }
 
   @GetMapping("/search/{filter}")

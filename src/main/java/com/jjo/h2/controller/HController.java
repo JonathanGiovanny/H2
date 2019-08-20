@@ -6,6 +6,7 @@ import java.net.URI;
 import java.security.Principal;
 import java.util.List;
 import javax.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -46,7 +47,7 @@ public class HController {
   }
 
   @GetMapping
-  public ResponseEntity<List<HDTO>> findAll(Pageable pageable, Principal principal) {
+  public ResponseEntity<Page<HDTO>> findAll(Pageable pageable, Principal principal) {
     return ResponseEntity.ok(mapper.entityToDTO(hService.findAll(pageable)));
   }
 
@@ -82,6 +83,6 @@ public class HController {
 
   @PatchMapping("/{id}/click")
   public ResponseEntity<HDTO> increaseClick(@PathVariable Long id) {
-    return ResponseEntity.ok(mapper.entityToDTO(hService.increaseClick(id)));
+    return ResponseEntity.ok(mapper.entityToDTO(hService.increaseClick(id).getOrElseThrow()));
   }
 }

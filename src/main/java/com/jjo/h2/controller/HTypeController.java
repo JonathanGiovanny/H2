@@ -43,7 +43,7 @@ public class HTypeController {
 
   @GetMapping("/{id}")
   public ResponseEntity<HTypeDTO> getHType(@PathVariable Integer id) {
-    return ResponseEntity.ok(mapper.entityToDto(hTypeService.getHType(id).getOrElse()));
+    return ResponseEntity.ok(mapper.entityToDto(hTypeService.getHType(id).getOrElseThrow()));
   }
 
   @GetMapping

@@ -61,7 +61,7 @@ public class Either<L extends RuntimeException, R> {
     }
   }
 
-  public R getOrElse() {
+  public R getOrElseThrow() {
     if (isLeft() || getRight().isEmpty()) {
       throw left;
     }

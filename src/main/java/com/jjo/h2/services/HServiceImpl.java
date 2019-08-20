@@ -1,15 +1,12 @@
 package com.jjo.h2.services;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.jjo.h2.exception.Either;
 import com.jjo.h2.model.H;
-import com.jjo.h2.model.HHistory;
 import com.jjo.h2.repositories.HRepository;
 import com.jjo.h2.utils.Utils;
 import lombok.NonNull;
@@ -64,16 +61,11 @@ public class HServiceImpl implements HService {
   }
 
   @Override
-  public H increaseClick(Long id) {
-    H resultingH = getH(id)
+  public Either<?, H> increaseClick(Long id) {
+    return getH(id)
         .peek(h -> h.setClicks(h.getClicks() + 1))
-        .mapRight(hRepo::save)
-        .getOrElse();
-
-    HHistory hh = HHistory.builder().h(resultingH).date(LocalDateTime.now()).build();
-    hHisService.save(hh);
-
-    return resultingH;
+        .peek(hHisService::save)
+        .mapRight(hRepo::save);
   }
 
   private void copyExistingValuesThatShouldNotUpdate(H existingEntity, H updatingEntity) {

@@ -2,6 +2,7 @@ package com.jjo.h2.services;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import com.jjo.h2.exception.Either;
 import com.jjo.h2.model.H;
 
 public interface HService {
@@ -25,5 +26,5 @@ public interface HService {
 
   void deleteH(Long id);
 
-  H increaseClick(Long id);
+  Either<?, H> increaseClick(Long id);
 }
