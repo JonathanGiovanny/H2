@@ -3,6 +3,7 @@ package com.jjo.h2.exception;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
@@ -61,6 +62,10 @@ public class Either<L extends RuntimeException, R> {
     }
   }
 
+  /**
+   * Returns the Right if exist, otherwise, it would return the Left
+   * @return
+   */
   public R getOrElseThrow() {
     if (isLeft() || getRight().isEmpty()) {
       throw left;

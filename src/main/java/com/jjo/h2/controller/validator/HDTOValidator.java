@@ -38,11 +38,11 @@ public class HDTOValidator implements Validator {
   public void validate(Object target, Errors errors) {
     HDTO dto = (HDTO) target;
 
-    validateTags(dto.getTags(), errors);
-    validateType(dto, errors);
+    validateExistingTags(dto.getTags(), errors);
+    validateExistingType(dto, errors);
   }
 
-  private void validateTags(List<TagsDTO> tags, Errors errors) {
+  private void validateExistingTags(List<TagsDTO> tags, Errors errors) {
     if (Objects.nonNull(tags)) {
       IntStream.range(0, tags.size())
       .forEach(index -> {
@@ -59,7 +59,7 @@ public class HDTOValidator implements Validator {
     }
   }
 
-  private void validateType(HDTO dto, Errors errors) {
+  private void validateExistingType(HDTO dto, Errors errors) {
     Optional.of(dto)
     .map(HDTO::getType)
     .map(t -> typeService.getHType(t.getId()))
