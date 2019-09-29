@@ -4,7 +4,6 @@ import static com.jjo.h2.config.security.SecurityConstants.DELETE_H;
 import static com.jjo.h2.config.security.SecurityConstants.MODIFY_H;
 import java.net.URI;
 import java.security.Principal;
-import java.util.List;
 import javax.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -52,7 +51,7 @@ public class HController {
   }
 
   @PostMapping("/search")
-  public ResponseEntity<List<HDTO>> searchH(@RequestBody HDTO h, Pageable pageable) {
+  public ResponseEntity<Page<HDTO>> searchH(@RequestBody HDTO h, Pageable pageable) {
     return ResponseEntity.ok(mapper.entityToDTO(hService.findAll(mapper.dtoToEntity(h), pageable)));
   }
 

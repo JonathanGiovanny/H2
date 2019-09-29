@@ -1,8 +1,9 @@
 package com.jjo.h2.repositories.impl;
 
-import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import com.jjo.h2.model.H;
@@ -20,7 +21,7 @@ public class HRepositoryCustomImpl extends DSLQueryCustomImpl implements HReposi
   private final @NonNull EntityManager em;
 
   @Override
-  public List<H> filter(H hFilter, Pageable pageable) {
+  public Page<H> filter(H hFilter, Pageable pageable) {
     JPAQuery<H> query = new JPAQuery<>(em);
     QH h = QH.h;
 
@@ -32,11 +33,13 @@ public class HRepositoryCustomImpl extends DSLQueryCustomImpl implements HReposi
     Optional.ofNullable(hFilter.getType()).ifPresent(type -> query.where(h.type.id.eq(type.getId())));
     Utils.isNotNullOrEmpty(hFilter.getTags()).forEach(tags -> query.where(h.tags.any().id.eq(tags.getId())));
 
+    long total = query.fetchCount();
+
     Optional.of(pageable).filter(Pageable::isPaged).ifPresent(p -> {
       query.limit(p.getPageSize() * (p.getPageNumber() + 1));
       query.offset(p.getOffset());
     });
 
-    return query.fetch();
+    return new PageImpl<>(query.fetch(), pageable, total);
   }
 }
