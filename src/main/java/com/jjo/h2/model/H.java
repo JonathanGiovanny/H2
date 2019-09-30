@@ -47,9 +47,11 @@ public class H extends Auditable implements Serializable {
   @Column(name = "H_COVER")
   private String cover;
 
+  @Builder.Default
   @Column(name = "H_CLICKS")
   private Long clicks = 0L;
 
+  @Builder.Default
   @Column(name = "H_SCORE")
   private Double score = 0.0;
 
