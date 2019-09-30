@@ -45,6 +45,11 @@ public class HController {
     binder.addValidators(hValid);
   }
 
+  @GetMapping("/{hId}")
+  public ResponseEntity<HDTO> findById(@PathVariable Long id) {
+    return ResponseEntity.ok(mapper.entityToDTO(hService.findById(id).get()));
+  }
+
   @GetMapping
   public ResponseEntity<Page<HDTO>> findAll(Pageable pageable, Principal principal) {
     return ResponseEntity.ok(mapper.entityToDTO(hService.findAll(pageable)));

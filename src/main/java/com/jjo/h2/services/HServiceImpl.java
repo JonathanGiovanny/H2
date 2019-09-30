@@ -29,6 +29,11 @@ public class HServiceImpl implements HService {
   }
 
   @Override
+  public Optional<H> findById(Long id) {
+    return hRepo.findById(id);
+  }
+  
+  @Override
   public Boolean isUrlAvailable(Long id, String url) {
     Optional<H> foundH = hRepo.findByUrlIgnoreCase(url);
     return !foundH.map(H::getId).filter(foundId -> !foundId.equals(id)).isPresent();
@@ -47,7 +52,7 @@ public class HServiceImpl implements HService {
 
   @Override
   public Page<H> findAll(Pageable pageable) {
-    return findAll(new H(), pageable);
+    return hRepo.findAll(pageable);
   }
 
   @Override
