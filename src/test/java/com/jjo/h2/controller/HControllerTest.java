@@ -6,8 +6,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.jjo.h2.controller.validator.HDTOValidator;
 import com.jjo.h2.mapper.HMapper;
@@ -15,28 +13,25 @@ import com.jjo.h2.model.H;
 import com.jjo.h2.services.HService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@WebMvcTest(HController.class)
 public class HControllerTest {
 
   private static final Long ID = 1L;
 
   private HController hController;
 
-  @MockBean
+  @Mock
   private HService hService;
 
-  @MockBean
+  @Mock
   private HDTOValidator hValid;
 
   @Mock
   private HMapper mapper;
 
-  public HControllerTest() {
+  @Before
+  public void setUp() {
     this.hController = new HController(hService, hValid, mapper);
   }
-
-  @Before
-  public void setUp() {}
 
   @Test
   public void testFindById() {
