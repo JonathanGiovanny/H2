@@ -3,8 +3,8 @@ package com.jjo.h2.controller;
 import static com.jjo.h2.config.security.SecurityConstants.DELETE_TYPES;
 import static com.jjo.h2.config.security.SecurityConstants.MODIFY_TYPES;
 import java.net.URI;
-import java.util.List;
 import javax.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -47,13 +47,13 @@ public class HTypeController {
   }
 
   @GetMapping
-  public ResponseEntity<List<HTypeDTO>> findAll(Pageable pageable) {
-    return ResponseEntity.ok(mapper.entityToDto(hTypeService.findAll(pageable)));
+  public ResponseEntity<Page<HTypeDTO>> findAll(Pageable pageable) {
+    return ResponseEntity.ok(hTypeService.findAll(pageable).map(mapper::entityToDto));
   }
 
   @GetMapping("/search/{filter}")
-  public ResponseEntity<List<HTypeDTO>> findByFilter(@PathVariable String filter, Pageable pageable) {
-    return ResponseEntity.ok(mapper.entityToDto(hTypeService.findByNameLike(filter, pageable)));
+  public ResponseEntity<Page<HTypeDTO>> findByFilter(@PathVariable String filter, Pageable pageable) {
+    return ResponseEntity.ok(hTypeService.findByNameLike(filter, pageable).map(mapper::entityToDto));
   }
 
   @GetMapping("/availableName/{name}")

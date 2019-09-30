@@ -1,10 +1,9 @@
 package com.jjo.h2.services;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.jjo.h2.exception.Either;
@@ -28,8 +27,8 @@ public class HTypeServiceImpl implements HTypeService {
   }
 
   @Override
-  public List<HType> findAll(Pageable pageable) {
-    return hTypeRepo.findAll(pageable).getContent();
+  public Page<HType> findAll(Pageable pageable) {
+    return hTypeRepo.findAll(pageable);
   }
 
   @Override
@@ -44,14 +43,12 @@ public class HTypeServiceImpl implements HTypeService {
   }
 
   @Override
-  public List<HType> findByNameLike(String name, Pageable pageable) {
+  public Page<HType> findByNameLike(String name, Pageable pageable) {
     return hTypeRepo.findByNameLike(name, pageable);
   }
 
   @Override
   public HType saveHType(HType hType) {
-    var something = new ArrayList<Set<List<String>>>();
-    something.get(0);
     return Optional.of(hType).filter(ht -> validateHTypeNameUnique(ht.getId(), ht.getName())).map(hTypeRepo::save).get();
   }
 

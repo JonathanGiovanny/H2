@@ -1,8 +1,8 @@
 package com.jjo.h2.services;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.jjo.h2.exception.Either;
@@ -26,8 +26,8 @@ public class TagsServiceImpl implements TagsService {
   }
 
   @Override
-  public List<Tags> findAll(Pageable pageable) {
-    return tagsRepo.findAll(pageable).getContent();
+  public Page<Tags> findAll(Pageable pageable) {
+    return tagsRepo.findAll(pageable);
   }
 
   @Override
@@ -42,7 +42,7 @@ public class TagsServiceImpl implements TagsService {
   }
 
   @Override
-  public List<Tags> findByNameLike(String name, Pageable pageable) {
+  public Page<Tags> findByNameLike(String name, Pageable pageable) {
     return tagsRepo.findByNameLikeIgnoreCase(name, pageable);
   }
 

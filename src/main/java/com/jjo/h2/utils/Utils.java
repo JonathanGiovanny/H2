@@ -7,10 +7,9 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import com.jjo.h2.exception.Errors;
 import com.jjo.h2.exception.HException;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.experimental.UtilityClass;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@UtilityClass
 public class Utils {
 
   /**

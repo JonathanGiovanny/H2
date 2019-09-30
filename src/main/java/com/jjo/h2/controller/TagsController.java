@@ -3,8 +3,8 @@ package com.jjo.h2.controller;
 import static com.jjo.h2.config.security.SecurityConstants.DELETE_TAGS;
 import static com.jjo.h2.config.security.SecurityConstants.MODIFY_TAGS;
 import java.net.URI;
-import java.util.List;
 import javax.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -40,20 +40,20 @@ public class TagsController {
   protected void initBinder(WebDataBinder binder) {
     binder.addValidators(tagsValidator);
   }
-  
+
   @GetMapping("/{id}")
   public ResponseEntity<TagsDTO> getTag(@PathVariable Long id) {
     return ResponseEntity.ok(mapper.entityToDto(tagsService.getTag(id).getOrElseThrow()));
   }
 
   @GetMapping("/search/{filter}")
-  public ResponseEntity<List<TagsDTO>> findByFilter(@PathVariable String filter, Pageable pageable) {
-    return ResponseEntity.ok(mapper.entityToDto(tagsService.findByNameLike(filter, pageable)));
+  public ResponseEntity<Page<TagsDTO>> findByFilter(@PathVariable String filter, Pageable pageable) {
+    return ResponseEntity.ok(tagsService.findByNameLike(filter, pageable).map(mapper::entityToDto));
   }
 
   @GetMapping
-  public ResponseEntity<List<TagsDTO>> findAll(Pageable pageable) {
-    return ResponseEntity.ok(mapper.entityToDto(tagsService.findAll(pageable)));
+  public ResponseEntity<Page<TagsDTO>> findAll(Pageable pageable) {
+    return ResponseEntity.ok(tagsService.findAll(pageable).map(mapper::entityToDto));
   }
 
   @GetMapping("/availableName/{name}")
